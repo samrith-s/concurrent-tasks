@@ -2,9 +2,15 @@
     "name": "concurrent-tasks",
     "version": "0.0.1",
     "description": "A simple task runner which will run all tasks till completion, while maintaining concurrency limits.",
-    "main": "index.js",
     "author": "Samrith Shankar",
     "license": "MIT",
+    "main": "lib/concurrent-tasks.js",
+    "umd:main": "lib/umd/concurrent-tasks.min.js",
+    "source": "src/index.js",
+    "scripts": {
+        "build": "microbundle --name ConcurrentTasks",
+        "dev": "microbundle watch"
+    },
     "devDependencies": {
         "@babel/core": "^7.1.6",
         "@babel/node": "^7.0.0",
