@@ -1,10 +1,10 @@
-import { startCheck, run } from './private-functions';
+import { startCheck, run } from './PrivateFunctions';
 
 export default class ConcurrentTasks {
     constructor(concurrency) {
         this.concurrency = typeof concurrency === 'number' ? concurrency : 3;
     }
-
+    working = false;
     completed = 0;
     running = 0;
     onEnd;
