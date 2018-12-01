@@ -1,10 +1,10 @@
-# node-concurrent-tasks
+# Concurrent Tasks
 
 [![Travis][build-badge]][build]
 [![npm package][npm-badge]][npm]
 [![Coveralls][coveralls-badge]][coveralls]
 
-Describe node-concurrent-tasks here.
+A simple task runner which will run all tasks till completion, while maintaining concurrency limits.
 
 [build-badge]: https://img.shields.io/travis/user/repo/master.png?style=flat-square
 [build]: https://travis-ci.org/user/repo
