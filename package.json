@@ -2,6 +2,10 @@
     "name": "concurrent-tasks",
     "version": "0.0.1",
     "description": "A simple task runner which will run tasks in parallel while maintaining limits.",
+    "author": "Samrith Shankar",
+    "license": "MIT",
+    "homepage": "https://samrith-s.github.io/concurrent-tasks",
+    "repository": "https://github.com/samrith-s/concurrent-tasks.git",
     "main": "lib/index.js",
     "module": "es/index.js",
     "files": [
@@ -20,9 +24,5 @@
     "dependencies": {},
     "devDependencies": {
         "nwb": "0.23.x"
-    },
-    "author": "",
-    "homepage": "",
-    "license": "MIT",
-    "repository": ""
+    }
 }
