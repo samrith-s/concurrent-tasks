@@ -1,30 +1,28 @@
 {
     "name": "concurrent-tasks",
     "version": "0.0.1",
-    "description": "A simple task runner which will run all tasks till completion, while maintaining concurrency limits.",
-    "author": "Samrith Shankar",
-    "license": "MIT",
-    "source": "src/index.js",
+    "description": "A simple task runner which will run tasks in parallel while maintaining limits.",
+    "main": "lib/index.js",
+    "module": "es/index.js",
+    "files": [
+        "es",
+        "lib",
+        "umd"
+    ],
     "scripts": {
-        "build": "microbundle --name ConcurrentTasks -o lib",
-        "dev": "microbundle watch",
-        "test": "mocha"
+        "build": "nwb build-web-module",
+        "clean": "nwb clean-module",
+        "prepublishOnly": "npm run build",
+        "test": "nwb test",
+        "test:coverage": "nwb test --coverage",
+        "test:watch": "nwb test --server"
     },
+    "dependencies": {},
     "devDependencies": {
-        "@babel/core": "^7.1.6",
-        "@babel/node": "^7.0.0",
-        "@babel/plugin-proposal-class-properties": "^7.1.0",
-        "@babel/preset-env": "^7.1.6",
-        "babel-eslint": "^10.0.1",
-        "eslint": "^5.9.0",
-        "eslint-config-prettier": "^3.3.0",
-        "eslint-plugin-import": "^2.14.0",
-        "eslint-plugin-prettier": "^3.0.0",
-        "microbundle": "^0.7.0",
-        "mocha": "^5.2.0",
-        "nodemon": "^1.18.7",
-        "parcel-bundler": "^1.10.3",
-        "prettier": "^1.15.3",
-        "rimraf": "^2.6.2"
-    }
+        "nwb": "0.23.x"
+    },
+    "author": "",
+    "homepage": "",
+    "license": "MIT",
+    "repository": ""
 }
