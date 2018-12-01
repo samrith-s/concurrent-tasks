@@ -16,8 +16,9 @@
     "scripts": {
         "build": "nwb build-web-module",
         "clean": "nwb clean-module",
-        "test": "",
-        "prepublishOnly": "npm run build"
+        "test": "nwb test",
+        "prepublishOnly": "npm run build",
+        "demo:dev": "parcel watch demo/index.html -"
     },
     "dependencies": {},
     "devDependencies": {
