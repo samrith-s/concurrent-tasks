@@ -1,55 +1,51 @@
-export function TaskRunner(concurrency = 3) {
-    this.concurrency = concurrency;
-    this.tasks = {
+import { startCheck, run } from './private-functions';
+
+export default class ConcurrentTasks {
+    constructor(concurrency) {
+        this.concurrency = typeof concurrency === 'number' ? concurrency : 3;
+    }
+
+    completed = 0;
+    running = 0;
+    onEnd;
+    onStart;
+    tasks = {
         list: [],
         total: 0
     };
-    this.completed = 0;
-    this.running = 0;
-    this.totalTasks = 0;
-    this.onEnd;
-    this.onStart;
-    this.duration = {
+    duration = {
         start: 0,
         end: 0,
         total: 0,
         idle: 0
     };
-    this.push = task => {
-        this.duration.start = Date.now();
+
+    add = task => {
         this.tasks.list.push(task);
         this.tasks.total++;
-        if (!hasStarted && typeof this.onStart === 'function') {
-            hasStarted = true;
-            this.onStart();
-        }
-
-        run();
+        startCheck.call(this);
+        run.call(this);
     };
 
-    let hasStarted = false;
-
-    const run = () => {
-        if (this.tasks.list.length) {
-            if (this.running < this.concurrency) {
-                this.tasks.list.shift()(done);
-                this.running++;
-            }
-        } else {
-            if (this.completed === this.tasks.total) {
-                this.duration.end = Date.now();
-                this.duration.total = this.duration.end - this.duration.start;
-                if (typeof this.onEnd === 'function') {
-                    const { completed, duration } = this;
-                    this.onEnd({ completed, duration });
-                }
-            }
+    addMultiple = tasks => {
+        if (
+            tasks.constructor === Array &&
+            tasks.every(t => typeof t === 'function')
+        ) {
+            this.tasks.list = tasks;
+            this.tasks.total = tasks.length;
+            startCheck.call(this);
+            run.call(this);
         }
     };
 
-    const done = () => {
-        this.completed++;
-        this.running--;
-        run();
+    remove = index => {
+        this.tasks.list.splice(index, 1);
+        this.tasks.total = this.tasks.list.length;
+    };
+
+    removeAll = () => {
+        this.tasks.list = [];
+        this.tasks.total = 0;
     };
 }
