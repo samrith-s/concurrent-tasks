@@ -18,11 +18,14 @@
         "clean": "nwb clean-module",
         "test": "nwb test",
         "prepublishOnly": "npm run build",
-        "demo:dev": "parcel watch demo/index.html -"
+        "demo:dev": "rimraf demo/.cache demo/dev-dist && parcel watch demo/index.html -d demo/dev-dist",
+        "build:dev": "rimraf demo/dist && parcel demo/index.html -d demo/dist"
     },
     "dependencies": {},
     "devDependencies": {
         "nwb": "0.23.x",
-        "parcel-bundler": "^1.10.3"
+        "parcel-bundler": "^1.10.3",
+        "rimraf": "^2.6.2",
+        "sass": "^1.15.1"
     }
 }
