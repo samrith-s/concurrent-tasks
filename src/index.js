@@ -1,7 +1,7 @@
 import { startCheckAndRun } from './PrivateFunctions';
 import log from './log';
 
-import { assignFunction, isFunction, isArray, isNumber } from './util';
+import { assignFunction, isFunction, isArray, assignNumber } from './util';
 
 export default class ConcurrentTasks {
     constructor(config = {}) {
@@ -10,7 +10,7 @@ export default class ConcurrentTasks {
             autoStart: true,
             ...otherConfig
         };
-        this.concurrency = isNumber(concurrency) ? concurrency : 3;
+        this.concurrency = assignNumber(concurrency, 3);
         this.onStart = assignFunction(onStart);
         this.onDone = assignFunction(onDone);
         this.onEnd = assignFunction(onEnd);
