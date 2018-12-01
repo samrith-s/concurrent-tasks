@@ -7,3 +7,15 @@ export const assignFunction = item => {
         return item;
     }
 };
+
+export const assignNumber = (number, defaultNumber) => {
+    if (isNumber(number)) {
+        if (number === 0) {
+            return Infinity;
+        }
+
+        return number;
+    }
+
+    return defaultNumber;
+};
