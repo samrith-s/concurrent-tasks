@@ -1,0 +1,18 @@
+{
+    "name": "demo",
+    "version": "1.0.0",
+    "description": "",
+    "main": "demo.js",
+    "scripts": {
+        "demo:dev": "rimraf demo/.cache demo/dev-dist && parcel watch demo/index.html -d demo/dev-dist",
+        "build:dev": "rimraf demo/dist && parcel demo/index.html -d demo/dist"
+    },
+    "author": "Samrith Shankar",
+    "license": "ISC",
+    "devDependencies": {
+        "@babel/core": "^7.1.6",
+        "@babel/plugin-proposal-class-properties": "^7.1.0",
+        "@babel/preset-env": "^7.1.6",
+        "parcel-bundler": "^1.10.3"
+    }
+}
