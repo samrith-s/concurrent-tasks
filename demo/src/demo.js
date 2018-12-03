@@ -1,2 +1,3 @@
-import TaskRunner from 'concurrent-tasks';
 import './prism';
+
+import './examples/basic-taskrunner';
