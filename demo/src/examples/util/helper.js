@@ -1,5 +1,5 @@
 export const getElements = id => {
-    const element = document.getElementById('example-1');
+    const element = document.getElementById(id);
     const button = element.querySelector('.btn');
     const concurrency = element.querySelector('.concurrency');
     const console = element.querySelector('.console');
