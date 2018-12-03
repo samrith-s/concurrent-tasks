@@ -36,8 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         done.innerText = '';
         end.innerText = '';
 
-        multipleTasks(runner, 1000);
-        console.log(runner);
+        addMultipleTasks(runner, 1000);
     };
 
     startButton.onclick = () => {
