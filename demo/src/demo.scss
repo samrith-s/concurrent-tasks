@@ -60,6 +60,7 @@ pre > code {
 }
 
 .btn {
+    height: 34px;
     margin: 0 10px 0 0;
     padding: 10px 20px;
     background: lighten($btn, 10%);
@@ -156,29 +157,36 @@ pre > code {
 }
 
 .example {
-    margin: 0 0 20px;
+    border-radius: 5px;
+    overflow: hidden;
+
+    &-block {
+        margin: 0 0 20px;
+    }
 }
 
 .console {
-    margin: 0 0 10px;
+    margin: 0;
     padding: 10px 20px;
     background: $black;
     color: $white;
     font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
     font-size: 12px;
-    border-radius: 5px;
 }
 
 .toolbar {
     display: flex;
     align-items: center;
+    padding: 10px;
+    background: lighten($black, 70%);
 
     .concurrency {
         width: 100px;
-        margin: 0 10px 0 0;
+        height: 34px;
+        margin: 0 5px 0 0;
         padding: 10px;
-        border: 1px solid rgba($black, 0.5);
-        border-radius: 5px;
+        border: 1px solid rgba($black, 0.25);
+        border-radius: 999px;
         outline: 0;
     }
 }
