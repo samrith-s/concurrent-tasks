@@ -4,10 +4,13 @@ import log from './log';
 import { assignFunction, isFunction, isArray, assignNumber } from './util';
 
 export default class ConcurrentTasks {
+    static runnerCount = 0;
+
     constructor(config = {}) {
         const { concurrency, onStart, onDone, onEnd, ...otherConfig } = config;
         this.config = {
             autoStart: true,
+            name: `Runner ${ConcurrentTasks.runnerCount++}`,
             ...otherConfig
         };
         this.concurrency = assignNumber(concurrency, 3);
@@ -30,12 +33,12 @@ export default class ConcurrentTasks {
 
     start = () => {
         if (this.__working) {
-            console.warn(log('already_running'));
+            console.warn(log.call(this, 'already_running'));
             return false;
         }
 
         if (this.config.autoStart) {
-            console.warn(log('auto_start_true'));
+            console.warn(log.call(this, 'auto_start_true'));
             return false;
         }
 
@@ -70,7 +73,9 @@ export default class ConcurrentTasks {
             return true;
         }
 
-        throw new TypeError(log('add_multiple_requires_array_of_functions'));
+        throw new TypeError(
+            log.call(this, 'add_multiple_requires_array_of_functions')
+        );
     };
 
     remove = index => {
