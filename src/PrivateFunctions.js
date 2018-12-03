@@ -10,6 +10,7 @@ export function run() {
         if (this.tasks.completed === this.tasks.total) {
             this.duration.end = Date.now();
             this.duration.total = this.duration.end - this.duration.start;
+            this.__working = false;
             if (isFunction(this.onEnd)) {
                 const {
                     tasks: { completed },
@@ -36,7 +37,8 @@ export function startCheck() {
         this.duration.start = Date.now();
         this.__working = true;
         if (isFunction(this.onStart)) {
-            this.onStart();
+            const { duration } = this;
+            this.onStart({ duration });
         }
     }
 }
