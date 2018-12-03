@@ -95,8 +95,19 @@ pre > code {
     }
 }
 
-.main-heading {
-    margin: 0 0 30px;
+.main {
+    &-heading {
+        margin: 0 0 30px;
+    }
+
+    &-title {
+        display: flex;
+        align-items: center;
+
+        > img {
+            margin-right: 10px;
+        }
+    }
 }
 
 .title {
@@ -119,6 +130,20 @@ pre > code {
     font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
     font-size: 12px;
     border-radius: 5px;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+
+    .concurrency {
+        width: 100px;
+        margin: 0 10px;
+        padding: 10px;
+        border: 1px solid rgba($black, 0.5);
+        border-radius: 5px;
+        outline: 0;
+    }
 }
 
 .use-cases {
