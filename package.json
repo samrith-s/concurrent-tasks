@@ -4,7 +4,7 @@
     "description": "A simple task runner which will run tasks in parallel while maintaining limits.",
     "author": "Samrith Shankar",
     "license": "MIT",
-    "homepage": "https://samrith-s.github.io/concurrent-tasks",
+    "homepage": "https://concurrent-tasks.js.org",
     "repository": "https://github.com/samrith-s/concurrent-tasks.git",
     "main": "lib/index.js",
     "module": "es/index.js",
@@ -22,5 +22,27 @@
     "dependencies": {},
     "devDependencies": {
         "nwb": "0.23.x"
-    }
+    },
+    "keywords": [
+        "parallel",
+        "concurrent",
+        "tasks",
+        "processes",
+        "threads",
+        "tasks",
+        "task",
+        "worker",
+        "process",
+        "run",
+        "concurrent tasks",
+        "parallel tasks",
+        "node parallel tasks",
+        "react parallel task",
+        "priority",
+        "queue",
+        "priority queue",
+        "fifo",
+        "scheduler",
+        "schedule task"
+    ]
 }
