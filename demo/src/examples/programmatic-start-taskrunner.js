@@ -1,6 +1,6 @@
 import TaskRunner from 'concurrent-tasks';
 import { getElements } from './util/helper';
-import { multipleTasks } from './util/task';
+import { addMultipleTasks } from './util/task';
 
 document.addEventListener('DOMContentLoaded', () => {
     const {
@@ -31,12 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     button.onclick = () => {
-        button.setAttribute('disabled', true);
-        start.innerText = 'Added 1000 tasks!';
+        addMultipleTasks(runner, 1000);
+        start.innerText = `Total tasks: ${runner.tasks.total}`;
         done.innerText = '';
         end.innerText = '';
-
-        addMultipleTasks(runner, 1000);
     };
 
     startButton.onclick = () => {
