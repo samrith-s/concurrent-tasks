@@ -5,7 +5,9 @@
     "main": "demo.js",
     "scripts": {
         "dev": "rimraf dev-dist && parcel serve src/index.html -d dev-dist --port 3000",
-        "build": "rimraf dist && parcel build src/index.html -d dist"
+        "build": "rimraf dist && parcel build src/index.html -d dist",
+        "copy-cname": "cp src/CNAME dist/CNAME",
+        "deploy": "yarn build && yarn copy-cname && gh-pages -d dist"
     },
     "author": "Samrith Shankar",
     "license": "ISC",
