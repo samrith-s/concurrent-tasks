@@ -63,8 +63,7 @@
             <article class="block examples">
                 <heading class="title">Simple task runner:</heading>
 
-                <article class="example">
-                    <pre class="line-numbers">
+                <pre class="line-numbers">
                     <code class="language-javascript">
                         import TaskRunner from 'concurrent-tasks'
 
@@ -78,7 +77,6 @@
                         runner.add(myTask);
                     </code>
                 </pre>
-                </article>
             </article>
 
             <article class="block live-examples">
@@ -88,22 +86,28 @@
                     <h3>Basic task runner</h3>
                     <div class="example">
                         <div class="console">
-                            <div class="console__on-start">
-                                Click the button to start the task runner!
+                            <div class="console__info">
+                                Click the <i class="fa fa-plus"></i> button to
+                                start the task runner! You can keep adding tasks
+                                while the TaskRunner is running.
                             </div>
+                            <div class="console__on-start"></div>
                             <div class="console__on-done"></div>
                             <div class="console__on-end"></div>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-inner"></div>
                         </div>
                         <div class="toolbar">
                             <button class="btn">
                                 <i class="fa fa-plus"></i>
                             </button>
-                            <input
-                                type="number"
-                                class="concurrency"
-                                value="100"
-                            />
-                            Concurrency
+                            <div class="concurrency">
+                                <input type="number" value="100" />
+                                <button class="btn set-concurrency">
+                                    <i class="fa fa-check"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </article>
@@ -112,12 +116,19 @@
                     <h3>Basic task runner with programmatic start</h3>
                     <div class="example">
                         <div class="console">
-                            <div class="console__on-start">
-                                Click the Add button to add tasks and the Start
-                                button to start them
+                            <div class="console__info">
+                                Click the <i class="fa fa-plus"></i> button to
+                                add tasks and the
+                                <i class="fa fa-play"></i> button to start them.
+                                You can keep adding tasks while the TaskRunner
+                                is running.
                             </div>
+                            <div class="console__on-start"></div>
                             <div class="console__on-done"></div>
                             <div class="console__on-end"></div>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-inner"></div>
                         </div>
                         <div class="toolbar">
                             <div class="btn-toolbar">
@@ -128,12 +139,12 @@
                                     <i class="fa fa-play"></i>
                                 </button>
                             </div>
-                            <input
-                                type="number"
-                                class="concurrency"
-                                value="100"
-                            />
-                            Concurrency
+                            <div class="concurrency">
+                                <input type="number" value="100" />
+                                <button class="btn set-concurrency">
+                                    <i class="fa fa-check"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </article>
