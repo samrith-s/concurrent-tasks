@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     button.onclick = () => {
-        runner.setConcurrency(concurrency.value);
+        runner.setConcurrency(parseInt(concurrency.value, 10));
         button.setAttribute('disabled', true);
         start.innerText = '';
         done.innerText = '';
