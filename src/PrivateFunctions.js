@@ -43,6 +43,20 @@ export function startCheck() {
     }
 }
 
+export function addCheck() {
+    if (isFunction(this.onAdd)) {
+        const { tasks } = this;
+        this.onAdd({ tasks });
+    }
+}
+
+export function removeCheck() {
+    if (isFunction(this.onRemove)) {
+        const { tasks } = this;
+        this.onRemove({ tasks });
+    }
+}
+
 export function startCheckAndRun() {
     startCheck.call(this);
     run.call(this);
@@ -50,7 +64,11 @@ export function startCheckAndRun() {
 
 export function runPending() {
     if (this.tasks.running < this.concurrency) {
-        for (var i = this.tasks.running; i < this.concurrency; i++) {
+        const concurrency =
+            this.concurrency === Infinity
+                ? this.tasks.list.length
+                : this.concurrency;
+        for (let i = this.tasks.running; i < concurrency; i++) {
             run.call(this);
         }
     }
