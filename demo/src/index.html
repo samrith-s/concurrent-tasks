@@ -4,7 +4,13 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <title>Concurrent Tasks</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+            rel="icon"
+            href="../../icons/icon-x64.png"
+            <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1"
+        />
         <link
             rel="stylesheet"
             type="text/css"
@@ -16,7 +22,10 @@
     <body>
         <main>
             <div class="main-heading">
-                <h1>Concurrent Tasks</h1>
+                <h1 class="main-title">
+                    <img src="../../icons/icon.svg" alt="icon" width="64" />
+                    Concurrent Tasks
+                </h1>
                 <p class="short-description">
                     A simple task runner which will run tasks in parallel while
                     maintaining concurrency limits.
@@ -84,7 +93,11 @@
                         <div class="console__on-done"></div>
                         <div class="console__on-end"></div>
                     </div>
-                    <button class="btn">Add 1000 Tasks</button>
+                    <div class="toolbar">
+                        <button class="btn">Add 1000 Tasks</button>
+                        <input type="number" class="concurrency" value="100" />
+                        Concurrency
+                    </div>
                 </article>
             </article>
         </main>
