@@ -2,8 +2,8 @@
 
 $black: #333;
 $white: #fefefe;
-$primary: #388e3c;
-$pink: rgb(255, 9, 100);
+$brand: #c62828;
+$btn: #388e3c;
 
 html,
 body {
@@ -38,8 +38,8 @@ h6 {
 
 code {
     padding: 2px;
-    background: rgba(black, 0.1);
-    color: $pink;
+    background: rgba($black, 0.1);
+    color: $brand;
 }
 
 pre > code {
@@ -61,13 +61,44 @@ pre > code {
 
 .btn {
     margin: 0 10px 0 0;
-    padding: 10px;
-    background: lighten($primary, 10%);
+    padding: 10px 20px;
+    background: lighten($btn, 10%);
     color: $white;
     border: 0;
-    border-radius: 5px;
+    border-radius: 999px;
     outline: 0;
+    transition: all 0.25s ease;
     cursor: pointer;
+
+    $self: &;
+
+    &[disabled],
+    &[disabled]:hover {
+        cursor: not-allowed;
+        background: lighten($black, 35%);
+    }
+
+    &:hover {
+        background: darken($btn, 1.5%);
+    }
+
+    &-toolbar {
+        display: flex;
+        align-items: center;
+        margin: 0 10px 0 0;
+        border-radius: 999px;
+        overflow: hidden;
+
+        #{$self} {
+            margin: 0;
+            border-right: 1px solid rgba($white, 0.25);
+            border-radius: 0;
+
+            &:last-of-type {
+                border: 0;
+            }
+        }
+    }
 }
 
 .or {
@@ -104,6 +135,7 @@ pre > code {
     &-title {
         display: flex;
         align-items: center;
+        color: $brand;
 
         > img {
             margin-right: 10px;
