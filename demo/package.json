@@ -20,6 +20,6 @@
         "sass": "^1.15.1"
     },
     "dependencies": {
-        "concurrent-tasks": "^0.0.4"
+        "concurrent-tasks": "^0.0.5"
     }
 }
