@@ -31,6 +31,10 @@ export default class TaskRunner {
         total: 0
     };
 
+    setConcurrency = concurrency => {
+        this.concurrency = assignNumber(concurrency, 3);
+    };
+
     start = () => {
         if (this.__working) {
             console.warn(log.call(this, 'already_running'));
