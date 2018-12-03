@@ -1,6 +1,6 @@
 {
     "name": "concurrent-tasks",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "description": "A simple task runner which will run tasks in parallel while maintaining limits.",
     "author": "Samrith Shankar",
     "license": "MIT",
