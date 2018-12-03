@@ -1,4 +1,4 @@
-import { startCheckAndRun, startCheck, run } from './PrivateFunctions';
+import { startCheckAndRun, runPending, startCheck } from './PrivateFunctions';
 import log from './log';
 
 import { assignFunction, isFunction, isArray, assignNumber } from './util';
@@ -33,6 +33,9 @@ export default class TaskRunner {
 
     setConcurrency = concurrency => {
         this.concurrency = assignNumber(concurrency, 3);
+        if (this.__working) {
+            runPending.call(this);
+        }
     };
 
     start = () => {
@@ -47,9 +50,7 @@ export default class TaskRunner {
         }
 
         startCheck.call(this);
-        for (let i = 0; i < this.concurrency; i++) {
-            run.call(this);
-        }
+        runPending.call(this);
         return true;
     };
 
@@ -73,7 +74,7 @@ export default class TaskRunner {
             this.tasks = {
                 ...this.tasks,
                 list: [...this.tasks.list, ...tasks],
-                total: this.tasks.list.length + tasks.length
+                total: this.tasks.total + tasks.length
             };
             if (autoStart) {
                 startCheckAndRun.call(this);

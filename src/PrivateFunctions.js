@@ -47,3 +47,11 @@ export function startCheckAndRun() {
     startCheck.call(this);
     run.call(this);
 }
+
+export function runPending() {
+    if (this.tasks.running < this.concurrency) {
+        for (var i = this.tasks.running; i < this.concurrency; i++) {
+            run.call(this);
+        }
+    }
+}
