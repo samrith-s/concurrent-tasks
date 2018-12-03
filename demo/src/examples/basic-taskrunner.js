@@ -19,9 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
         end.innerText = '';
 
         queueTasks(runner, 1000, {
-            onStart() {
-                alert('start run!');
-                start.innerText = 'Tasks have begun!';
+            onStart({ duration: { start: startDate } }) {
+                start.innerText = `Added 1000 tasks on ${new Date(startDate)}`;
             },
             onDone({ completed, total }) {
                 done.innerText = `✅ Completed ${completed} of ${total} tasks`;
