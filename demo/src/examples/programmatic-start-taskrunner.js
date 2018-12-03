@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
         concurrency: concurrency.value,
         autoStart: false,
         onStart({ duration: { start: startDate } }) {
-            console.log('called start');
             start.innerText = `Added 1000 tasks on ${new Date(startDate)}`;
         },
         onDone({ completed, total }) {
