@@ -18,8 +18,10 @@
         <main>
             <div class="main-heading">
                 <h1 class="main-title">
-                    <img src="../../icons/icon.svg" alt="icon" width="64" />
-                    Concurrent Tasks
+                    <a href="https://concurrent-tasks.js.org">
+                        <img src="../../icons/icon.svg" alt="icon" width="64" />
+                        Concurrent Tasks
+                    </a>
                 </h1>
                 <p class="short-description">
                     A simple task runner which will run tasks in parallel while
@@ -27,36 +29,8 @@
                 </p>
             </div>
 
-            <article class="block use-cases">
-                <heading class="title">Where can I use this?</heading>
-                <p class="use-cases__description">
-                    ConcurrentTasks can be used virtually anywhere. It has ZERO
-                    dependencies and works like a charm when plugged into any
-                    JavaScript environment or flavour.
-                </p>
-                <ul class="use-cases__list">
-                    <li>Frontend Frameworks (React, Vue, Angular, etc)</li>
-                    <li>Backend Frameworks (Express, Hapi, Koa, etc)</li>
-                    <li>NPM module</li>
-                    <li>Node CLI application</li>
-                </ul>
-            </article>
-
-            <article class="block getting-started">
-                <heading class="title">Getting Started</heading>
-                <article class="getting-started__npm">
-                    Using NPM
-                    <pre><code>npm i concurrent-tasks</code></pre>
-                </article>
-                <div class="or">OR</div>
-                <article class="getting-started__umd">
-                    Add as a script file
-                    <pre><code>&lt;script src="https://unpkg.com/concurrent-tasks/umd/concurrent-tasks.min.js" type="text/javascript"&gt;&lt;/script&gt;</code></pre>
-                </article>
-            </article>
-
             <article class="block examples">
-                <heading class="title">Simple task runner:</heading>
+                <heading class="title">Simple task runner source:</heading>
 
                 <pre class="line-numbers">
                     <code class="language-javascript">
@@ -75,10 +49,8 @@
             </article>
 
             <article class="block live-examples">
-                <heading class="title">Live examples</heading>
-
                 <article class="example-block" id="example-1">
-                    <h3>Basic task runner</h3>
+                    <heading class="title"> Basic task runner </heading>
                     <div class="example">
                         <div class="console">
                             <div class="console__info">
@@ -108,7 +80,9 @@
                 </article>
 
                 <article class="example-block" id="example-2">
-                    <h3>Basic task runner with programmatic start</h3>
+                    <heading class="title">
+                        Basic task runner with programmatic start
+                    </heading>
                     <div class="example">
                         <div class="console">
                             <div class="console__info">

@@ -134,11 +134,14 @@ pre > code {
     }
 
     &-title {
-        display: flex;
-        align-items: center;
-        color: $brand;
+        > a {
+            display: flex;
+            align-items: center;
+            color: $brand;
+            text-decoration: none;
+        }
 
-        > img {
+        img {
             margin-right: 10px;
         }
     }
