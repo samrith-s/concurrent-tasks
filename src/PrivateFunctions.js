@@ -1,8 +1,7 @@
 import { isFunction } from './util';
 
 export function run() {
-    const listLength = this.tasks.list.length;
-    if (listLength) {
+    if (this.tasks.list.length) {
         if (this.tasks.running < this.concurrency) {
             this.tasks.list.shift()(done.bind(this));
             this.tasks.running++;
@@ -11,7 +10,6 @@ export function run() {
         if (this.tasks.completed === this.tasks.total) {
             this.duration.end = Date.now();
             this.duration.total = this.duration.end - this.duration.start;
-            this.tasks.total = listLength;
             this.__working = false;
             if (isFunction(this.onEnd)) {
                 const {
