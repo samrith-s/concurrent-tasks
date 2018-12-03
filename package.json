@@ -17,7 +17,7 @@
         "build": "nwb build-web-module",
         "clean": "nwb clean-module",
         "test": "nwb test",
-        "prepublishOnly": "cp ../README.md ./README.md && npm run build && rm ./README.md"
+        "prepublishOnly": "npm run build"
     },
     "dependencies": {},
     "devDependencies": {
