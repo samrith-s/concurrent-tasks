@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         onEnd({ duration: { total } }) {
             button.removeAttribute('disabled');
+            startButton.removeAttribute('disabled');
             end.innerText = `✨ Completed all tasks in: ${(
                 total / 1000
             ).toFixed(2)}s`;
