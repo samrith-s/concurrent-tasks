@@ -1,11 +1,11 @@
 export const queueTasks = (instance, count, { onStart, onDone, onEnd }) => {
     const orderOfCompletion = [];
-    for (let i = 0; i < count; i++) {
-        instance.add(task(i + 1, orderOfCompletion));
-    }
     instance.onStart = onStart;
     instance.onDone = onDone;
     instance.onEnd = onEnd;
+    for (let i = 0; i < count; i++) {
+        instance.add(task(i + 1, orderOfCompletion));
+    }
 };
 
 export const task = (number, orderOfCompletion = []) => done => {
