@@ -9,4 +9,6 @@ const logs = {
         'The "addMultiple" operation requires an array of functions. Check if the first argument is an array and whether all the items in the array are functions!'
 };
 
-export default logKey => `TaskRunner: ${logs[logKey]}`;
+export default function(logKey) {
+    return `[TaskRunner]${this.config.name}: ${logs[logKey]}`;
+}
