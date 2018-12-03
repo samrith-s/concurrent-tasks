@@ -3,14 +3,14 @@ import log from './log';
 
 import { assignFunction, isFunction, isArray, assignNumber } from './util';
 
-export default class ConcurrentTasks {
+export default class TaskRunner {
     static runnerCount = 0;
 
     constructor(config = {}) {
         const { concurrency, onStart, onDone, onEnd, ...otherConfig } = config;
         this.config = {
             autoStart: true,
-            name: `Runner ${ConcurrentTasks.runnerCount++}`,
+            name: `Runner ${TaskRunner.runnerCount++}`,
             ...otherConfig
         };
         this.concurrency = assignNumber(concurrency, 3);
