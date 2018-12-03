@@ -84,45 +84,57 @@
             <article class="block live-examples">
                 <heading class="title">Live examples</heading>
 
-                <article class="example" id="example-1">
+                <article class="example-block" id="example-1">
                     <h3>Basic task runner</h3>
-                    <div class="console">
-                        <div class="console__on-start">
-                            Click the button to start the task runner!
+                    <div class="example">
+                        <div class="console">
+                            <div class="console__on-start">
+                                Click the button to start the task runner!
+                            </div>
+                            <div class="console__on-done"></div>
+                            <div class="console__on-end"></div>
                         </div>
-                        <div class="console__on-done"></div>
-                        <div class="console__on-end"></div>
-                    </div>
-                    <div class="toolbar">
-                        <button class="btn">
-                            <i class="fa fa-plus" />
-                        </button>
-                        <input type="number" class="concurrency" value="100" />
-                        Concurrency
+                        <div class="toolbar">
+                            <button class="btn">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                            <input
+                                type="number"
+                                class="concurrency"
+                                value="100"
+                            />
+                            Concurrency
+                        </div>
                     </div>
                 </article>
 
-                <article class="example" id="example-2">
+                <article class="example-block" id="example-2">
                     <h3>Basic task runner with programmatic start</h3>
-                    <div class="console">
-                        <div class="console__on-start">
-                            Click the Add button to add tasks and the Start
-                            button to start them
+                    <div class="example">
+                        <div class="console">
+                            <div class="console__on-start">
+                                Click the Add button to add tasks and the Start
+                                button to start them
+                            </div>
+                            <div class="console__on-done"></div>
+                            <div class="console__on-end"></div>
                         </div>
-                        <div class="console__on-done"></div>
-                        <div class="console__on-end"></div>
-                    </div>
-                    <div class="toolbar">
-                        <div class="btn-toolbar">
-                            <button class="btn">
-                                <i class="fa fa-plus" />
-                            </button>
-                            <button class="btn start">
-                                <i class="fa fa-play" />
-                            </button>
+                        <div class="toolbar">
+                            <div class="btn-toolbar">
+                                <button class="btn">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <button class="btn start">
+                                    <i class="fa fa-play"></i>
+                                </button>
+                            </div>
+                            <input
+                                type="number"
+                                class="concurrency"
+                                value="100"
+                            />
+                            Concurrency
                         </div>
-                        <input type="number" class="concurrency" value="100" />
-                        Concurrency
                     </div>
                 </article>
             </article>
