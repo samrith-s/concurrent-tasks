@@ -73,7 +73,7 @@ export default class TaskRunner {
             this.tasks = {
                 ...this.tasks,
                 list: [...this.tasks.list, ...tasks],
-                total: tasks.length
+                total: this.tasks.list.length + tasks.length
             };
             if (autoStart) {
                 startCheckAndRun.call(this);
