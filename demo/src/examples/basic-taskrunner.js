@@ -1,4 +1,6 @@
-import TaskRunner from '../../../es';
+'use strict';
+
+import TaskRunner from 'concurrent-tasks';
 import { getElements } from './util/helper';
 import { queueTasks } from './util/task';
 

@@ -1,6 +1,6 @@
 'use strict';
 
-import TaskRunner from '../../../es';
+import TaskRunner from 'concurrent-tasks';
 import { getElements } from './util/helper';
 import { addMultipleTasks } from './util/task';
 
