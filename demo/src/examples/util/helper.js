@@ -1,6 +1,7 @@
 export const getElements = id => {
     const element = document.getElementById('example-1');
     const button = element.querySelector('.btn');
+    const concurrency = element.querySelector('.concurrency');
     const console = element.querySelector('.console');
     const start = console.querySelector('.console__on-start');
     const done = console.querySelector('.console__on-done');
@@ -8,12 +9,13 @@ export const getElements = id => {
 
     return {
         element,
+        concurrency,
+        button,
         console: {
             console,
             start,
             done,
             end
-        },
-        button
+        }
     };
 };
