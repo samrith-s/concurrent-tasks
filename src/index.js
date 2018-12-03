@@ -30,12 +30,12 @@ export default class ConcurrentTasks {
 
     start = () => {
         if (this.__working) {
-            log('already_running');
+            console.warn(log('already_running'));
             return false;
         }
 
         if (this.config.autoStart) {
-            log('auto_start_true');
+            console.warn(log('auto_start_true'));
             return false;
         }
 
@@ -44,25 +44,33 @@ export default class ConcurrentTasks {
     };
 
     add = task => {
-        const { autoStart } = this.config;
-        this.tasks.list.push(task);
-        this.tasks.total++;
-        if (autoStart) {
-            startCheckAndRun.call(this);
+        if (isFunction(task)) {
+            const { autoStart } = this.config;
+            this.tasks.list.push(task);
+            this.tasks.total++;
+            if (autoStart) {
+                startCheckAndRun.call(this);
+            }
+            return true;
         }
+
+        throw new TypeError(log('add_requires_function'));
     };
 
     addMultiple = tasks => {
         if (isArray(tasks) && tasks.every(t => isFunction(t))) {
             const { autoStart } = this.config;
             this.tasks = {
-                list: tasks,
+                list: [...this.tasks.list, ...tasks],
                 total: tasks.length
             };
             if (autoStart) {
                 startCheckAndRun.call(this);
             }
+            return true;
         }
+
+        throw new TypeError(log('add_multiple_requires_array_of_functions'));
     };
 
     remove = index => {
