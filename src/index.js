@@ -1,4 +1,4 @@
-import { startCheckAndRun } from './PrivateFunctions';
+import { startCheckAndRun, startCheck, run } from './PrivateFunctions';
 import log from './log';
 
 import { assignFunction, isFunction, isArray, assignNumber } from './util';
@@ -46,7 +46,10 @@ export default class TaskRunner {
             return false;
         }
 
-        startCheckAndRun.call(this);
+        startCheck.call(this);
+        for (let i = 0; i < this.concurrency; i++) {
+            run.call(this);
+        }
         return true;
     };
 
@@ -68,6 +71,7 @@ export default class TaskRunner {
         if (isArray(tasks) && tasks.every(t => isFunction(t))) {
             const { autoStart } = this.config;
             this.tasks = {
+                ...this.tasks,
                 list: [...this.tasks.list, ...tasks],
                 total: tasks.length
             };
