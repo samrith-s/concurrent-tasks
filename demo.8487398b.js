@@ -18,4 +18,4 @@ var e=arguments[3],t="undefined"!=typeof window?window:"undefined"!=typeof Worke
 },{"concurrent-tasks":"3ypE","./util/helper":"/gta","./util/task":"+O28"}],"lgAh":[function(require,module,exports) {
 "use strict";require("./prism"),require("./examples/basic-taskrunner");
 },{"./prism":"sIF+","./examples/basic-taskrunner":"qkhW"}]},{},["lgAh"], null)
-//# sourceMappingURL=/demo.8487398b.map
+//# sourceMappingURL=/concurrent-tasks/demo.8487398b.map
