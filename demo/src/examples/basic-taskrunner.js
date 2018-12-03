@@ -1,20 +1,22 @@
-import TaskRunner from 'concurrent-tasks';
+import TaskRunner from '../../../es';
 import { getElements } from './util/helper';
 import { queueTasks } from './util/task';
 
 document.addEventListener('DOMContentLoaded', () => {
     const {
-        console: { start, done, end },
+        progress,
+        console: { info, start, done, end },
         concurrency,
         button
     } = getElements('example-1');
 
     const runner = new TaskRunner({
-        concurrency: concurrency.value,
+        concurrency: parseInt(concurrency.input.value, 10),
         onStart({ duration: { start: startDate } }) {
-            start.innerText = `Added 1000 tasks on ${new Date(startDate)}`;
+            start.innerText = `🏃🏻‍ Started at ${new Date(startDate)}`;
         },
         onDone({ completed, total }) {
+            progress.style.width = `${(completed / total) * 100}%`;
             done.innerText = `✅ Completed ${completed} of ${total} tasks with ${
                 runner.concurrency
             } concurrency`;
@@ -28,12 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     button.onclick = () => {
-        runner.setConcurrency(parseInt(concurrency.value, 10));
-        button.setAttribute('disabled', true);
-        start.innerText = '';
-        done.innerText = '';
-        end.innerText = '';
-
+        runner.setConcurrency(parseInt(concurrency.input.value, 10));
         queueTasks(runner, 1000);
+        info.innerText = `ℹ️ Total tasks: ${runner.tasks.total}`;
+        end.innerHTML = '';
+    };
+
+    concurrency.set.onclick = () => {
+        runner.setConcurrency(parseInt(concurrency.input.value, 10));
     };
 });
