@@ -35,7 +35,7 @@ export function startCheck() {
     if (!this.__working) {
         this.duration.start = Date.now();
         this.__working = true;
-        if (isFunction(this.on)) {
+        if (isFunction(this.onStart)) {
             this.onStart();
         }
     }
