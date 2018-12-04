@@ -15,6 +15,7 @@
 * [removeFirst](api/removefirst.md)
 * [removeAt](api/removeat.md)
 * [removeAll](api/removeall.md)
+* [start](api/start.md)
 * [setConcurrency](api/setconcurrency.md)
 * [isBusy](api/isbusy.md)
 

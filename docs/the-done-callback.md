@@ -27,9 +27,9 @@ Internally, the done function does a fair amount of work. It:
 
 ### Examples
 
-It's a very simplistic approach, which can be used across anything. Be it pure functions, Promises, timeouts etc. 
+It's a very simplistic approach, which can be used across anything. Be it functions, Promises, timeouts etc. 
 
-Below are a few common ways of calling the `done` function in everyday JavaScript:
+Below are a few common ways of using the `done` callback:
 
 #### In a regular function
 

@@ -2,8 +2,7 @@
 
 * Adds a task to the beginning of the task list.
 * Requires a function which calls the `done` callback upon completion. 
-* The task will be executed as soon as any tasks currently being executed are done. 
-* By default, adds to the end of the task list.
+* The task inserted, will be executed as soon as any tasks currently being executed are done. 
 * Returns `true` upon successful addition.
 
 ### Structure

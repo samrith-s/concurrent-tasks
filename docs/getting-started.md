@@ -14,7 +14,7 @@ You can install via NPM
 npm install concurrent-tasks
 ```
 
-Or you can simple add add it via a script tag
+Or you can add it via a script tag
 
 ```markup
 <script src="https://unpkg.com/concurrent-tasks/umd/concurrent-tasks.min.js" type="text/javascript"></script>
@@ -22,7 +22,7 @@ Or you can simple add add it via a script tag
 
 ## Usage
 
-The below code should give you an idea of how simple it is to really start a task runner.
+The below code should give you an idea of how easy it really is to start a task runner.
 
 In this case, we are pushing a thousand tasks to our `runner` which is an instance of the `TaskRunner` provided by Concurrent Tasks. Each "task" will resolve at a random time.
 
