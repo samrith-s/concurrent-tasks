@@ -1,6 +1,6 @@
 ---
 description: >-
-  A simple task runner which will run tasks in parallel, all while maintaining
+  A simple task runner which will run tasks in parallel while maintaining
   limits.
 ---
 
