@@ -3,8 +3,8 @@
 * [👶🏻 Introduction](README.md)
 * [🎬 Getting Started](getting-started.md)
 * [🏁 The Done Callback](the-done-callback.md)
-* [⚒ Configuration](configuration.md)
 * [💪🏼 Powered by Concurrent Tasks](powered-by-concurrent-tasks.md)
+* [⚒ Configuration](configuration.md)
 
 ## 🕹 API
 
