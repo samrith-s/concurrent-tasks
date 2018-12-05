@@ -1,10 +1,6 @@
----
-description: >-
-  Getting started with Concurrent Tasks is super easy. The practical
-  nomenclature and the simplicity of it's API is the true power behind it.
----
-
 # 🎬 Getting Started
+
+Getting started with **Concurrent Tasks** is super easy. The practical nomenclature and the simplicity of it's API is the true power behind it.
 
 ## Installation
 
@@ -24,7 +20,7 @@ Or you can add it via a script tag
 
 The below code should give you an idea of how easy it really is to start a task runner.
 
-In this case, we are pushing a thousand tasks to our `runner` which is an instance of the `TaskRunner` provided by Concurrent Tasks. Each "task" will resolve at a random time.
+In this case, we are pushing a thousand tasks to our `runner` which is an instance of the `TaskRunner` provided by **Concurrent Tasks**. Each "task" will resolve at a random time.
 
 ```javascript
 import TaskRunner from 'concurrent-tasks';

@@ -1,10 +1,6 @@
----
-description: >-
-  The list of available configurations which will help you tinker Concurrent
-  Tasks to your needs!
----
-
 # ⚒ Configuration
+
+The list of available configurations which will help you tinker **Concurrent Tasks** to your needs!
 
 ### concurrency
 
