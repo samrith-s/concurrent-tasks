@@ -32,6 +32,7 @@ The following is a quick reference guide to help you get friendly with **Concurr
 -   [💪🏼 Powered by Concurrent Tasks](#powered-by-concurrent-tasks)
 -   [👩🏻‍💻 Contributing](#contributing)
 -   [🧐 Issues](#issues)
+-   [🗺 Roadmap](#roadmap)
 -   [🔑 License](#license)
 
 # 👶🏻 Introduction <a name="introduction"></a>
@@ -234,7 +235,7 @@ We ❤️ contributions! We are looking for people who echo our sentiments and s
 
 For any issues or queries you might have about the table, please feel free to create one in the [issues section](https://github.com/samrith-s/concurrent-tasks/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc).
 
-# Roadmap <a name="roadmap"></a>
+# 🗺 Roadmap <a name="roadmap"></a>
 
 -   ✅ Custom concurrency.
 -   ✅ Events for task addition, idle state change, `done` callback firing.
