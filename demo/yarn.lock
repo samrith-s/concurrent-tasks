@@ -1169,9 +1169,9 @@ concat-stream@~1.6.0:
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
 
-concurrent-tasks@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/concurrent-tasks/-/concurrent-tasks-1.0.0.tgz#8f9c4dbad355f7d7d1367b21ed618211aecf6a86"
+concurrent-tasks@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/concurrent-tasks/-/concurrent-tasks-1.0.2.tgz#651bce363ad5fa48b19dde1762a425c3a0d41319"
 
 config-chain@~1.1.5:
   version "1.1.12"
