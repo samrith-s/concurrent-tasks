@@ -93,7 +93,7 @@ runner.addMultiple(generateTasks());
 
 In JavaScript, it gets very difficult for tasks to talk to each other. A lot of times, we need to maintain a map of running tasks and call a function which will update the value and call the next task.
 
-**Concurrent Tasks** is a JavaScript module, which runs multiple tasks in parallel until all the tasks are complete. It needs a way to figure out when a particular task has been completed.
+**Concurrent Tasks** is a JavaScript module, which runs multiple tasks concurrently until all the tasks are complete. It needs a way to figure out when a particular task has been completed.
 
 ### Solution
 

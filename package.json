@@ -1,7 +1,7 @@
 {
     "name": "concurrent-tasks",
     "version": "1.0.1",
-    "description": "A simple task runner which will run tasks in parallel while maintaining limits.",
+    "description": "A simple task runner which will run tasks concurrently while maintaining limits.",
     "author": "Samrith Shankar",
     "license": "MIT",
     "homepage": "https://concurrent-tasks.js.org",
@@ -24,7 +24,6 @@
         "nwb": "0.23.x"
     },
     "keywords": [
-        "parallel",
         "concurrent",
         "tasks",
         "processes",
@@ -35,9 +34,7 @@
         "process",
         "run",
         "concurrent tasks",
-        "parallel tasks",
-        "node parallel tasks",
-        "react parallel task",
+        "react concurrent task",
         "priority",
         "queue",
         "priority queue",
