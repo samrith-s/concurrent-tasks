@@ -60,7 +60,7 @@ npm install concurrent-tasks
 Or the script tag
 
 ```
-<script src="https://unpkg.com/concurrent-tasks/umd/concurrent-tasks.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/concurrent-tasks/umd/concurrent-tasks.min.jss" type="text/javascript"></script>
 ```
 
 ### Usage
