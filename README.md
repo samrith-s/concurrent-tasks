@@ -13,7 +13,7 @@ The following is a quick reference guide to help you get friendly with **Concurr
 
 # Table of Contents
 
--   [👶🏻 Introduction](#introduction)
+-   [👋🏼 Introduction](#introduction)
 -   [🎬 Getting Started](#getting-started)
 -   [🏁 The Done Callback](#the-done-callback)
 -   [⚒ Configuration](#configuration)
@@ -35,7 +35,7 @@ The following is a quick reference guide to help you get friendly with **Concurr
 -   [🗺 Roadmap](#roadmap)
 -   [🔑 License](#license)
 
-# 👶🏻 Introduction <a name="introduction"></a>
+# 👋🏼 Introduction <a name="introduction"></a>
 
 Concurrent Tasks mimics a priority queue by using JavaScript's inbuilt array data type. Each task is a function which signals completion back to the `TaskRunner`. Once tasks are added, the instance starts executing them until the concurrency criteria is met. Once even a single task is complete (it calls the `done` callback), the next task in the queue is picked up.
 
