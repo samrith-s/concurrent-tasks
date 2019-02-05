@@ -10,7 +10,13 @@ import {
 } from './PrivateFunctions';
 import log from './log';
 
-import { isNumber, assignFunction, isFunction, isArray, assignNumber } from './util';
+import {
+    isNumber,
+    assignFunction,
+    isFunction,
+    isArray,
+    assignNumber
+} from './util';
 
 export default class TaskRunner {
     static runnerCount = 0;
@@ -29,11 +35,13 @@ export default class TaskRunner {
             name: `Runner ${++TaskRunner.runnerCount}`,
             ...otherConfig
         };
-        this.concurrency = this.setConcurrency(concurrency);
+
+        this.setConcurrency(concurrency);
         this.onAdd = assignFunction(onAdd);
         this.onStart = assignFunction(onStart);
         this.onDone = assignFunction(onDone);
         this.onEnd = assignFunction(onEnd);
+
         Object.seal(this);
     }
     __working = false;
