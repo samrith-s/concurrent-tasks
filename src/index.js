@@ -10,8 +10,7 @@ import {
 } from './PrivateFunctions';
 import log from './log';
 
-import { assignFunction, isFunction, isArray, assignNumber } from './util';
-import { isNumber } from '../es/util';
+import { isNumber, assignFunction, isFunction, isArray, assignNumber } from './util';
 
 export default class TaskRunner {
     static runnerCount = 0;
