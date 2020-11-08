@@ -2,18 +2,17 @@
     "root": true,
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": "tsconfig.json",
+        "project": "tsconfig.base.json",
         "sourceType": "module"
     },
-    "plugins": [
-        "@typescript-eslint",
-        "prettier",
-        "prettier/@typescript-eslint"
-    ],
+    "plugins": ["@typescript-eslint", "import", "prettier"],
     "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
-        "prettier"
+        "plugin:import/warnings",
+        "plugin:import/errors",
+        "prettier",
+        "prettier/@typescript-eslint"
     ],
     "rules": {
         "@typescript-eslint/interface-name-prefix": "off",
@@ -42,14 +41,13 @@
     },
     "settings": {
         "import/parsers": {
-            "@typescript-eslint/parser": [".ts", ".tsx"]
+            "@typescript-eslint/parser": [".ts"]
         },
         "import/resolver": {
             "typescript": {
                 "alwaysTryTypes": true,
-                "project": "tsconfig.json"
+                "project": "tsconfig.base.json"
             }
-        },
-        "import/internal-regex": "^~*"
+        }
     }
 }
