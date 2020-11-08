@@ -9,7 +9,9 @@
     "bugs": "https://github.com/samrith-s/concurrent-tasks/issues",
     "private": false,
     "main": "dist/index.js",
-    "typings": "dist/index.d.ts",
+    "module": "dist/esm/index.esm.js",
+    "umd": "dist/umd/index.min.js",
+    "typings": "dist/types/index.d.ts",
     "files": [
         "dist",
         "README",
@@ -20,12 +22,6 @@
     },
     "publishConfig": {
         "access": "public"
-    },
-    "scripts": {
-        "build": "tsdx build --format cjs,esm,umd",
-        "test": "tsdx test",
-        "lint": "tsdx lint",
-        "prepare": "yarn build"
     },
     "keywords": [
         "concurrent",
