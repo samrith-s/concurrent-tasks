@@ -1,0 +1,55 @@
+{
+    "name": "@concurrent-tasks/browser",
+    "version": "2.0.0-alpha.1",
+    "description": "Concurrent tasks implemented using Service Workers",
+    "author": "Samrith Shankar <samrith.shankar@outlook.com>",
+    "homepage": "https://github.com/samrith-s/concurrent-tasks#readme",
+    "license": "MIT",
+    "repository": "git@github.com:samrith-s/concurrent-tasks.git",
+    "bugs": "https://github.com/samrith-s/concurrent-tasks/issues",
+    "private": false,
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "README",
+        "../../LICENSE"
+    ],
+    "engines": {
+        "node": ">=10"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "build": "tsdx build --format cjs,esm,umd",
+        "test": "tsdx test",
+        "lint": "tsdx lint",
+        "prepare": "yarn build"
+    },
+    "keywords": [
+        "concurrent",
+        "tasks",
+        "processes",
+        "threads",
+        "multithreading",
+        "tasks",
+        "task",
+        "worker",
+        "process",
+        "run",
+        "concurrent tasks",
+        "react concurrent task",
+        "angular concurrent task",
+        "vue concurrent task",
+        "service worker",
+        "worker thread",
+        "queue",
+        "priority",
+        "queue",
+        "priority queue",
+        "fifo",
+        "scheduler",
+        "schedule task"
+    ]
+}

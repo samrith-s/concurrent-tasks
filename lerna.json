@@ -1,0 +1,10 @@
+{
+    "version": "0.0.0",
+    "npmClient": "yarn",
+    "packages": ["packages/*"],
+    "command": {
+        "publish": {
+            "message": "chore: release"
+        }
+    }
+}

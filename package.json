@@ -1,0 +1,30 @@
+{
+    "name": "concurrent-tasks",
+    "repository": "git@github.com:samrith-s/concurrent-tasks.git",
+    "author": "Samrith Shankar <samrith.shankar@outlook.com>",
+    "license": "MIT",
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "dev": "scripts/run-package.sh",
+        "build-all": "scripts/build-all.sh"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "11.0.0",
+        "@commitlint/config-conventional": "11.0.0",
+        "@commitlint/config-lerna-scopes": "11.0.0",
+        "@typescript-eslint/eslint-plugin": "4.6.1",
+        "@typescript-eslint/parser": "4.6.1",
+        "eslint": "7.13.0",
+        "eslint-config-prettier": "6.15.0",
+        "eslint-plugin-prettier": "3.1.4",
+        "husky": "4.3.0",
+        "lerna": "3.22.1",
+        "prettier": "2.1.2",
+        "size-limit": "4.7.0",
+        "tsdx": "0.14.1",
+        "typescript": "4.0.5"
+    }
+}

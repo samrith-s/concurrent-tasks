@@ -1,0 +1,58 @@
+{
+    "name": "@concurrent-tasks/node",
+    "version": "2.0.0-alpha.1",
+    "description": "A simple runner to run tasks concurrently in Node while maintaining limits, using Worker Threads.",
+    "author": "Samrith Shankar <samrith.shankar@outlook.com>",
+    "homepage": "https://github.com/samrith-s/concurrent-tasks#readme",
+    "license": "MIT",
+    "repository": "git@github.com:samrith-s/concurrent-tasks.git",
+    "bugs": "https://github.com/samrith-s/concurrent-tasks/issues",
+    "private": false,
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "README",
+        "../../LICENSE"
+    ],
+    "engines": {
+        "node": ">=10"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "build": "tsdx build --target node --format cjs,esm,umd",
+        "test": "tsdx test",
+        "lint": "tsdx lint",
+        "prepare": "yarn build"
+    },
+    "devDependencies": {
+        "@types/node": "14.14.6"
+    },
+    "keywords": [
+        "concurrent",
+        "tasks",
+        "processes",
+        "threads",
+        "multithreading",
+        "tasks",
+        "task",
+        "worker",
+        "process",
+        "run",
+        "concurrent tasks",
+        "react concurrent task",
+        "angular concurrent task",
+        "vue concurrent task",
+        "service worker",
+        "worker thread",
+        "queue",
+        "priority",
+        "queue",
+        "priority queue",
+        "fifo",
+        "scheduler",
+        "schedule task"
+    ]
+}
