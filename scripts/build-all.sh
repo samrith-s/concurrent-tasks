@@ -1,17 +1,8 @@
-NODE_BIN="../../node_modules/.bin"
-list=$(yarn lerna list)
-list_split=( ${list} )
+#!/bin/bash
 
-for i in "${list_split[@]}"
+source scripts/utils/init.sh;
+
+for package in "${packages[@]}"
 do
-    if [[ $i = @* ]]
-    then
-        package=${i/@concurrent-tasks\//""};
-        (
-            cd packages/$package;
-            $NODE_BIN/rimraf dist
-        )
-    fi
+    scripts/build.sh $package
 done
-
-ENV="production" yarn lerna run build;
