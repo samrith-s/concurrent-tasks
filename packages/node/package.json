@@ -1,6 +1,6 @@
 {
     "name": "@concurrent-tasks/node",
-    "version": "2.0.0-alpha.1",
+    "version": "2.0.0-alpha.0",
     "description": "A simple runner to run tasks concurrently in Node while maintaining limits, using Worker Threads.",
     "author": "Samrith Shankar <samrith.shankar@outlook.com>",
     "homepage": "https://github.com/samrith-s/concurrent-tasks#readme",
