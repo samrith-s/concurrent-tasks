@@ -14,5 +14,5 @@ command="
     cd packages/$1;
     $NODE_BIN/rimraf dist;
     eval $command;
-    $NODE_BIN/chokidar "src/index.ts" -c "$command";
+    $NODE_BIN/chokidar "src/**/*.ts" -c "$command";
 )
