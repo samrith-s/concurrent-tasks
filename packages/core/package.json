@@ -24,7 +24,7 @@
         "access": "public"
     },
     "scripts": {
-        "prepare": "(cd ../../ && yarn build browser)"
+        "prepare": "(cd ../../ && yarn build core)"
     },
     "keywords": [
         "concurrent",

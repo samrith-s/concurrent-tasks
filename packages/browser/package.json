@@ -26,6 +26,9 @@
     "scripts": {
         "prepare": "(cd ../../ && yarn build browser)"
     },
+    "dependencies": {
+        "@concurrent-tasks/core": "2.0.0-alpha.2"
+    },
     "keywords": [
         "concurrent",
         "tasks",
