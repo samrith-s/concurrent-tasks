@@ -1,6 +1,6 @@
 {
     "name": "@concurrent-tasks/node",
-    "version": "2.0.0-alpha.2",
+    "version": "2.0.0-alpha.3",
     "description": "A simple runner to run tasks concurrently in Node while maintaining limits, using Worker Threads.",
     "author": "Samrith Shankar <samrith.shankar@outlook.com>",
     "homepage": "https://github.com/samrith-s/concurrent-tasks#readme",
@@ -27,7 +27,7 @@
         "prepare": "(cd ../../ && yarn build node)"
     },
     "dependencies": {
-        "@concurrent-tasks/core": "2.0.0-alpha.2"
+        "@concurrent-tasks/core": "^2.0.0-alpha.3"
     },
     "devDependencies": {
         "@types/node": "14.14.6"
