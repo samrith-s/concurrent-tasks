@@ -12,7 +12,8 @@
         "build": "scripts/build.sh",
         "build:all": "scripts/build-all.sh",
         "bump": "scripts/version.sh",
-        "lint": "scripts/lint.sh"
+        "lint": "scripts/lint.sh",
+        "pub": "scripts/publish.sh"
     },
     "devDependencies": {
         "@commitlint/cli": "11.0.0",
