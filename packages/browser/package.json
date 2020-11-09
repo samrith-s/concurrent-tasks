@@ -1,6 +1,6 @@
 {
     "name": "@concurrent-tasks/browser",
-    "version": "2.0.0-alpha.1",
+    "version": "2.0.0-alpha.2",
     "description": "Concurrent tasks implemented using Service Workers",
     "author": "Samrith Shankar <samrith.shankar@outlook.com>",
     "homepage": "https://github.com/samrith-s/concurrent-tasks#readme",
