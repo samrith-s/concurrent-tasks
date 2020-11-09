@@ -1,6 +1,6 @@
 # @concurrent-tasks/core
 
-:warning: **This is a package for `v2` of `concurrent-taks`[https://github.com/samrith-s/concurrent-tasks]**
+:warning: **This is a package for `v2` of [`concurrent-taks`][https://github.com/samrith-s/concurrent-tasks]**
 
 ---
 
