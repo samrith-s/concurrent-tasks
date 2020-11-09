@@ -1,3 +1,3 @@
 export * from '@concurrent-tasks/core';
 
-export { TaskRunner } from './TaskRunner';
+export * from './TaskRunner';

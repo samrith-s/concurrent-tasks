@@ -1,14 +1,19 @@
-import { Worker, isMainThread, workerData } from 'worker_threads';
+import { fork, isMaster, Worker } from 'cluster';
 
-import { IStrategy } from '@concurrent-tasks/core';
+import { IDoneFunction, IStrategy } from '@concurrent-tasks/core';
 
 export const Strategy: IStrategy = function Strategy(task, done) {
-    if (isMainThread) {
-        new Worker(__filename, {
-            workerData: task.bind(done),
+    if (isMaster) {
+        const worker = fork();
+        worker.on('online', () => {
+            task(customDone(done, worker));
         });
-    } else {
-        const task = workerData;
-        task();
     }
+};
+
+const customDone = (done: IDoneFunction, worker: Worker): IDoneFunction => (
+    data
+) => {
+    worker.destroy();
+    done(data);
 };
