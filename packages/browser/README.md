@@ -1,13 +1,13 @@
 # @concurrent-tasks/browser
 
-:warning: **This is a package for `v2` of [`concurrent-taks`][https://github.com/samrith-s/concurrent-tasks]**
+:warning: **This is a package for `v2` of `concurrent-taks`**
 
 ---
 
 For docs and details on `v1` visit:
 
 -   [the old branch](https://github.com/samrith-s/concurrent-tasks/tree/v1)
--   [the website](https://concurrent-tasks.js.org).
+-   [the website](https://concurrent-tasks.js.org)
 -   [the NPM package](https://www.npmjs.com/package/concurrent-tasks)
 -   [the examples website](https://samrith-s.github.io/concurrent-tasks)
 
