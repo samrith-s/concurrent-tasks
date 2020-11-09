@@ -69,7 +69,7 @@ export type IOnEnd<T = any> = ({
     duration: IDuration;
 }) => void;
 
-export interface IRunnerOptions<T = any> {
+export interface IRunnerDefaultOptions<T> {
     concurrency: number;
     autoStart: boolean;
     name: string | (() => string);
@@ -81,8 +81,13 @@ export interface IRunnerOptions<T = any> {
     onEnd: IOnEnd<T>;
 }
 
-export type IStrategy<T = any> = (
-    this: CoreRunner,
+export type IRunnerOptions<T = any, TOptions = Record<string, any>> = {
+    [K in keyof (TOptions & IRunnerDefaultOptions<T>)]: (TOptions &
+        IRunnerDefaultOptions<T>)[K];
+};
+
+export type IStrategy<T = any, TOptions = any> = (
+    this: CoreRunner<T, TOptions>,
     task: ITaskFunction<T>,
     done: IDoneFunction<T>
 ) => void;

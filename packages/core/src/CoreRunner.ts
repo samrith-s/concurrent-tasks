@@ -17,10 +17,10 @@ import {
     startCheckAndRunPending,
 } from './PrivateFunctions';
 
-export class CoreRunner<T = any> {
+export class CoreRunner<T = any, TOptions = any> {
     static runnerCount = 0;
 
-    protected options: IRunnerOptions<T>;
+    protected options: IRunnerOptions<T, TOptions>;
     public tasks: ITasks<T> = {
         total: 0,
         completed: 0,
@@ -35,9 +35,15 @@ export class CoreRunner<T = any> {
     protected __working = false;
     protected __isPaused = false;
 
-    constructor(strategy: IStrategy<T>, options?: Partial<IRunnerOptions<T>>) {
+    constructor(
+        strategy: IStrategy<T>,
+        options?: Partial<IRunnerOptions<T, TOptions>>
+    ) {
+        console.log('options in core', options);
         this.options = {
-            ...DefaultOptions(`Runner-${++CoreRunner.runnerCount}`),
+            ...DefaultOptions<T, TOptions>(
+                `Runner-${++CoreRunner.runnerCount}`
+            ),
             ...options,
         };
         this.strategy = strategy;
