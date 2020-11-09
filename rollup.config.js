@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-undef */
 import * as path from 'path';
+
+import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import typescript from 'rollup-plugin-typescript2';
-import { terser } from 'rollup-plugin-terser';
 import builtins from 'builtin-modules';
+import { terser } from 'rollup-plugin-terser';
+import typescript from 'rollup-plugin-typescript2';
 
 const input = 'src/index.ts';
 const pkg = require(path.resolve('package.json'));
@@ -30,7 +33,7 @@ export default {
         output('umd', 'umd'),
     ],
     plugins,
-    external: [...builtins, ...Object.keys(pkg.dependencies || {})],
+    external: [...builtins],
 };
 
 function output(format, pkgKey) {
