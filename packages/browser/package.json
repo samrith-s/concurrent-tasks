@@ -24,10 +24,7 @@
         "access": "public"
     },
     "scripts": {
-        "build": "tsdx build --format cjs,esm,umd",
-        "test": "tsdx test",
-        "lint": "tsdx lint",
-        "prepare": "yarn build"
+        "prepare": "(cd ../../ && yarn build browser)"
     },
     "keywords": [
         "concurrent",
