@@ -1,6 +1,6 @@
 'use strict';
 
-import { CoreRunner } from './core/CoreRunner';
+import { CoreRunner } from './CoreRunner';
 
 export type IDoneFunction<T = any> = (result?: T) => void;
 export type ITaskFunction<T = any> = (done: IDoneFunction<T>) => void;

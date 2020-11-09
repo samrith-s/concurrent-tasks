@@ -1,6 +1,6 @@
 'use strict';
 
-import { DefaultOptions } from '../DefaultOptions';
+import { DefaultOptions } from './DefaultOptions';
 import {
     IRunnerOptions,
     ITaskFunction,
@@ -8,8 +8,7 @@ import {
     IStrategy,
     IDuration,
     RemovalMethods,
-} from '../Interface';
-
+} from './Interface';
 import {
     addCheck,
     removeCheck,

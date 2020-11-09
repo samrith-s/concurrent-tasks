@@ -1,9 +1,8 @@
 'use strict';
 
-import { IDoneFunction, IRemovalMethods, ITaskFunction } from '../Interface';
-import { isFunction } from '../Utils';
-
 import { CoreRunner } from './CoreRunner';
+import { IDoneFunction, IRemovalMethods, ITaskFunction } from './Interface';
+import { isFunction } from './Utils';
 
 /**
  * Handles running a task, and updating metadata.

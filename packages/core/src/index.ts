@@ -1,5 +1,3 @@
-export { CoreRunner } from './core/CoreRunner';
-export { DefaultOptions } from './DefaultOptions';
-export { TaskRunner } from './TaskRunner';
-
+export { CoreRunner } from './CoreRunner';
 export * from './Interface';
+export * from './Utils';
