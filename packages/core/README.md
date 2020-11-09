@@ -1,5 +1,7 @@
 # @concurrent-tasks/core
 
+[![npm (scoped with tag)](https://img.shields.io/npm/v/@concurrent-tasks/core/next)][core] ![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/core) ![tree-shaking](https://badgen.net/bundlephobia/tree-shaking/@concurrent-tasks/core)
+
 :warning: **This is a package for `v2` of `concurrent-taks`**
 
 ---
@@ -12,8 +14,6 @@ For docs and details on `v1` visit:
 -   [the examples website](https://samrith-s.github.io/concurrent-tasks)
 
 ---
-
-![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/core?label=%40concurrent-tasks%2Fcore) ![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/node?label=%40concurrent-tasks%2Fnode) ![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/browser?label=%40concurrent-tasks%2Fbrowser) ![tree-shaking](https://badgen.net/bundlephobia/tree-shaking/@concurrent-tasks/core)
 
 This project is a complete rewrite and is still in the early alpha stages. It consists of three packages:
 

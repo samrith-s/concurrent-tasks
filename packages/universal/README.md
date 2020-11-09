@@ -1,5 +1,7 @@
 # @concurrent-tasks/universal
 
+[![npm (scoped with tag)](https://img.shields.io/npm/v/@concurrent-tasks/universal/next)][universal] ![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/universal) ![tree-shaking](https://badgen.net/bundlephobia/tree-shaking/@concurrent-tasks/universal)
+
 :warning: **This is a package for `v2` of `concurrent-taks`**
 
 ---

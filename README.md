@@ -1,5 +1,7 @@
 # Concurrent Tasks
 
+[![npm (scoped with tag)](https://img.shields.io/npm/v/@concurrent-tasks/core/next)][core] [![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/core?label=%40concurrent-tasks%2Fcore)][core] [![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/universal?label=%40concurrent-tasks%2Funiversal)][universal] [![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/node?label=%40concurrent-tasks%2Fnode)][node] [![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/browser?label=%40concurrent-tasks%2Fbrowser)][node]
+
 > **Note 🚨**
 > This branch contains the `v2` version of the package which is still in active development. For docs and details on `v1`, visit the [old branch](https://github.com/samrith-s/concurrent-tasks/tree/v1) or [the website](https://concurrent-tasks.js.org).
 
