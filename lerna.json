@@ -1,9 +1,7 @@
 {
     "version": "2.1.0-alpha.0",
     "npmClient": "yarn",
-    "packages": [
-        "packages/*"
-    ],
+    "packages": ["core", "runners/*"],
     "useWorkspaces": true,
     "command": {
         "publish": {

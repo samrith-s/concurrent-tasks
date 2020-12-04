@@ -5,11 +5,14 @@
     "license": "MIT",
     "private": true,
     "workspaces": [
-        "packages/*"
+        "core",
+        "runners/*"
     ],
     "scripts": {
-        "dev": "scripts/dev.sh",
-        "build": "scripts/build.sh",
+        "dev:core": "scripts/core/dev-core.sh",
+        "dev:runner": "scripts/runners/dev-runner.sh",
+        "build:core": "scripts/core/build-core.sh",
+        "build:runner": "scripts/runners/build-plugin.sh",
         "build:all": "scripts/build-all.sh",
         "bump": "scripts/version.sh",
         "lint": "scripts/lint.sh",

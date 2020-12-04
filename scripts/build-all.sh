@@ -6,5 +6,5 @@ scripts/core/build-core.sh
 
 for package in "${packages[@]}"
 do
-    scripts/plugins/build-plugin.sh $package
+    scripts/runners/build-runner.sh $package
 done

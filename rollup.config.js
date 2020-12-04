@@ -9,10 +9,11 @@ import builtins from 'builtin-modules';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 
-const input = 'src/index.ts';
+const isProd = process.env.NODE_END === 'production';
+
 const pkg = require(path.resolve('package.json'));
 
-const isProd = process.env.NODE_END === 'production';
+const input = pkg.entries || 'src/index.ts';
 
 const plugins = [
     resolve(),
@@ -37,21 +38,23 @@ export default {
 };
 
 function output(format, pkgKey) {
-    return {
-        file: pkg[pkgKey],
-        name: 'ConcurrentTasks',
-        format,
-        sourcemap: !isProd,
-        exports: 'auto',
-        plugins: [
-            isProd &&
-                terser({
-                    mangle: false,
-                    compress: isProd,
-                    format: {
-                        beautify: !isProd,
-                    },
-                }),
-        ],
-    };
+    if (pkg[pkgKey]) {
+        return {
+            dir: `dist/${format}`,
+            name: 'ConcurrentTasks',
+            format,
+            sourcemap: !isProd,
+            exports: 'auto',
+            plugins: [
+                isProd &&
+                    terser({
+                        mangle: false,
+                        compress: isProd,
+                        format: {
+                            beautify: !isProd,
+                        },
+                    }),
+            ],
+        };
+    }
 }
