@@ -1,6 +1,7 @@
 #!/bin/bash
 
-export NODE_BIN="../../node_modules/.bin"
+export NODE_BIN_CORE="../node_modules/.bin"
+export NODE_BIN_PLUGIN="../../node_modules/.bin"
 list=$(yarn lerna list)
 list_split=( ${list} )
 

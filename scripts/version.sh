@@ -1,3 +1,3 @@
-scripts/build-all.sh
+scripts/plugins/build-all.sh
 
 yarn lerna version
