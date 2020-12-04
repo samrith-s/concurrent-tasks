@@ -8,9 +8,9 @@
     "repository": "git@github.com:samrith-s/concurrent-tasks.git",
     "bugs": "https://github.com/samrith-s/concurrent-tasks/issues",
     "private": false,
-    "main": "dist/index.js",
-    "module": "dist/esm/index.esm.js",
-    "umd": "dist/umd/index.min.js",
+    "main": "dist/cjs/index.js",
+    "module": "dist/esm/index.js",
+    "umd": "dist/umd/index.js",
     "typings": "dist/types/index.d.ts",
     "files": [
         "dist",

@@ -1,6 +1,6 @@
 'use strict';
 
-import { CoreRunner } from './CoreRunner';
+import { CoreRunner } from './internals/CoreRunner';
 
 export type IDoneFunction<T = any> = (result?: T) => void;
 export type ITaskFunction<T = any> = (done: IDoneFunction<T>) => void;
@@ -69,16 +69,19 @@ export type IOnEnd<T = any> = ({
     duration: IDuration;
 }) => void;
 
-export interface IRunnerDefaultOptions<T> {
-    concurrency: number;
-    autoStart: boolean;
-    name: string | (() => string);
+export interface IRunnerEvents<T> {
+    onStart: IOnStart<T>;
     onAdd: IOnAdd<T>;
     onRemove: IOnRemove<T>;
-    onStart: IOnStart<T>;
     onRun: IOnRun<T>;
     onDone: IOnDone<T>;
     onEnd: IOnEnd<T>;
+}
+
+export interface IRunnerDefaultOptions<T> extends IRunnerEvents<T> {
+    concurrency: number;
+    autoStart: boolean;
+    name: string | (() => string);
 }
 
 export type IRunnerOptions<T = any, TOptions = Record<string, any>> = {

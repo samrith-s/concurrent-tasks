@@ -1,5 +1,7 @@
-import { IRunnerOptions } from './Interface';
-import { noop } from './Utils';
+'use strict';
+
+import { IRunnerOptions } from '../Interface';
+import { noop } from '../Utils';
 
 export function DefaultOptions<T, TOptions>(
     name: string

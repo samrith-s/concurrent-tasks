@@ -1,6 +1,5 @@
 'use strict';
 
-import { DefaultOptions } from './DefaultOptions';
 import {
     IRunnerOptions,
     ITaskFunction,
@@ -8,7 +7,15 @@ import {
     IStrategy,
     IDuration,
     RemovalMethods,
-} from './Interface';
+    IOnAdd,
+    IOnStart,
+    IOnRun,
+    IOnRemove,
+    IOnDone,
+    IOnEnd,
+} from '../Interface';
+
+import { DefaultOptions } from './DefaultOptions';
 import {
     addCheck,
     removeCheck,
@@ -20,26 +27,28 @@ import {
 export class CoreRunner<T = any, TOptions = any> {
     static runnerCount = 0;
 
-    protected options: IRunnerOptions<T, TOptions>;
+    protected readonly options: IRunnerOptions<T, TOptions>;
+    protected readonly strategy: IStrategy<T>;
+
+    protected __working = false;
+    protected __destroyed = false;
+    protected __paused = false;
+
     public tasks: ITasks<T> = {
         total: 0,
         completed: 0,
         running: 0,
         list: [],
     };
+
     public duration: IDuration = {
         total: 0,
     };
-
-    protected strategy: IStrategy<T>;
-    protected __working = false;
-    protected __isPaused = false;
 
     constructor(
         strategy: IStrategy<T>,
         options?: Partial<IRunnerOptions<T, TOptions>>
     ) {
-        console.log('options in core', options);
         this.options = {
             ...DefaultOptions<T, TOptions>(
                 `Runner-${++CoreRunner.runnerCount}`
@@ -58,8 +67,12 @@ export class CoreRunner<T = any, TOptions = any> {
         this.__working = working;
     }
 
+    protected setDestroyed(destroyed: boolean) {
+        this.__destroyed = destroyed;
+    }
+
     public start(): boolean {
-        if (this.__working) {
+        if (this.__working || this.__destroyed) {
             return false;
         }
 
@@ -70,6 +83,24 @@ export class CoreRunner<T = any, TOptions = any> {
         startCheck.call(this);
         runPending.call(this);
         return true;
+    }
+
+    public destroy(): boolean {
+        this.__destroyed = true;
+        this.__working = false;
+
+        return true;
+    }
+
+    public on(event: 'start', callback: IOnStart<T>): void;
+    public on(event: 'add', callback: IOnAdd<T>): void;
+    public on(event: 'remove', callback: IOnRemove<T>): void;
+    public on(event: 'run', callback: IOnRun<T>): void;
+    public on(event: 'done', callback: IOnDone<T>): void;
+    public on(event: 'end', callback: IOnEnd<T>): void;
+    public on(event: string, callback: any): void {
+        const newEvent = `on${event.charAt(0).toUpperCase() + event.substr(1)}`;
+        (this.options as any)[newEvent] = callback as any;
     }
 
     public add(task: ITaskFunction<T>, first = false): number {

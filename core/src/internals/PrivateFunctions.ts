@@ -1,8 +1,9 @@
 'use strict';
 
+import { IDoneFunction, IRemovalMethods, ITaskFunction } from '../Interface';
+import { isFunction } from '../Utils';
+
 import { CoreRunner } from './CoreRunner';
-import { IDoneFunction, IRemovalMethods, ITaskFunction } from './Interface';
-import { isFunction } from './Utils';
 
 /**
  * Handles running a task, and updating metadata.
@@ -58,7 +59,10 @@ const done: IDoneFunction = function done(this: CoreRunner, result) {
         const { tasks } = this;
         this.options.onDone({ tasks, result });
     }
-    run.call(this);
+
+    if (!this.__destroyed) {
+        run.call(this);
+    }
 };
 
 /**
