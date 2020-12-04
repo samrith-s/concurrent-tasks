@@ -15,7 +15,7 @@
     "files": [
         "dist",
         "README",
-        "../../LICENSE"
+        "../LICENSE"
     ],
     "engines": {
         "node": ">=10"
@@ -24,7 +24,7 @@
         "access": "public"
     },
     "scripts": {
-        "prepare": "(cd ../../ && yarn build core)"
+        "prepare": "(cd ../ && yarn build core)"
     },
     "keywords": [
         "concurrent",
