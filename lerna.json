@@ -1,7 +1,10 @@
 {
-    "version": "2.1.0-alpha.0",
+    "version": "2.1.0-beta.0",
     "npmClient": "yarn",
-    "packages": ["core", "strategies/*"],
+    "packages": [
+        "core",
+        "strategies/*"
+    ],
     "useWorkspaces": true,
     "command": {
         "publish": {
