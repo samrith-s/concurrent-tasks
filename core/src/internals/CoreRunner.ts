@@ -14,6 +14,7 @@ import {
     IOnDone,
     IOnEnd,
 } from '../Interface';
+import { noop } from '../Utils';
 
 import { DefaultOptions } from './DefaultOptions';
 import {
@@ -100,7 +101,14 @@ export class CoreRunner<T = any, TOptions = any> {
     public on(event: 'end', callback: IOnEnd<T>): void;
     public on(event: string, callback: any): void {
         const newEvent = `on${event.charAt(0).toUpperCase() + event.substr(1)}`;
-        (this.options as any)[newEvent] = callback as any;
+        (this.options as any)[newEvent] = callback;
+    }
+
+    public off(
+        event: 'start' | 'add' | 'remove' | 'run' | 'done' | 'end'
+    ): void {
+        const newEvent = `on${event.charAt(0).toUpperCase() + event.substr(1)}`;
+        (this.options as any)[newEvent] = noop;
     }
 
     public add(task: ITaskFunction<T>, first = false): number {

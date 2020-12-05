@@ -1,9 +1,11 @@
 'use strict';
 
 import { CoreRunner } from './internals/CoreRunner';
-
+export type ITaskReturn<T> = T | void;
 export type IDoneFunction<T = any> = (result?: T) => void;
-export type ITaskFunction<T = any> = (done: IDoneFunction<T>) => void;
+export type ITaskFunction<T = any> = (
+    done: IDoneFunction<T>
+) => ITaskReturn<T> | Promise<ITaskReturn<T>>;
 
 export interface ITasks<T = any> {
     total: number;
@@ -79,6 +81,7 @@ export interface IRunnerEvents<T> {
 }
 
 export interface IRunnerDefaultOptions<T> extends IRunnerEvents<T> {
+    strategy?: IStrategy<T>;
     concurrency: number;
     autoStart: boolean;
     name: string | (() => string);
