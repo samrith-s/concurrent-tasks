@@ -1,20 +1,29 @@
 # Concurrent Tasks
 
-[![npm (scoped with tag)](https://img.shields.io/npm/v/@concurrent-tasks/core/next)][core] [![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/core?label=%40concurrent-tasks%2Fcore)][core] [![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/universal?label=%40concurrent-tasks%2Funiversal)][universal] [![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/node?label=%40concurrent-tasks%2Fnode)][node] [![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/browser?label=%40concurrent-tasks%2Fbrowser)][node]
+[![npm (scoped with tag)](https://img.shields.io/npm/v/@concurrent-tasks/core/next)][core] [![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@concurrent-tasks/core?label=%40concurrent-tasks%2Fcore)][core]
 
 > **Note 🚨**
 > This branch contains the `v2` version of the package which is still in active development. For docs and details on `v1`, visit the [old branch](https://github.com/samrith-s/concurrent-tasks/tree/v1) or [the website](https://concurrent-tasks.js.org).
 
 A simple task runner which will run all tasks till completion, while maintaining concurrency limits.
 
-This branch is for the current rewrite (`v2`) of the package from ground up in TypeScript and featuring four packages:
+This branch is for the current rewrite (`v2`) of the package from ground up in TypeScript and featuring a more modular structure.
 
--   [`@concurrent-tasks/core`][core] (status: basic): the current form of the package, recreated in a modular way to enable passing custom strategies.
--   [`@concurrent-tasks/universal`][universal] (status: basic): environment agnostic strategy which can be used with any JS flavor.
--   [`@concurrent-tasks/node`][node] (status: not-started): specifically for NodeJS, leveraging [Worker Threads](https://nodejs.org/api/worker_threads.html).
--   [`@concurrent-tasks/browser`][browser] (status: not-started): specifically for the browser, leveraging [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API).
+## Task runners
 
-Each package will ship with proper types to leverage auto-completion and awareness. _The `core` package **can be tried out** but please be aware it is **NOT** meant for production use as it is still in early alpha._
+-   [`@concurrent-tasks/core`][core] (status: implemented): Allows you to create, manage and execute a task runner in virtually any environment or flavour of JavaScript.
+
+## Strategies
+
+-   [`@concurrent-tasks/strategy-sync`][strategy-sync] (status: implemented): A simple strategy which accepts a promise and moves on to the next task automatically when a Promise resoves itself.
+
+_The `core` package **can be tried out** but please be aware it is still in `beta` and is considered more-or-less stable. Useage in production environment is discouraged._
+
+If you are keen on contributing to the development of this package, please feel free to create a PR.
+
+Alternatively, if you have created an independent pacakge which implements a strategy, please do not hesitate to create a PR which adds it to the README.
+
+The guides on implementing strategies are currently being written. You can check out the [`strategies/strategy-sync`](#) for an example.
 
 [core]: https://www.npmjs.com/package/@concurrent-tasks/core
 [universal]: https://www.npmjs.com/package/@concurrent-tasks/universal
