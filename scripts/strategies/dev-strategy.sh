@@ -2,7 +2,7 @@
 
 source scripts/utils/init.sh;
 
-source scripts/utils/check-runner.sh "$1"
+source scripts/utils/check-strategy.sh "$1"
 
 command="
     clear; 
@@ -11,7 +11,7 @@ command="
 "
 
 (
-    cd runners/$1;
+    cd strategies/$1;
     $NODE_BIN_PACKAGES/rimraf dist;
     eval $command;
     $NODE_BIN_PACKAGES/chokidar "src/**/*.ts" -c "$command";

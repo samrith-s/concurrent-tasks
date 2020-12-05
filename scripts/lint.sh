@@ -2,12 +2,14 @@
 
 source scripts/utils/init.sh;
 
-# for package in "${packages[@]}"
-# do
-#     if [[ package != "core" ]] 
-#     then
-#         (
-#             eslint plugins/$package/src/**
-#         )
-#     fi
-# done
+eslint core/src/**
+
+for package in "${packages[@]}"
+do
+    if [[ "$package" != "core" ]] 
+    then
+        (
+            eslint strategies/$package/src/**
+        )
+    fi
+done
