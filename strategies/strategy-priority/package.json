@@ -1,0 +1,60 @@
+{
+    "name": "@concurrent-tasks/strategy-priority",
+    "version": "2.1.0-beta.0",
+    "description": "A simple runner to run tasks concurrently while maintaining limits.",
+    "author": "Samrith Shankar <samrith.shankar@outlook.com>",
+    "homepage": "https://github.com/samrith-s/concurrent-tasks#readme",
+    "license": "MIT",
+    "repository": "git@github.com:samrith-s/concurrent-tasks.git",
+    "bugs": "https://github.com/samrith-s/concurrent-tasks/issues",
+    "private": false,
+    "main": "dist/cjs/index.js",
+    "module": "dist/esm/index.esm.js",
+    "umd": "dist/umd/index.min.js",
+    "typings": "dist/types/index.d.ts",
+    "files": [
+        "dist",
+        "README",
+        "../../../LICENSE"
+    ],
+    "engines": {
+        "node": ">=10"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "prepare": "(cd ../../../ && yarn build:runner strategy-priority)"
+    },
+    "devDependencies": {
+        "@concurrent-tasks/core": "2.1.0-beta.0"
+    },
+    "peerDependencies": {
+        "@concurrent-tasks/core": "2.1.0-beta.0"
+    },
+    "keywords": [
+        "concurrent",
+        "tasks",
+        "processes",
+        "threads",
+        "multithreading",
+        "tasks",
+        "task",
+        "worker",
+        "process",
+        "run",
+        "concurrent tasks",
+        "react concurrent task",
+        "angular concurrent task",
+        "vue concurrent task",
+        "service worker",
+        "worker thread",
+        "queue",
+        "priority",
+        "queue",
+        "priority queue",
+        "fifo",
+        "scheduler",
+        "schedule task"
+    ]
+}
