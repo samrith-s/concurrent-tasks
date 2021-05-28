@@ -4,13 +4,7 @@ const { TaskRunner } = require('@concurrent-tasks/core');
 
 const { Strategy } = require('.');
 
-const x = new TaskRunner({
-    strategy: Strategy({
-        passErrorToDone: false,
-    }),
-});
-
-function generateTasks(count) {
+function generatePromiseTasks(count) {
     const tasks = [];
 
     for (let i = 0; i < count; i++) {
@@ -18,7 +12,9 @@ function generateTasks(count) {
             return new Promise((resolve) => {
                 const rand = Math.floor(Math.random() * 2000);
                 setTimeout(() => {
-                    resolve(`Task ${i} completed after ${rand}ms`);
+                    resolve(
+                        `[Async Strategy]::Task ${i} completed after ${rand}ms`
+                    );
                 }, rand);
             });
         });
@@ -27,10 +23,37 @@ function generateTasks(count) {
     return tasks;
 }
 
+function generateTasks(count) {
+    const tasks = [];
+
+    for (let i = 0; i < count; i++) {
+        tasks.push(function (done) {
+            const rand = Math.floor(Math.random() * 2000);
+            setTimeout(() => {
+                done(`[Default Strategy]::Task ${i} completed after ${rand}ms`);
+            }, rand);
+        });
+    }
+
+    return tasks;
+}
+
+const x = new TaskRunner({
+    onDone({ result }) {
+        console.log(result);
+    },
+});
 x.addMultiple(generateTasks(10));
 
-x.on('done', ({ result }) => {
-    !!result && console.log('Successful result', result);
+const y = new TaskRunner({
+    onDone({ result }) {
+        console.log(result);
+    },
+    strategy: Strategy({
+        passErrorToDone: false,
+    }),
 });
-console.log('lol?');
+y.addMultiple(generatePromiseTasks(10));
+
 x.start();
+y.start();

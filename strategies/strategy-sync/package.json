@@ -27,10 +27,10 @@
         "prepare": "(cd ../../../ && yarn build:runner strategy-sync)"
     },
     "devDependencies": {
-        "@concurrent-tasks/core": "^2.1.0-beta.0"
+        "@concurrent-tasks/core": "2.1.0-beta.0"
     },
     "peerDependencies": {
-        "@concurrent-tasks/core": "2.1.0-alpha.0"
+        "@concurrent-tasks/core": "2.1.0-beta.0"
     },
     "keywords": [
         "concurrent",
