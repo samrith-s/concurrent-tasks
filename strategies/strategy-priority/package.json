@@ -1,6 +1,6 @@
 {
     "name": "@concurrent-tasks/strategy-priority",
-    "version": "2.1.0-beta.0",
+    "version": "2.2.0-beta.0",
     "description": "A simple runner to run tasks concurrently while maintaining limits.",
     "author": "Samrith Shankar <samrith.shankar@outlook.com>",
     "homepage": "https://github.com/samrith-s/concurrent-tasks#readme",
@@ -27,7 +27,7 @@
         "prepare": "(cd ../../../ && yarn build:runner strategy-priority)"
     },
     "devDependencies": {
-        "@concurrent-tasks/core": "2.1.0-beta.0"
+        "@concurrent-tasks/core": "^2.2.0-beta.0"
     },
     "peerDependencies": {
         "@concurrent-tasks/core": "2.1.0-beta.0"
