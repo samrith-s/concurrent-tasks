@@ -3,9 +3,7 @@
 import { IRunnerOptions } from '../Interface';
 import { noop } from '../Utils';
 
-export function DefaultOptions<T, TOptions>(
-    name: string
-): IRunnerOptions<T, TOptions> {
+export function DefaultOptions<T, TOptions>(name: string) {
     return ({
         concurrency: 3,
         autoStart: false,

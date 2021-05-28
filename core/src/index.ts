@@ -1,8 +1,9 @@
 'use strict';
 
 export { CoreRunner } from './internals/CoreRunner';
-export * from './Interface';
-export * from './Utils';
+export { DefaultOptions } from './internals/DefaultOptions';
 export { Strategy as DefaultStrategy } from './DefaultStrategy';
 export { TaskRunner } from './TaskRunner';
-export { DefaultOptions } from './internals/DefaultOptions';
+export { createStrategy } from './createStrategy';
+export * from './Utils';
+export * from './Interface';

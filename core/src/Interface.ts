@@ -92,8 +92,15 @@ export type IRunnerOptions<T = any, TOptions = Record<string, any>> = {
         IRunnerDefaultOptions<T>)[K];
 };
 
-export type IStrategy<T = any, TOptions = any> = (
-    this: CoreRunner<T, TOptions>,
-    task: ITaskFunction<T>,
-    done: IDoneFunction<T>
-) => void;
+export interface IStrategy<T = any, TOptions = any> {
+    options?: TOptions;
+    init?(): void;
+    getTask(
+        this: CoreRunner<T, TOptions> & IStrategy<T, TOptions>
+    ): ITaskFunction<T> | void;
+    execute(
+        this: CoreRunner<T, TOptions> & IStrategy<T, TOptions>,
+        task: ITaskFunction<T>,
+        done: IDoneFunction<T>
+    ): void;
+}

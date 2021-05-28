@@ -1,6 +1,11 @@
 'use strict';
 
-import { IDoneFunction, IRemovalMethods, ITaskFunction } from '../Interface';
+import {
+    IDoneFunction,
+    IRemovalMethods,
+    IStrategy,
+    ITaskFunction,
+} from '../Interface';
 import { isFunction } from '../Utils';
 
 import { CoreRunner } from './CoreRunner';
@@ -9,29 +14,38 @@ import { CoreRunner } from './CoreRunner';
  * Handles running a task, and updating metadata.
  */
 export function run(this: CoreRunner) {
-    if (this.tasks.list.length) {
-        if (this.tasks.running < this.options.concurrency) {
-            const task = this.tasks.list.shift();
-            if (task) {
-                this.tasks.running++;
-                if (isFunction(this.options.onRun)) {
-                    const { tasks, duration } = this;
-                    this.options.onRun({ task, tasks, duration });
-                }
-                this.strategy(task, done.bind(this));
-            }
-        }
-    } else {
-        if (this.tasks.completed === this.tasks.total) {
-            this.duration.end = new Date();
-            this.duration.total =
-                (this.duration.end.valueOf() ?? 0) -
-                (this.duration.start?.valueOf() ?? 0);
-            this.setWorking(false);
-            if (isFunction(this.options.onEnd)) {
+    if (
+        this.tasks.list.length &&
+        this.tasks.running < this.options.concurrency
+    ) {
+        const $this = {
+            ...this,
+            ...this.strategy,
+        } as CoreRunner & IStrategy;
+
+        const task = this.strategy.getTask.call($this);
+
+        if (task) {
+            this.tasks.running++;
+            if (isFunction(this.options.onRun)) {
                 const { tasks, duration } = this;
-                this.options.onEnd({ tasks, duration });
+                this.options.onRun({ task, tasks, duration });
             }
+            this.strategy.execute.call($this, task, done.bind(this));
+        }
+
+        return;
+    }
+
+    if (this.tasks.completed === this.tasks.total) {
+        this.duration.end = new Date();
+        this.duration.total =
+            (this.duration.end.valueOf() ?? 0) -
+            (this.duration.start?.valueOf() ?? 0);
+        this.setWorking(false);
+        if (isFunction(this.options.onEnd)) {
+            const { tasks, duration } = this;
+            this.options.onEnd({ tasks, duration });
         }
     }
 }

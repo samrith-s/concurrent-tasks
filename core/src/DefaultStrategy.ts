@@ -1,11 +1,17 @@
 'use strict';
 
-import { IStrategy } from './Interface';
+import { createStrategy } from './createStrategy';
 
-export const Strategy: IStrategy = function (task, done) {
-    task(done);
-
-    process.on('unhandledRejection', (e) => {
-        throw e;
-    });
-};
+export const Strategy = createStrategy({
+    init() {
+        process.on('unhandledRejection', (e) => {
+            console.log(e);
+        });
+    },
+    getTask() {
+        return this.tasks.list.shift();
+    },
+    execute(task, done) {
+        task(done);
+    },
+});

@@ -57,6 +57,7 @@ export class CoreRunner<T = any, TOptions = any> {
             ...options,
         };
         this.strategy = strategy;
+        this.strategy.init?.();
         Object.seal(this);
     }
 
