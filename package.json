@@ -25,22 +25,32 @@
         "@rollup/plugin-commonjs": "16.0.0",
         "@rollup/plugin-json": "4.1.0",
         "@rollup/plugin-node-resolve": "10.0.0",
+        "@types/chai": "4.2.18",
+        "@types/mocha": "8.2.2",
         "@typescript-eslint/eslint-plugin": "4.6.1",
         "@typescript-eslint/parser": "4.6.1",
         "builtin-modules": "3.1.0",
+        "chai": "4.3.4",
+        "chalk": "4.1.1",
         "chokidar-cli": "2.1.0",
         "eslint": "7.13.0",
         "eslint-config-prettier": "6.15.0",
         "eslint-import-resolver-typescript": "2.3.0",
         "eslint-plugin-import": "2.22.1",
         "eslint-plugin-prettier": "3.1.4",
-        "husky": "4.3.0",
+        "husky": "6.0.0",
         "lerna": "3.22.1",
+        "lint-staged": "11.0.0",
+        "mocha": "8.4.0",
         "prettier": "2.1.2",
         "rollup": "2.33.1",
         "rollup-plugin-terser": "7.0.2",
         "rollup-plugin-typescript2": "0.29.0",
         "size-limit": "4.7.0",
+        "ts-node": "10.0.0",
         "typescript": "4.0.5"
+    },
+    "lint-staged": {
+        "*.ts": "eslint --cache"
     }
 }
