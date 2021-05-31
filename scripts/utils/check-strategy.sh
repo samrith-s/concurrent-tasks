@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source scripts/utils/init.sh;
+
 if [[ ! " ${packages[@]} " =~ " $1 " ]] || [[ -z $1 ]];
 then
     echo ""

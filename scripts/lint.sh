@@ -9,7 +9,7 @@ do
     if [[ "$package" != "core" ]] 
     then
         (
-            eslint strategies/$package/src/**
+            eslint strategies/strategy-$package/src/**
         )
     fi
 done

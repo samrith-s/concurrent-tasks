@@ -10,8 +10,8 @@ for i in "${list_split[@]}"
 do
     if [[ $i = @* ]]
     then
-        packageName=${i/@concurrent-tasks\//""};
-        if [[ "$packageName" != "core" ]]
+        packageName=${i/@concurrent-tasks\/strategy-/""};
+        if [[ "$packageName" != "@concurrent-tasks/core" ]]
         then
             packages+=("$packageName");
         fi
