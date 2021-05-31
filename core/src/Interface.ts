@@ -92,15 +92,27 @@ export type IRunnerOptions<T = any, TOptions = Record<string, any>> = {
         IRunnerDefaultOptions<T>)[K];
 };
 
-export interface IStrategy<T = any, TOptions = any> {
+type IStrategyConfig<TConfig = Record<string | number | symbol, any>> = {
+    [K in keyof TConfig]: TConfig[K];
+};
+
+export type IStrategy<
+    T = any,
+    TOptions = any,
+    TConfig = Record<string, any>
+> = {
     options?: TOptions;
     init?(): void;
+    transform?(
+        this: CoreRunner<T, TOptions> & IStrategy<T, TOptions, TConfig>,
+        task: ITaskFunction<T>
+    ): ITaskFunction<T>;
     getTask(
-        this: CoreRunner<T, TOptions> & IStrategy<T, TOptions>
+        this: CoreRunner<T, TOptions> & IStrategy<T, TOptions, TConfig>
     ): ITaskFunction<T> | void;
     execute(
-        this: CoreRunner<T, TOptions> & IStrategy<T, TOptions>,
+        this: CoreRunner<T, TOptions> & IStrategy<T, TOptions, TConfig>,
         task: ITaskFunction<T>,
         done: IDoneFunction<T>
     ): void;
-}
+} & IStrategyConfig<TConfig>;

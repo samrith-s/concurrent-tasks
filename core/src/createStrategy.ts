@@ -1,8 +1,9 @@
 import { IStrategy } from './Interface';
 
-export function createStrategy<TStrategyOptions = any>(
-    strategy: IStrategy<any, TStrategyOptions>
-) {
+export function createStrategy<
+    TStrategyOptions = any,
+    TStrategyConfig = Record<string | number | symbol, any>
+>(strategy: IStrategy<any, TStrategyOptions, TStrategyConfig>) {
     return function CreatedStrategy<T = any>(
         options: Partial<TStrategyOptions> = {}
     ) {
@@ -11,6 +12,6 @@ export function createStrategy<TStrategyOptions = any>(
             ...options,
         } as TStrategyOptions;
 
-        return strategy as IStrategy<T, TStrategyOptions>;
+        return strategy as IStrategy<T, TStrategyOptions, TStrategyConfig>;
     };
 }

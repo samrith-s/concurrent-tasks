@@ -14,7 +14,7 @@ import {
     IOnDone,
     IOnEnd,
 } from '../Interface';
-import { noop } from '../Utils';
+import { isFunction, noop } from '../Utils';
 
 import { DefaultOptions } from './DefaultOptions';
 import {
@@ -113,10 +113,19 @@ export class CoreRunner<T = any, TOptions = any> {
     }
 
     public add(task: ITaskFunction<T>, first = false): number {
+        const newTask =
+            this.strategy.transform?.call(
+                {
+                    ...this,
+                    ...this.strategy,
+                },
+                task
+            ) || task;
+
         if (first) {
-            this.tasks.list.unshift(task);
+            this.tasks.list.unshift(newTask);
         } else {
-            this.tasks.list.push(task);
+            this.tasks.list.push(newTask);
         }
 
         if (this.options.autoStart) {
@@ -132,10 +141,24 @@ export class CoreRunner<T = any, TOptions = any> {
     }
 
     public addMultiple(tasks: ITaskFunction<T>[], first = false): number {
+        let newTasks = tasks;
+
+        if (isFunction(this.strategy.transform)) {
+            newTasks = newTasks.map((task) =>
+                this.strategy.transform!.call(
+                    {
+                        ...this,
+                        ...this.strategy,
+                    },
+                    task
+                )
+            );
+        }
+
         if (first) {
-            this.tasks.list = [...tasks, ...this.tasks.list];
+            this.tasks.list = [...newTasks, ...this.tasks.list];
         } else {
-            this.tasks.list = [...this.tasks.list, ...tasks];
+            this.tasks.list = [...this.tasks.list, ...newTasks];
         }
 
         if (this.options.autoStart) {
