@@ -1,59 +1,65 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { TaskRunner } = require('@concurrent-tasks/core');
+const chalk = require('chalk');
 
-const { Strategy } = require('.');
+const { Strategy, priorityTask } = require('.');
 
-function generatePromiseTasks(count) {
-    const tasks = [];
-
-    for (let i = 0; i < count; i++) {
-        tasks.push(function () {
-            return new Promise((resolve) => {
-                const rand = Math.floor(Math.random() * 2000);
-                setTimeout(() => {
-                    resolve(
-                        `[Async Strategy]::Task ${i} completed after ${rand}ms`
-                    );
-                }, rand);
-            });
-        });
-    }
-
-    return tasks;
-}
+const TOTAL_PRIORITIES = 4;
 
 function generateTasks(count) {
     const tasks = [];
 
     for (let i = 0; i < count; i++) {
-        tasks.push(function (done) {
-            const rand = Math.floor(Math.random() * 2000);
-            setTimeout(() => {
-                done(`[Default Strategy]::Task ${i} completed after ${rand}ms`);
-            }, rand);
-        });
+        const p = Math.floor(Math.random() * (TOTAL_PRIORITIES - 1));
+
+        let text = '';
+
+        switch (p) {
+            case 0: {
+                text = 'redBright ⬆';
+                break;
+            }
+            case 1: {
+                text = 'yellowBright ⬆';
+                break;
+            }
+            case 2: {
+                text = 'cyanBright ⬇';
+                break;
+            }
+            case 3: {
+                text = 'greenBright ⬇⬇';
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+
+        tasks.push(
+            priorityTask(function (done) {
+                const rand = Math.floor(Math.random() * 2000);
+                setTimeout(() => {
+                    done(chalk`{${text} Task ${i} completed after ${rand}ms}`);
+                }, rand);
+            }, p)
+        );
     }
 
     return tasks;
 }
 
-const x = new TaskRunner({
-    onDone({ result }) {
-        console.log(result);
-    },
-});
-x.addMultiple(generateTasks(10));
-
 const y = new TaskRunner({
     onDone({ result }) {
         console.log(result);
     },
-    strategy: Strategy({
-        passErrorToDone: false,
-    }),
+    strategy: Strategy(),
 });
-y.addMultiple(generatePromiseTasks(10));
+y.addMultiple(generateTasks(10));
 
-x.start();
 y.start();
+
+setTimeout(() => {
+    y.addMultiple(generateTasks(10));
+}, 150);

@@ -3,9 +3,14 @@
 import { ITaskFunction } from '@concurrent-tasks/core';
 
 export interface StrategyPriorityOptions {
-    maintainPriorityQueueAcrossLifecycle?: boolean;
+    totalPriorities: number;
 }
 
-export interface PriorityTask<T> extends ITaskFunction<T> {
+export interface StrategyPriorityConfig {
+    indices: [number[]];
+    currentPriority: number;
+}
+
+export interface PriorityTask<T = any> extends ITaskFunction<T> {
     __priority: number;
 }
