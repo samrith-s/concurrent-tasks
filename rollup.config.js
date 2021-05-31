@@ -42,6 +42,9 @@ function output(format, pkgKey) {
         return {
             dir: `dist/${format}`,
             name: 'ConcurrentTasks',
+            globals: {
+                '@concurrent-tasks/core': 'ConcurrentTasks',
+            },
             format,
             sourcemap: !isProd,
             exports: 'auto',
