@@ -1,13 +1,11 @@
 {
     "version": "2.2.0-beta.0",
     "npmClient": "yarn",
-    "packages": [
-        "core",
-        "strategies/*"
-    ],
+    "packages": ["core", "strategies/*"],
     "useWorkspaces": true,
     "command": {
         "publish": {
+            "conventionalCommits": true,
             "message": "chore: release %s"
         }
     }
