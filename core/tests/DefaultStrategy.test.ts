@@ -1,12 +1,11 @@
-import { checkResults, createRunner } from '../../testing-utils';
+import { runTest } from '../../testing-utils';
+
+import { generateTasks } from './utils';
 
 describe('DefaultStrategy', () => {
-    it('should run the tasks and print in the expected order', () => {
-        const { runner, results, expected } = createRunner({
-            onEnd() {
-                checkResults(results, expected);
-            },
+    it('should run the tasks and print in the expected order', (done) => {
+        runTest(done, {
+            tasks: generateTasks(),
         });
-        runner.start();
     });
 });
