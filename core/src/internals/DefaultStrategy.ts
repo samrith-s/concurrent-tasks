@@ -5,14 +5,13 @@ import { IDoneFunction, ITaskFunction } from '../Interface';
 import { CoreRunner } from './CoreRunner';
 
 export class Strategy<T = any, TOptions = Record<string, any>> {
-    constructor(config: Partial<TOptions> = {}) {
+    constructor(defaultConfig: TOptions, config: Partial<TOptions> = {}) {
         this.config = {
-            ...this.defaultConfig,
+            ...defaultConfig,
             ...config,
         } as TOptions;
     }
     config: TOptions = {} as TOptions;
-    defaultConfig: TOptions = {} as TOptions;
     instance = {} as Omit<
         CoreRunner<T, TOptions>,
         '__working' | '__destroyed' | '__paused'

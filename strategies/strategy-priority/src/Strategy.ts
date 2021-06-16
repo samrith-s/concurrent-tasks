@@ -13,13 +13,14 @@ export class StrategyPriority<T = any> extends Strategy<
     T,
     StrategyPriorityOptions
 > {
-    constructor(config: Partial<StrategyPriorityOptions>) {
-        super(config);
+    constructor(config?: Partial<StrategyPriorityOptions>) {
+        super(
+            {
+                totalPriorities: 5,
+            },
+            config
+        );
     }
-
-    defaultConfig = {
-        totalPriorities: 5,
-    };
     logged = false;
     taskIds: number[][] = [[]];
     currentPriority = 0;
