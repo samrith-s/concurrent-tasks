@@ -15,7 +15,7 @@
         "build:strategy": "scripts/strategies/build-strategy.sh",
         "build:all": "scripts/build-all.sh",
         "test:core": "scripts/core/test-core.sh",
-        "test:strategy": "scripts/core/test-strategy.sh",
+        "test:strategy": "scripts/strategies/test-strategy.sh",
         "test:all": "scripts/test-all.sh",
         "bump": "scripts/version.sh",
         "lint": "scripts/lint.sh",
