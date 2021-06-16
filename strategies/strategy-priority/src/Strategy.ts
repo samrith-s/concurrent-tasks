@@ -1,37 +1,45 @@
 'use strict';
 
-import { createStrategy } from '@concurrent-tasks/core';
+import { Strategy, Task } from '@concurrent-tasks/core';
 
-import {
-    PriorityTask,
-    StrategyPriorityConfig,
-    StrategyPriorityOptions,
-} from './Interface';
+import { PriorityTask, StrategyPriorityOptions } from './Interface';
 
-export function priorityTask<T = any>(task: PriorityTask<T>, priority: number) {
-    task.__priority = priority;
+export function priorityTask<T = any>(task: Task<T>, priority: number) {
+    (task as PriorityTask<T>).__priority = priority;
     return task;
 }
 
-export const Strategy = createStrategy<
-    StrategyPriorityOptions,
-    StrategyPriorityConfig
->({
-    indices: [[]],
-    init() {
-        this.indices = new Array(this.options?.totalPriorities)
+export class StrategyPriority<T = any> extends Strategy<
+    T,
+    StrategyPriorityOptions
+> {
+    constructor(config: Partial<StrategyPriorityOptions>) {
+        super(config);
+    }
+
+    defaultConfig = {
+        totalPriorities: 5,
+    };
+    logged = false;
+    taskIds: number[][] = [[]];
+    currentPriority = 0;
+    count = 0;
+
+    init: Strategy<T>['init'] = () => {
+        this.taskIds = new Array(this.config.totalPriorities)
             .fill(0)
             .reduce((acc) => {
                 acc.push([]);
                 return acc;
             }, []);
-    },
-    currentPriority: 0,
-    transform(task: PriorityTask) {
-        let priority = task.__priority;
+    };
 
-        if (priority > this.options.totalPriorities - 1) {
-            priority = this.options.totalPriorities - 1;
+    transform: Strategy<T>['transform'] = (task) => {
+        const { totalPriorities } = this.config;
+        let priority = (task as PriorityTask).__priority;
+
+        if (priority > totalPriorities - 1) {
+            priority = totalPriorities - 1;
         }
 
         if (!isNaN(priority)) {
@@ -39,35 +47,35 @@ export const Strategy = createStrategy<
                 this.currentPriority = priority;
             }
 
-            if (this.indices[priority]) {
-                this.indices[priority].push(this.tasks.list.length);
+            if (this.taskIds[priority]) {
+                this.taskIds[priority].push(task.meta.id);
             } else {
-                this.indices[priority] = [this.tasks.list.length];
+                this.taskIds[priority] = [task.meta.id];
             }
         }
 
         return task;
-    },
-    options: {
-        totalPriorities: 5,
-    },
-    getTask() {
-        const index = this.indices[this.currentPriority].shift() as number;
+    };
 
-        if (index >= 0) {
-            return this.tasks.list.splice(index, 1)[0];
+    get: Strategy<T>['get'] = () => {
+        const id = this.taskIds[this.currentPriority].shift() as number;
+
+        if (id) {
+            const taskIndex = this.instance.tasks.list.findIndex(
+                (task) => task.meta.id === id
+            );
+            if (taskIndex > -1) {
+                const [task] = this.instance.tasks.list.splice(taskIndex, 1);
+                return task;
+            }
         }
 
-        this.currentPriority += 1;
+        this.currentPriority = this.currentPriority + 1;
 
-        if (this.currentPriority > this.options.totalPriorities - 1) {
-            this.currentPriority = this.options.totalPriorities - 1;
-            return;
+        if (this.currentPriority > this.config.totalPriorities - 1) {
+            this.currentPriority = this.config.totalPriorities - 1;
         }
 
-        return this.getTask();
-    },
-    execute(task, done) {
-        task(done);
-    },
-});
+        return this.get();
+    };
+}
