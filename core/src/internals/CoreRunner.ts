@@ -4,7 +4,6 @@ import {
     IRunnerOptions,
     ITaskFunction,
     ITasks,
-    IStrategy,
     IDuration,
     RemovalMethods,
     IOnAdd,
@@ -13,10 +12,13 @@ import {
     IOnRemove,
     IOnDone,
     IOnEnd,
+    TaskID,
+    Task,
 } from '../Interface';
-import { isFunction, noop } from '../Utils';
+import { noop } from '../Utils';
 
 import { DefaultOptions } from './DefaultOptions';
+import { Strategy } from './DefaultStrategy';
 import {
     addCheck,
     removeCheck,
@@ -28,12 +30,13 @@ import {
 export class CoreRunner<T = any, TOptions = any> {
     static runnerCount = 0;
 
-    protected readonly options: IRunnerOptions<T, TOptions>;
-    protected readonly strategy: IStrategy<T>;
+    public readonly strategy: Strategy<T, TOptions>;
 
     protected __working = false;
     protected __destroyed = false;
     protected __paused = false;
+
+    public readonly options: IRunnerOptions<T, TOptions>;
 
     public tasks: ITasks<T> = {
         total: 0,
@@ -46,8 +49,10 @@ export class CoreRunner<T = any, TOptions = any> {
         total: 0,
     };
 
+    private taskIds = 0;
+
     constructor(
-        strategy: IStrategy<T>,
+        strategy: Strategy<T, TOptions>,
         options?: Partial<IRunnerOptions<T, TOptions>>
     ) {
         this.options = {
@@ -56,8 +61,9 @@ export class CoreRunner<T = any, TOptions = any> {
             ),
             ...options,
         };
+        strategy.instance = this;
         this.strategy = strategy;
-        this.strategy.init?.();
+        this.strategy.init();
         Object.seal(this);
     }
 
@@ -112,116 +118,53 @@ export class CoreRunner<T = any, TOptions = any> {
         (this.options as any)[newEvent] = noop;
     }
 
-    public add(task: ITaskFunction<T>, first = false): number {
-        const newTask =
-            this.strategy.transform?.call(
-                {
-                    ...this,
-                    ...this.strategy,
-                },
-                task
-            ) || task;
+    public add(task: Task<T>): ITaskFunction<T> {
+        const newTask = task as ITaskFunction<T>;
+        newTask.meta = {
+            id: ++this.taskIds,
+            execution: {
+                start: new Date(),
+                end: null,
+                time: 0,
+            },
+        };
 
-        if (first) {
-            this.tasks.list.unshift(newTask);
-        } else {
-            this.tasks.list.push(newTask);
-        }
+        const transformedTask = this.strategy.transform(
+            newTask as ITaskFunction<T>
+        );
+
+        this.tasks.list.push(transformedTask);
+        this.tasks.total++;
 
         if (this.options.autoStart) {
             startCheckAndRunPending.call(this);
         }
 
         addCheck.call(this);
-        return ++this.tasks.total;
+        return newTask;
     }
 
-    public addFirst(task: ITaskFunction<T>): number {
-        return this.add(task, true);
+    public addMultiple(tasks: Task<T>[]): ITaskFunction<T>[] {
+        return tasks.map((task) => this.add(task));
     }
 
-    public addMultiple(tasks: ITaskFunction<T>[], first = false): number {
-        let newTasks = tasks;
-
-        if (isFunction(this.strategy.transform)) {
-            newTasks = newTasks.map((task) =>
-                this.strategy.transform!.call(
-                    {
-                        ...this,
-                        ...this.strategy,
-                    },
-                    task
-                )
-            );
-        }
-
-        if (first) {
-            this.tasks.list = [...newTasks, ...this.tasks.list];
-        } else {
-            this.tasks.list = [...this.tasks.list, ...newTasks];
-        }
-
-        if (this.options.autoStart) {
-            startCheckAndRunPending.call(this);
-        }
-
-        addCheck.call(this);
-
-        return (this.tasks.total =
-            this.tasks.list.length + this.tasks.completed);
-    }
-
-    public addMultipleFirst(tasks: ITaskFunction[]): number {
-        return this.addMultiple(tasks, true);
-    }
-
-    public remove(first = false): ITaskFunction | undefined {
-        let task;
-
-        if (first) {
-            task = this.tasks.list.shift();
-        } else {
-            task = this.tasks.list.pop();
-        }
-
-        --this.tasks.total;
-
-        removeCheck.call(
-            this,
-            first
-                ? RemovalMethods.SINGULAR_FIRST
-                : RemovalMethods.SINGULAR_LAST,
-            task ? [task] : []
+    public remove(id: TaskID): ITaskFunction<T> | void {
+        const taskIndex = this.tasks.list.findIndex(
+            (task) => task.meta.id === id
         );
 
-        return task;
+        if (taskIndex > -1) {
+            const task = this.tasks.list.splice(taskIndex, 1).pop();
+            --this.tasks.total;
+
+            removeCheck.call(this, RemovalMethods.BY_ID, task ? [task] : []);
+            return task;
+        }
+
+        return void 0;
     }
 
-    public removeFirst(): ITaskFunction | undefined {
-        const task = this.remove(true);
-        removeCheck.call(
-            this,
-            RemovalMethods.SINGULAR_FIRST,
-            task ? [task] : []
-        );
-        return task;
-    }
-
-    public removeAt(index: number): ITaskFunction | undefined {
-        const tasks = this.tasks.list.splice(index, 1);
-        --this.tasks.total;
-        removeCheck.call(this, RemovalMethods.AT_INDEX, tasks);
-        return tasks[0];
-    }
-
-    public removeRange(startIndex: number, endIndex: number): ITaskFunction[] {
-        const tasks = this.tasks.list.splice(startIndex, endIndex + 1);
-        this.tasks.total -= tasks.length;
-        removeCheck.call(this, RemovalMethods.RANGE, tasks);
-        return tasks;
-    }
-
-    public removeAll(): ITaskFunction[] {
+    public removeAll(): ITaskFunction<T>[] {
         const tasks = this.tasks.list.slice();
         this.tasks.list = [];
         this.tasks.total = this.tasks.completed;

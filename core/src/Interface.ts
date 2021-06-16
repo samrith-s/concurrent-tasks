@@ -1,11 +1,23 @@
 'use strict';
 
-import { CoreRunner } from './internals/CoreRunner';
+import { Strategy } from './internals/DefaultStrategy';
+
+export type TaskID = number;
+export type Task<T = any> = (done: IDoneFunction<T>) => void;
 export type ITaskReturn<T> = T | void;
 export type IDoneFunction<T = any> = (result?: T) => void;
-export type ITaskFunction<T = any> = (
-    done: IDoneFunction<T>
-) => ITaskReturn<T> | Promise<ITaskReturn<T>>;
+
+export interface ITaskFunction<T = any> {
+    (done: IDoneFunction<T>): ITaskReturn<T> | Promise<ITaskReturn<T>>;
+    meta: {
+        id: TaskID;
+        execution: {
+            start: Date;
+            end: Date | null;
+            time: number;
+        };
+    };
+}
 
 export interface ITasks<T = any> {
     total: number;
@@ -16,10 +28,7 @@ export interface ITasks<T = any> {
 
 export const RemovalMethods = {
     ALL: 'all',
-    SINGULAR_LAST: 'singular-last',
-    SINGULAR_FIRST: 'singular-first',
-    AT_INDEX: 'at-index',
-    RANGE: 'range',
+    BY_ID: 'by-id',
 } as const;
 
 export type IRemovalMethods = typeof RemovalMethods[keyof typeof RemovalMethods];
@@ -57,9 +66,11 @@ export type IOnRun<T = any> = ({
     duration: IDuration;
 }) => void;
 export type IOnDone<T = any> = ({
+    task,
     tasks,
     result,
 }: {
+    task: ITaskFunction<T>;
     tasks: ITasks<T>;
     result?: T;
 }) => void;
@@ -80,39 +91,16 @@ export interface IRunnerEvents<T> {
     onEnd: IOnEnd<T>;
 }
 
-export interface IRunnerDefaultOptions<T> extends IRunnerEvents<T> {
-    strategy?: IStrategy<T>;
+export interface IRunnerDefaultOptions<T, TOptions> extends IRunnerEvents<T> {
+    strategy?: Strategy<T, TOptions>;
     concurrency: number;
     autoStart: boolean;
     name: string | (() => string);
 }
 
-export type IRunnerOptions<T = any, TOptions = Record<string, any>> = {
-    [K in keyof (TOptions & IRunnerDefaultOptions<T>)]: (TOptions &
-        IRunnerDefaultOptions<T>)[K];
+export type IRunnerOptions<T = any, TOptions = any> = {
+    [K in keyof IRunnerDefaultOptions<T, TOptions>]: IRunnerDefaultOptions<
+        T,
+        TOptions
+    >[K];
 };
-
-type IStrategyConfig<TConfig = Record<string | number | symbol, any>> = {
-    [K in keyof TConfig]: TConfig[K];
-};
-
-export type IStrategy<
-    T = any,
-    TOptions = any,
-    TConfig = Record<string, any>
-> = {
-    options?: TOptions;
-    init?(): void;
-    transform?(
-        this: CoreRunner<T, TOptions> & IStrategy<T, TOptions, TConfig>,
-        task: ITaskFunction<T>
-    ): ITaskFunction<T>;
-    getTask(
-        this: CoreRunner<T, TOptions> & IStrategy<T, TOptions, TConfig>
-    ): ITaskFunction<T> | void;
-    execute(
-        this: CoreRunner<T, TOptions> & IStrategy<T, TOptions, TConfig>,
-        task: ITaskFunction<T>,
-        done: IDoneFunction<T>
-    ): void;
-} & IStrategyConfig<TConfig>;

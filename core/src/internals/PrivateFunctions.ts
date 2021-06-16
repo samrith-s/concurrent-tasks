@@ -1,11 +1,6 @@
 'use strict';
 
-import {
-    IDoneFunction,
-    IRemovalMethods,
-    IStrategy,
-    ITaskFunction,
-} from '../Interface';
+import { IDoneFunction, IRemovalMethods, ITaskFunction } from '../Interface';
 import { isFunction } from '../Utils';
 
 import { CoreRunner } from './CoreRunner';
@@ -18,12 +13,7 @@ export function run(this: CoreRunner) {
         this.tasks.list.length &&
         this.tasks.running < this.options.concurrency
     ) {
-        const $this = {
-            ...this,
-            ...this.strategy,
-        } as CoreRunner & IStrategy;
-
-        const task = this.strategy.getTask.call($this);
+        const task = this.strategy.get();
 
         if (task) {
             this.tasks.running++;
@@ -31,7 +21,7 @@ export function run(this: CoreRunner) {
                 const { tasks, duration } = this;
                 this.options.onRun({ task, tasks, duration });
             }
-            this.strategy.execute.call($this, task, done.bind(this));
+            this.strategy.execute(task, done(task).bind(this));
         }
 
         return;
@@ -65,18 +55,27 @@ export function runPending(this: CoreRunner) {
  * The done function marks a task as done, and frees a slot in the queue, subsequently calling `run` to fill that slot up.
  * @param result - The result of the task which can be accessed in `onDone`.
  */
-const done: IDoneFunction = function done(this: CoreRunner, result) {
-    this.tasks.completed++;
-    this.tasks.running--;
-    this.duration.total = Date.now() - (this.duration.start?.valueOf() ?? 0);
-    if (isFunction(this.options.onDone)) {
-        const { tasks } = this;
-        this.options.onDone({ tasks, result });
-    }
+const done = function done(task: ITaskFunction): IDoneFunction {
+    return function DoneInternal(this: CoreRunner, result) {
+        this.tasks.completed++;
+        this.tasks.running--;
+        this.duration.total =
+            Date.now() - (this.duration.start?.valueOf() ?? 0);
 
-    if (!this.__destroyed) {
-        run.call(this);
-    }
+        const endDate = new Date();
+        task.meta.execution.end = endDate;
+        task.meta.execution.time =
+            endDate.valueOf() - task.meta.execution.start.valueOf();
+
+        if (isFunction(this.options.onDone)) {
+            const { tasks } = this;
+            this.options.onDone({ task, tasks, result });
+        }
+
+        if (!this.__destroyed) {
+            run.call(this);
+        }
+    };
 };
 
 /**
