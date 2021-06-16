@@ -1,35 +1,31 @@
-import {
-    IRunnerOptions,
-    ITaskFunction,
-    TaskRunner,
-} from '@concurrent-tasks/core';
 import { assert } from 'chai';
 
-export function createRunner(options?: Partial<IRunnerOptions<number>>) {
+import { Strategy, Task, TaskRunner } from './core/src';
+
+export function runTest<TOptions = any>(
+    done: Mocha.Done,
+    options: {
+        tasks: Task<number>[];
+        expected?: number[];
+        strategy?: Strategy<number, TOptions>;
+    } = {
+        tasks: [],
+    }
+) {
     const results: number[] = [];
+    const expected = options.expected ?? [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     const runner = new TaskRunner<number>({
         ...options,
+        onEnd() {
+            checkResults(results, expected);
+            done();
+        },
         onDone({ result }) {
             results.push(result as number);
         },
     });
-    runner.addMultiple(generateTasks());
-    const expected = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-    return { runner, results, expected };
-}
-
-export function generateTasks(count = 10, timeout = 500) {
-    const tasks: ITaskFunction[] = [];
-
-    for (let i = 0; i < count; i++) {
-        tasks.push(function (done) {
-            setTimeout(() => {
-                done(i);
-            }, timeout);
-        });
-    }
-
-    return tasks;
+    runner.addMultiple(options.tasks);
+    runner.start();
 }
 
 export function checkResults(results: number[], value: number[]) {
