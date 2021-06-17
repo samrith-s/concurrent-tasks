@@ -1,13 +1,13 @@
 import { assert } from 'chai';
 
-import { Strategy, Task, TaskRunner } from './core/src';
+import { CT, TaskRunner } from './core/src';
 
 export function runTest<TOptions = any>(
     done: Mocha.Done,
     options: {
-        tasks: Task<number>[];
+        tasks: CT.Task<number>[];
         expected?: number[];
-        strategy?: Strategy<number, TOptions>;
+        strategy?: CT.Strategy<number, TOptions>;
     } = {
         tasks: [],
     }

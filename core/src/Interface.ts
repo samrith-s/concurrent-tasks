@@ -3,12 +3,12 @@
 import { Strategy } from './internals/DefaultStrategy';
 
 export type TaskID = number;
-export type Task<T = any> = (done: IDoneFunction<T>) => void;
-export type ITaskReturn<T> = T | void;
-export type IDoneFunction<T = any> = (result?: T) => void;
+export type Done<T = any> = (result?: T) => void;
+export type Task<T = any> = (done: Done<T>) => void;
+export type TaskReturn<T> = T | void;
 
-export interface ITaskFunction<T = any> {
-    (done: IDoneFunction<T>): ITaskReturn<T> | Promise<ITaskReturn<T>>;
+export interface TaskWithMeta<T = any> {
+    (done: Done<T>): TaskReturn<T> | Promise<TaskReturn<T>>;
     meta: {
         id: TaskID;
         execution: {
@@ -19,11 +19,11 @@ export interface ITaskFunction<T = any> {
     };
 }
 
-export interface ITasks<T = any> {
+export interface TasksDescriptor<T = any> {
     total: number;
     completed: number;
     running: number;
-    list: ITaskFunction<T>[];
+    list: TaskWithMeta<T>[];
 }
 
 export const RemovalMethods = {
@@ -31,75 +31,75 @@ export const RemovalMethods = {
     BY_ID: 'by-id',
 } as const;
 
-export type IRemovalMethods = typeof RemovalMethods[keyof typeof RemovalMethods];
+export type RemovalMethods = typeof RemovalMethods[keyof typeof RemovalMethods];
 
-export interface IDuration {
+export interface Duration {
     start?: Date;
     end?: Date;
     total?: number;
 }
 
-export type IOnStart<T = any> = ({
+export type OnStart<T = any> = ({
     tasks,
     duration,
 }: {
-    tasks: ITasks<T>;
-    duration: IDuration;
+    tasks: TasksDescriptor<T>;
+    duration: Duration;
 }) => void;
-export type IOnAdd<T = any> = ({ tasks }: { tasks: ITasks<T> }) => void;
-export type IOnRemove<T = any> = ({
+export type OnAdd<T = any> = ({ tasks }: { tasks: TasksDescriptor<T> }) => void;
+export type OnRemove<T = any> = ({
     tasks,
     method,
     removedTasks,
 }: {
-    tasks: ITasks<T>;
-    method: IRemovalMethods;
-    removedTasks: ITaskFunction<T>[];
+    tasks: TasksDescriptor<T>;
+    method: RemovalMethods;
+    removedTasks: TaskWithMeta<T>[];
 }) => void;
-export type IOnRun<T = any> = ({
+export type OnRun<T = any> = ({
     task,
     tasks,
     duration,
 }: {
-    task: ITaskFunction<T>;
-    tasks: ITasks<T>;
-    duration: IDuration;
+    task: TaskWithMeta<T>;
+    tasks: TasksDescriptor<T>;
+    duration: Duration;
 }) => void;
-export type IOnDone<T = any> = ({
+export type OnDone<T = any> = ({
     task,
     tasks,
     result,
 }: {
-    task: ITaskFunction<T>;
-    tasks: ITasks<T>;
+    task: TaskWithMeta<T>;
+    tasks: TasksDescriptor<T>;
     result?: T;
 }) => void;
-export type IOnEnd<T = any> = ({
+export type OnEnd<T = any> = ({
     tasks,
     duration,
 }: {
-    tasks: ITasks<T>;
-    duration: IDuration;
+    tasks: TasksDescriptor<T>;
+    duration: Duration;
 }) => void;
 
-export interface IRunnerEvents<T> {
-    onStart: IOnStart<T>;
-    onAdd: IOnAdd<T>;
-    onRemove: IOnRemove<T>;
-    onRun: IOnRun<T>;
-    onDone: IOnDone<T>;
-    onEnd: IOnEnd<T>;
+export interface RunnerEvents<T> {
+    onStart: OnStart<T>;
+    onAdd: OnAdd<T>;
+    onRemove: OnRemove<T>;
+    onRun: OnRun<T>;
+    onDone: OnDone<T>;
+    onEnd: OnEnd<T>;
 }
 
-export interface IRunnerDefaultOptions<T, TOptions> extends IRunnerEvents<T> {
+export interface RunnerDefaultOptions<T, TOptions> extends RunnerEvents<T> {
     strategy?: Strategy<T, TOptions>;
     concurrency: number;
     autoStart: boolean;
     name: string | (() => string);
 }
 
-export type IRunnerOptions<T = any, TOptions = any> = {
-    [K in keyof IRunnerDefaultOptions<T, TOptions>]: IRunnerDefaultOptions<
+export type RunnerOptions<T = any, TOptions = any> = {
+    [K in keyof RunnerDefaultOptions<T, TOptions>]: RunnerDefaultOptions<
         T,
         TOptions
     >[K];

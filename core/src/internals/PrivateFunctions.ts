@@ -1,6 +1,6 @@
 'use strict';
 
-import { IDoneFunction, IRemovalMethods, ITaskFunction } from '../Interface';
+import { Done, TaskWithMeta, RemovalMethods } from '../Interface';
 import { isFunction } from '../Utils';
 
 import { CoreRunner } from './CoreRunner';
@@ -55,7 +55,7 @@ export function runPending(this: CoreRunner) {
  * The done function marks a task as done, and frees a slot in the queue, subsequently calling `run` to fill that slot up.
  * @param result - The result of the task which can be accessed in `onDone`.
  */
-const done = function done(task: ITaskFunction): IDoneFunction {
+const done = function done(task: TaskWithMeta): Done {
     return function DoneInternal(this: CoreRunner, result) {
         this.tasks.completed++;
         this.tasks.running--;
@@ -107,8 +107,8 @@ export function addCheck(this: CoreRunner) {
  */
 export function removeCheck(
     this: CoreRunner,
-    method: IRemovalMethods,
-    removedTasks: ITaskFunction[]
+    method: RemovalMethods,
+    removedTasks: TaskWithMeta[]
 ) {
     if (isFunction(this.options.onRemove)) {
         const { tasks } = this;

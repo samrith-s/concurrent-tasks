@@ -1,6 +1,6 @@
 'use strict';
 
-import { IRunnerOptions } from '../Interface';
+import { RunnerOptions } from '../Interface';
 import { noop } from '../Utils';
 
 export function DefaultOptions<T, TOptions>(name: string) {
@@ -14,5 +14,5 @@ export function DefaultOptions<T, TOptions>(name: string) {
         onDone: noop,
         onEnd: noop,
         onRemove: noop,
-    } as unknown) as IRunnerOptions<T, TOptions>;
+    } as unknown) as RunnerOptions<T, TOptions>;
 }

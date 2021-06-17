@@ -1,19 +1,19 @@
 'use strict';
 
 import {
-    IRunnerOptions,
-    ITaskFunction,
-    ITasks,
-    IDuration,
-    RemovalMethods,
-    IOnAdd,
-    IOnStart,
-    IOnRun,
-    IOnRemove,
-    IOnDone,
-    IOnEnd,
-    TaskID,
+    RunnerOptions,
+    TasksDescriptor,
+    Duration,
+    OnStart,
+    OnAdd,
+    OnRemove,
+    OnRun,
+    OnDone,
+    OnEnd,
     Task,
+    TaskWithMeta,
+    TaskID,
+    RemovalMethods,
 } from '../Interface';
 import { noop } from '../Utils';
 
@@ -36,16 +36,16 @@ export class CoreRunner<T = any, TOptions = any> {
     protected __destroyed = false;
     protected __paused = false;
 
-    public readonly options: IRunnerOptions<T, TOptions>;
+    public readonly options: RunnerOptions<T, TOptions>;
 
-    public tasks: ITasks<T> = {
+    public tasks: TasksDescriptor<T> = {
         total: 0,
         completed: 0,
         running: 0,
         list: [],
     };
 
-    public duration: IDuration = {
+    public duration: Duration = {
         total: 0,
     };
 
@@ -53,7 +53,7 @@ export class CoreRunner<T = any, TOptions = any> {
 
     constructor(
         strategy: Strategy<T, TOptions>,
-        options?: Partial<IRunnerOptions<T, TOptions>>
+        options?: Partial<RunnerOptions<T, TOptions>>
     ) {
         this.options = {
             ...DefaultOptions<T, TOptions>(
@@ -100,12 +100,12 @@ export class CoreRunner<T = any, TOptions = any> {
         return true;
     }
 
-    public on(event: 'start', callback: IOnStart<T>): void;
-    public on(event: 'add', callback: IOnAdd<T>): void;
-    public on(event: 'remove', callback: IOnRemove<T>): void;
-    public on(event: 'run', callback: IOnRun<T>): void;
-    public on(event: 'done', callback: IOnDone<T>): void;
-    public on(event: 'end', callback: IOnEnd<T>): void;
+    public on(event: 'start', callback: OnStart<T>): void;
+    public on(event: 'add', callback: OnAdd<T>): void;
+    public on(event: 'remove', callback: OnRemove<T>): void;
+    public on(event: 'run', callback: OnRun<T>): void;
+    public on(event: 'done', callback: OnDone<T>): void;
+    public on(event: 'end', callback: OnEnd<T>): void;
     public on(event: string, callback: any): void {
         const newEvent = `on${event.charAt(0).toUpperCase() + event.substr(1)}`;
         (this.options as any)[newEvent] = callback;
@@ -118,8 +118,8 @@ export class CoreRunner<T = any, TOptions = any> {
         (this.options as any)[newEvent] = noop;
     }
 
-    public add(task: Task<T>): ITaskFunction<T> {
-        const newTask = task as ITaskFunction<T>;
+    public add(task: Task<T>): TaskWithMeta<T> {
+        const newTask = task as TaskWithMeta<T>;
         newTask.meta = {
             id: ++this.taskIds,
             execution: {
@@ -129,9 +129,7 @@ export class CoreRunner<T = any, TOptions = any> {
             },
         };
 
-        const transformedTask = this.strategy.transform(
-            newTask as ITaskFunction<T>
-        );
+        const transformedTask = this.strategy.transform(newTask);
 
         this.tasks.list.push(transformedTask);
         this.tasks.total++;
@@ -144,11 +142,11 @@ export class CoreRunner<T = any, TOptions = any> {
         return newTask;
     }
 
-    public addMultiple(tasks: Task<T>[]): ITaskFunction<T>[] {
+    public addMultiple(tasks: Task<T>[]): TaskWithMeta<T>[] {
         return tasks.map((task) => this.add(task));
     }
 
-    public remove(id: TaskID): ITaskFunction<T> | void {
+    public remove(id: TaskID): TaskWithMeta<T> | void {
         const taskIndex = this.tasks.list.findIndex(
             (task) => task.meta.id === id
         );
@@ -164,7 +162,7 @@ export class CoreRunner<T = any, TOptions = any> {
         return void 0;
     }
 
-    public removeAll(): ITaskFunction<T>[] {
+    public removeAll(): TaskWithMeta<T>[] {
         const tasks = this.tasks.list.slice();
         this.tasks.list = [];
         this.tasks.total = this.tasks.completed;
