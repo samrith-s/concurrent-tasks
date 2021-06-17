@@ -1,16 +1,15 @@
 'use strict';
 
-import { Strategy, Task } from '@concurrent-tasks/core';
-import { StrategyGet, StrategyInit, StrategyTransform } from '../../../core/dist/types/internals/DefaultStrategy';
+import { CT } from '@concurrent-tasks/core';
 
 import { PriorityTask, StrategyPriorityOptions } from './Interface';
 
-export function priorityTask<T = any>(task: Task<T>, priority: number) {
+export function priorityTask<T = any>(task: CT.Task<T>, priority: number) {
     (task as PriorityTask<T>).__priority = priority;
     return task;
 }
 
-export class StrategyPriority<T = any> extends Strategy<
+export class StrategyPriority<T = any> extends CT.Strategy<
     T,
     StrategyPriorityOptions
 > {
@@ -27,7 +26,7 @@ export class StrategyPriority<T = any> extends Strategy<
     currentPriority = 0;
     count = 0;
 
-    init: StrategyInit = () => {
+    init: CT.StrategyInit = () => {
         this.taskIds = new Array(this.config.totalPriorities)
             .fill(0)
             .reduce((acc) => {
@@ -36,7 +35,7 @@ export class StrategyPriority<T = any> extends Strategy<
             }, []);
     };
 
-    transform: StrategyTransform<T> = (task) => {
+    transform: CT.StrategyTransform<T> = (task) => {
         const { totalPriorities } = this.config;
         let priority = (task as PriorityTask).__priority;
 
@@ -59,7 +58,7 @@ export class StrategyPriority<T = any> extends Strategy<
         return task;
     };
 
-    get: StrategyGet<T> = () => {
+    get: CT.StrategyGet<T> = () => {
         const id = this.taskIds[this.currentPriority].shift() as number;
 
         if (id) {

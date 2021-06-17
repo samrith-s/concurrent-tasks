@@ -1,11 +1,11 @@
 'use strict';
 
-import { ITaskFunction } from '@concurrent-tasks/core';
+import { CT } from '@concurrent-tasks/core';
 
 export interface StrategyPriorityOptions {
     totalPriorities: number;
 }
 
-export interface PriorityTask<T = any> extends ITaskFunction<T> {
+export interface PriorityTask<T = any> extends CT.TaskWithMeta<T> {
     __priority: number;
 }
