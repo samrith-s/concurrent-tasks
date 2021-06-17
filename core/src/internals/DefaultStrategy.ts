@@ -4,6 +4,11 @@ import { IDoneFunction, ITaskFunction } from '../Interface';
 
 import { CoreRunner } from './CoreRunner';
 
+export type StrategyInit = () => void;
+export type StrategyTransform<T = any> = (task: ITaskFunction<T>) => ITaskFunction<T>
+export type StrategyGet<T = any> = () => ITaskFunction<T> | undefined | void;
+export type StrategyExecute<T = any> = (task: ITaskFunction<T>, done: IDoneFunction<T>) => void;
+
 export class Strategy<T = any, TOptions = Record<string, any>> {
     constructor(defaultConfig: TOptions, config: Partial<TOptions> = {}) {
         this.config = {
@@ -16,16 +21,16 @@ export class Strategy<T = any, TOptions = Record<string, any>> {
         CoreRunner<T, TOptions>,
         '__working' | '__destroyed' | '__paused'
     >;
-    get(): ITaskFunction<T> | undefined | void {
+    get: StrategyGet<T> = () =>  {
         return this.instance.tasks.list.shift();
     }
-    execute(task: ITaskFunction<T>, done: IDoneFunction<T>): void {
+    execute: StrategyExecute<T> = (task, done) => {
         task(done);
     }
-    init(): void {
+    init: StrategyInit = () => {
         return;
     }
-    transform(task: ITaskFunction<T>): ITaskFunction<T> {
+    transform: StrategyTransform<T> = (task) => {
         return task;
     }
 }

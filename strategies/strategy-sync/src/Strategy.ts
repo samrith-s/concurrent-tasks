@@ -1,6 +1,6 @@
 'use strict';
 
-import { Strategy } from '@concurrent-tasks/core';
+import { Strategy, StrategyExecute } from '@concurrent-tasks/core';
 
 import { StrategySyncOptions } from './Interface';
 
@@ -18,7 +18,7 @@ export class StrategySync<T = any> extends Strategy<T, StrategySyncOptions> {
         );
     }
 
-    execute: Strategy<T>['execute'] = async (task, done) => {
+    execute: StrategyExecute<T> = async (task, done) => {
         const { passResultToDone, passErrorToDone, logError } = this.config;
 
         try {

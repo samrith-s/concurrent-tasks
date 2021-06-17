@@ -1,6 +1,7 @@
 'use strict';
 
 import { Strategy, Task } from '@concurrent-tasks/core';
+import { StrategyGet, StrategyInit, StrategyTransform } from '../../../core/dist/types/internals/DefaultStrategy';
 
 import { PriorityTask, StrategyPriorityOptions } from './Interface';
 
@@ -26,7 +27,7 @@ export class StrategyPriority<T = any> extends Strategy<
     currentPriority = 0;
     count = 0;
 
-    init: Strategy<T>['init'] = () => {
+    init: StrategyInit = () => {
         this.taskIds = new Array(this.config.totalPriorities)
             .fill(0)
             .reduce((acc) => {
@@ -35,7 +36,7 @@ export class StrategyPriority<T = any> extends Strategy<
             }, []);
     };
 
-    transform: Strategy<T>['transform'] = (task) => {
+    transform: StrategyTransform<T> = (task) => {
         const { totalPriorities } = this.config;
         let priority = (task as PriorityTask).__priority;
 
@@ -58,7 +59,7 @@ export class StrategyPriority<T = any> extends Strategy<
         return task;
     };
 
-    get: Strategy<T>['get'] = () => {
+    get: StrategyGet<T> = () => {
         const id = this.taskIds[this.currentPriority].shift() as number;
 
         if (id) {
