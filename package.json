@@ -9,6 +9,7 @@
         "strategies/*"
     ],
     "scripts": {
+        "postinstall": "husky install",
         "dev:core": "scripts/core/dev-core.sh",
         "dev:strategy": "scripts/strategies/dev-strategy.sh",
         "build:core": "scripts/core/build-core.sh",
