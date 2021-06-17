@@ -1,12 +1,12 @@
 'use strict';
 
-import { Strategy, StrategyExecute } from '@concurrent-tasks/core';
+import { CT } from '@concurrent-tasks/core';
 
 import { StrategySyncOptions } from './Interface';
 
 const dummyDone = () => void 0;
 
-export class StrategySync<T = any> extends Strategy<T, StrategySyncOptions> {
+export class StrategySync<T = any> extends CT.Strategy<T, StrategySyncOptions> {
     constructor(config?: Partial<StrategySyncOptions>) {
         super(
             {
@@ -18,7 +18,7 @@ export class StrategySync<T = any> extends Strategy<T, StrategySyncOptions> {
         );
     }
 
-    execute: StrategyExecute<T> = async (task, done) => {
+    execute: CT.StrategyExecute<T> = async (task, done) => {
         const { passResultToDone, passErrorToDone, logError } = this.config;
 
         try {
