@@ -6,6 +6,7 @@ umd/
 dist/
 dev-dist/
 .cache/
+html/
 npm-debug.log*
 *.log
 .DS_Store
