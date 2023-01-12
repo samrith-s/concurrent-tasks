@@ -1,7 +1,5 @@
 type IUtil = (item: any) => boolean;
 
-export const noop = () => void 0;
-
 export const isFunction: IUtil = (item) => typeof item === "function";
 export const isNumber: IUtil = (item) => typeof item === "number" && !isNaN(item);
 export const isString: IUtil = (item) => typeof item === "string";

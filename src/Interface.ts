@@ -27,7 +27,7 @@ export const RemovalMethods = {
   BY_ID: "by-id",
 } as const;
 
-export type RemovalMethods = typeof RemovalMethods[keyof typeof RemovalMethods];
+export type RemovalMethods = (typeof RemovalMethods)[keyof typeof RemovalMethods];
 
 export interface Duration {
   start?: Date;
@@ -86,6 +86,8 @@ export enum RunnerEvents {
   DONE = "done",
   END = "end",
 }
+
+export const RunnerEventValues = Object.values(RunnerEvents);
 
 export interface RunnerHooks<T> {
   onStart: OnStart<T>;

@@ -17,13 +17,20 @@ export abstract class CoreMethods<T = any> extends Core<T> {
 
       if (task) {
         this.tasks.running++;
+        const done = this.done(task);
+        task(done);
+
+        this.setWorking(true);
+
         if (isFunction(this.options.onRun)) {
           const { tasks, duration } = this;
           this.options.onRun({ task, tasks, duration });
         }
+
+        return true
       }
 
-      return;
+      return false;
     }
 
     if (this.tasks.completed === this.tasks.total) {
@@ -38,6 +45,8 @@ export abstract class CoreMethods<T = any> extends Core<T> {
         this.options.onEnd({ tasks, duration });
       }
     }
+
+    return false;
   }
 
   /**
@@ -57,8 +66,8 @@ export abstract class CoreMethods<T = any> extends Core<T> {
    *
    * @param result - The result of the task which can be accessed in `onDone`.
    */
-  protected done<R = any>(task: TaskWithMeta): Done<R> {
-    const internal = function DoneInternal(this: CoreMethods, result: R) {
+  protected done(task: TaskWithMeta): Done<T> {
+    return ((result: T) => {
       this.tasks.completed++;
       this.tasks.running--;
       this.duration.total = Date.now() - (this.duration.start?.valueOf() ?? 0);
@@ -75,9 +84,7 @@ export abstract class CoreMethods<T = any> extends Core<T> {
       if (!this.__destroyed) {
         this.run();
       }
-    };
-
-    return internal as Done<R>;
+    }) as unknown as Done<T>;
   }
 
   /**

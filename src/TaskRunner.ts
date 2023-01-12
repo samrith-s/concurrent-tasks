@@ -13,8 +13,9 @@ import {
   TaskID,
   RemovalMethods,
   RunnerEvents,
+  RunnerEventValues,
+  TasksDescriptor,
 } from "./Interface";
-import { noop } from "./Utils";
 
 export class TaskRunner<T = any> extends CoreMethods<T> {
   static runnerCount = 0;
@@ -27,15 +28,11 @@ export class TaskRunner<T = any> extends CoreMethods<T> {
     };
   }
 
-  protected setWorking(working: boolean) {
-    this.__working = working;
+  public get allTasks(): TasksDescriptor["list"] {
+    return this.tasks.list;
   }
 
-  protected setDestroyed(destroyed: boolean) {
-    this.__destroyed = destroyed;
-  }
-
-  public isBusy(): boolean {
+  public get busy(): boolean {
     return this.__working;
   }
 
@@ -44,36 +41,42 @@ export class TaskRunner<T = any> extends CoreMethods<T> {
       return false;
     }
 
-    if (this.options.autoStart) {
-      return false;
-    }
-
     this.startCheck();
     this.runPending();
+
     return true;
   }
 
   public destroy(): boolean {
-    this.__destroyed = true;
-    this.__working = false;
+    this.setDestroyed(true);
 
     return true;
   }
 
-  public on(event: RunnerEvents.START, callback: OnStart<T>): void;
-  public on(event: RunnerEvents.ADD, callback: OnAdd<T>): void;
-  public on(event: RunnerEvents.REMOVE, callback: OnRemove<T>): void;
-  public on(event: RunnerEvents.RUN, callback: OnRun<T>): void;
-  public on(event: RunnerEvents.DONE, callback: OnDone<T>): void;
-  public on(event: RunnerEvents.DONE, callback: OnEnd<T>): void;
-  public on(event: string, callback: any): void {
-    const newEvent = `on${event.charAt(0).toUpperCase() + event.substring(1)}`;
-    (this.options as any)[newEvent] = callback;
+  public on(event: RunnerEvents.START, callback: OnStart<T>): boolean;
+  public on(event: RunnerEvents.ADD, callback: OnAdd<T>): boolean;
+  public on(event: RunnerEvents.REMOVE, callback: OnRemove<T>): boolean;
+  public on(event: RunnerEvents.RUN, callback: OnRun<T>): boolean;
+  public on(event: RunnerEvents.DONE, callback: OnDone<T>): boolean;
+  public on(event: RunnerEvents.END, callback: OnEnd<T>): boolean;
+  public on(event: RunnerEvents, callback: any): boolean {
+    if (RunnerEventValues.includes(event)) {
+      const newEvent = `on${event.charAt(0).toUpperCase() + event.substring(1)}`;
+      (this.options as any)[newEvent] = callback;
+      return true;
+    }
+
+    return false;
   }
 
-  public off(event: RunnerEvents): void {
-    const newEvent = `on${event.charAt(0).toUpperCase() + event.substring(1)}`;
-    (this.options as any)[newEvent] = noop;
+  public off(event: RunnerEvents): boolean {
+    if (RunnerEventValues.includes(event)) {
+      const newEvent = `on${event.charAt(0).toUpperCase() + event.substring(1)}`;
+      (this.options as any)[newEvent] = undefined;
+      return true;
+    }
+
+    return false;
   }
 
   public add(task: Task<T>): TaskWithMeta<T> {
@@ -110,10 +113,12 @@ export class TaskRunner<T = any> extends CoreMethods<T> {
       --this.tasks.total;
 
       this.removeCheck(RemovalMethods.BY_ID, task ? [task] : []);
+
+      if (this.tasks.list.length) {
+        this.setWorking(false);
+      }
       return task;
     }
-
-    return void 0;
   }
 
   public removeAll(): TaskWithMeta<T>[] {
@@ -121,6 +126,18 @@ export class TaskRunner<T = any> extends CoreMethods<T> {
     this.tasks.list = [];
     this.tasks.total = this.tasks.completed;
     this.removeCheck(RemovalMethods.ALL, tasks);
+    this.setWorking(false);
     return tasks;
+  }
+
+  public setOptions(options?: Partial<RunnerOptions<T>>) {
+    this.options = {
+      ...this.options,
+      ...options,
+    };
+
+    if (options?.autoStart) {
+      this.startCheckAndRunPending();
+    }
   }
 }
