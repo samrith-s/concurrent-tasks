@@ -3,7 +3,7 @@
   "exclude": ["node_modules", "rollup.config.js", "commitlint.config.js"],
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "esnext",
+    "module": "commonjs",
     "target": "ES5",
     "lib": ["esnext"],
     "importHelpers": false,
