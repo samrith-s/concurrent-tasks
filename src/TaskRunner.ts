@@ -76,7 +76,6 @@ export class TaskRunner<T = any> {
   private done(task: Task<T>) {
     return ((result: T) => {
       task.status = TaskStatus.DONE;
-      task.done();
 
       this.tasks.completed++;
       this.concurrency.used--;
@@ -108,8 +107,7 @@ export class TaskRunner<T = any> {
         this.__busy = true;
       } else {
         this.duration.end = Date.now();
-        this.duration.total = this.duration.end - this.duration.start;
-
+        this.duration.total = Math.ceil(this.duration.end - this.duration.start);
         this.onEnd?.({ tasks: this.tasks, duration: this.duration });
 
         this.__busy = false;
@@ -125,7 +123,9 @@ export class TaskRunner<T = any> {
     (this as any)[event] = undefined;
   }
 
-  public setOptions(options: Partial<RunnerOptions<T>>): RunnerOptions<T> {
+  public setOptions(
+    options: Partial<Omit<RunnerOptions<T>, keyof RunnerHooks<T>>>
+  ): RunnerOptions<T> {
     this.options = {
       ...this.options,
       ...options,
@@ -136,6 +136,12 @@ export class TaskRunner<T = any> {
     }
 
     return this.options;
+  }
+
+  public setHooks(hooks: Partial<RunnerHooks<T>>) {
+    Object.entries(hooks).forEach(([key, fn]) => {
+      (this as any)[key] = fn;
+    });
   }
 
   public start(): boolean {
@@ -165,6 +171,7 @@ export class TaskRunner<T = any> {
 
     this.onAdd?.({ tasks: this.tasks });
 
+    /* istanbul ignore next */
     if (!multiple && this.autoStart && !this.__busy) {
       this.start();
     }
