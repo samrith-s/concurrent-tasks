@@ -1,10 +1,9 @@
 ---
-name: 'Issue: Help Request'
-about: Any help requests for the community to fulfill
+name: "Issue: Help Request"
+about: Any help requests for the community to fulfil
 title: "[Help]"
 labels: help wanted
-assignees: ''
-
+assignees: ""
 ---
 
 **What help is needed?**
