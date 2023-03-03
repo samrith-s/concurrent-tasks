@@ -9,12 +9,6 @@ export type TaskWithDone<T = any> = (
   id: TaskID
 ) => TaskReturn<T> | Promise<TaskReturn<T>>;
 
-export type TaskExecution = {
-  start: number | null;
-  end: number | null;
-  time: number;
-};
-
 export type TasksDescriptor<T = any> = {
   total: number;
   completed: number;

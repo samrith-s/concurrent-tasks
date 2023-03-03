@@ -1,13 +1,7 @@
-import { TaskWithDone, TaskExecution, TaskID, TaskStatus, Done } from "./Interface";
+import { TaskWithDone, TaskID, TaskStatus, Done } from "./Interface";
 
 export class Task<T = any> {
   private task: TaskWithDone<T>;
-
-  private execution: TaskExecution = {
-    start: null,
-    end: null,
-    time: 0,
-  };
 
   private _id: TaskID;
   private _status: TaskStatus = TaskStatus.PENDING;
@@ -18,13 +12,7 @@ export class Task<T = any> {
   }
 
   public run(done: Done<T>) {
-    this.execution.start = Date.now();
     this.task(done, this.id);
-  }
-
-  public done() {
-    this.execution.end = Date.now();
-    this.execution.time = this.execution.end - (this.execution.start ?? 0);
   }
 
   get id() {
