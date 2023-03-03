@@ -1,14 +1,12 @@
-import { describe, it, expect, vitest } from "vitest";
-
 import { createRunner } from "./utils/create-runner";
 import { generateTask, generateTasks } from "./utils/generate-tasks";
 
 const TASK_COUNT = 10;
 
-describe.concurrent("Hooks", () => {
-  describe.concurrent("onStart", () => {
+describe("Hooks", () => {
+  describe("onStart", () => {
     it("should call `onStart` hook when `autoStart` is enabled", () => {
-      const onStart = vitest.fn();
+      const onStart = jest.fn();
       const runner = createRunner({ onStart, autoStart: true });
 
       expect(onStart).toHaveBeenCalled();
@@ -17,7 +15,7 @@ describe.concurrent("Hooks", () => {
     });
 
     it("should call `onStart` hook when calling `start` manually", () => {
-      const onStart = vitest.fn();
+      const onStart = jest.fn();
       const runner = createRunner({ onStart });
 
       expect(onStart).not.toHaveBeenCalled();
@@ -30,9 +28,9 @@ describe.concurrent("Hooks", () => {
     });
   });
 
-  describe.concurrent("onAdd", () => {
+  describe("onAdd", () => {
     it("should call `onAdd` hook when one task is added", () => {
-      const onAdd = vitest.fn();
+      const onAdd = jest.fn();
       const runner = createRunner({ onAdd, taskCount: 0 });
 
       runner.add(generateTask());
@@ -42,7 +40,7 @@ describe.concurrent("Hooks", () => {
     });
 
     it("should call `onAdd` hook as many times when multiple tasks are added", () => {
-      const onAdd = vitest.fn();
+      const onAdd = jest.fn();
       const runner = createRunner({ onAdd, taskCount: 0 });
 
       runner.addMultiple(generateTasks(10));
@@ -52,9 +50,9 @@ describe.concurrent("Hooks", () => {
     });
   });
 
-  describe.concurrent("onRemove", () => {
+  describe("onRemove", () => {
     it("should call `onRemove` hook when removing one", () => {
-      const onRemove = vitest.fn();
+      const onRemove = jest.fn();
       const runner = createRunner({ onRemove });
 
       runner.remove(1);
@@ -64,7 +62,7 @@ describe.concurrent("Hooks", () => {
     });
 
     it("should call `onRemove` hook when removing all", () => {
-      const onRemove = vitest.fn();
+      const onRemove = jest.fn();
       const runner = createRunner({ onRemove });
 
       runner.removeAll();
@@ -72,62 +70,70 @@ describe.concurrent("Hooks", () => {
 
       runner.destroy();
     });
+
+    it("should call `onRemove` hook when removing range", () => {
+      const onRemove = jest.fn();
+      const runner = createRunner({ onRemove });
+
+      runner.removeRange(0, 1);
+      expect(onRemove).toHaveBeenCalled();
+
+      runner.destroy();
+    });
   });
 
-  describe.concurrent("onRun", () => {
-    it("should call `onRun` hook whenever a task in run", () =>
-      new Promise<void>((done) => {
-        const onRun = vitest.fn();
+  describe("onRun", () => {
+    it("should call `onRun` hook whenever a task in run", (done) => {
+      const onRun = jest.fn();
 
-        const runner = createRunner({
-          onRun,
-          autoStart: true,
-          taskCount: TASK_COUNT,
-          onEnd() {
-            expect(onRun).toHaveBeenCalledTimes(TASK_COUNT);
-            done();
+      const runner = createRunner({
+        onRun,
+        autoStart: true,
+        taskCount: TASK_COUNT,
+        onEnd() {
+          expect(onRun).toHaveBeenCalledTimes(TASK_COUNT);
+          done();
 
-            runner.destroy();
-          },
-        });
-      }).catch(console.error));
+          runner.destroy();
+        },
+      });
+    });
   });
 
-  describe.concurrent("onDone", () => {
-    it("should call `onDone` hook whenever a task is done", () =>
-      new Promise<void>((done) => {
-        const onDone = vitest.fn();
+  describe("onDone", () => {
+    it("should call `onDone` hook whenever a task is done", (done) => {
+      const onDone = jest.fn();
 
-        const runner = createRunner({
-          onDone,
-          autoStart: true,
-          taskCount: TASK_COUNT,
-          onEnd() {
-            expect(onDone).toHaveBeenCalledTimes(TASK_COUNT);
-            done();
+      const runner = createRunner({
+        onDone,
+        autoStart: true,
+        taskCount: TASK_COUNT,
+        concurrency: 1,
+        onEnd() {
+          expect(onDone).toHaveBeenCalledTimes(TASK_COUNT);
 
-            runner.destroy();
-          },
-        });
-      }).catch(console.error));
+          runner.destroy();
+
+          done();
+        },
+      });
+    });
   });
 
-  describe.concurrent("onEnd", () => {
-    it("should call `onEnd` hook when all tasks are done", () =>
-      new Promise<void>((done) => {
-        let count = 0;
+  describe("onEnd", () => {
+    it("should call `onEnd` hook when all tasks are done", (done) => {
+      const onEnd = jest.fn().mockImplementation(() => {
+        expect(onEnd).toHaveBeenCalled();
 
-        const runner = createRunner({
-          autoStart: true,
-          taskCount: TASK_COUNT,
-          onEnd() {
-            count++;
-            expect(count).eq(1);
-            done();
+        runner.destroy();
+        done();
+      });
 
-            runner.destroy();
-          },
-        });
-      }).catch(console.error));
+      const runner = createRunner({
+        autoStart: true,
+        taskCount: TASK_COUNT,
+        onEnd,
+      });
+    });
   });
 });

@@ -1,4 +1,4 @@
-import { CT, TaskRunner } from "src";
+import { CT, TaskRunner } from "../../src";
 
 import { generateTasks } from "./generate-tasks";
 

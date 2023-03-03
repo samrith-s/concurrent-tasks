@@ -1,4 +1,4 @@
-import { CT } from "src";
+import { CT } from "../../src";
 
 export function generateTask(result = -1, timeout = 5) {
   return (done: CT.Done<number>) => {
