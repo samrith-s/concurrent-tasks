@@ -9,7 +9,7 @@ import terser from "@rollup/plugin-terser";
 import builtins from "builtin-modules";
 import typescript from "rollup-plugin-typescript2";
 
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = process.env.NODE_ENV === "development";
 
 const pkg = require(path.resolve("package.json"));
 

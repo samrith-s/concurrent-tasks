@@ -1,13 +1,14 @@
 {
-  "include": ["src/**/*.ts", "tests/**/*.ts"],
-  "exclude": ["node_modules", "rollup.config.js", "commitlint.config.js"],
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "rollup.config.js", "commitlint.config.js", "tests/**/*.ts"],
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "commonjs",
+    "module": "ES2015",
     "target": "ES5",
     "lib": ["esnext"],
     "importHelpers": false,
     "declaration": true,
+    "declarationDir": "lib/dts",
     "sourceMap": true,
     "strict": true,
     "noImplicitReturns": true,

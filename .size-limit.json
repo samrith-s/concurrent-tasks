@@ -1,0 +1,14 @@
+[
+  {
+    "path": "lib/cjs/index.js",
+    "limit": "5 kB"
+  },
+  {
+    "path": "lib/es/index.js",
+    "limit": "5 kB"
+  },
+  {
+    "path": "lib/umd/index.js",
+    "limit": "5 kB"
+  }
+]
