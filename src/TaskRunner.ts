@@ -91,7 +91,10 @@ export class TaskRunner<T = any> {
 
   private run() {
     if (!this.__destroyed) {
-      if (!!this.tasks.list.length && this.concurrency.used < this.concurrency.max) {
+      if (
+        !!this.tasks.list.length &&
+        this.concurrency.used < this.concurrency.max
+      ) {
         const difference = this.concurrency.max - this.concurrency.used;
         const tasks = this.tasks.list.splice(0, difference);
 
@@ -107,7 +110,9 @@ export class TaskRunner<T = any> {
         this.__busy = true;
       } else {
         this.duration.end = Date.now();
-        this.duration.total = Math.ceil(this.duration.end - this.duration.start);
+        this.duration.total = Math.ceil(
+          this.duration.end - this.duration.start
+        );
         this.onEnd?.({ tasks: this.tasks, duration: this.duration });
 
         this.__busy = false;
@@ -115,7 +120,10 @@ export class TaskRunner<T = any> {
     }
   }
 
-  public listen<E extends keyof RunnerHooks<T>>(event: E, listener: RunnerHooks<T>[E]): void {
+  public listen<E extends keyof RunnerHooks<T>>(
+    event: E,
+    listener: RunnerHooks<T>[E]
+  ): void {
     (this as any)[event] = listener;
   }
 

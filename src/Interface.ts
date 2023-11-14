@@ -28,7 +28,8 @@ export const RemovalMethods = {
   RANGE: "range",
 } as const;
 
-export type RemovalMethods = (typeof RemovalMethods)[keyof typeof RemovalMethods];
+export type RemovalMethods =
+  (typeof RemovalMethods)[keyof typeof RemovalMethods];
 
 export type RunnerDuration = {
   start: number;
@@ -36,7 +37,11 @@ export type RunnerDuration = {
   total: number;
 };
 
-export type OnStart<T = any> = ({ tasks }: { tasks: TasksDescriptor<T> }) => void;
+export type OnStart<T = any> = ({
+  tasks,
+}: {
+  tasks: TasksDescriptor<T>;
+}) => void;
 export type OnAdd<T = any> = ({ tasks }: { tasks: TasksDescriptor<T> }) => void;
 export type OnRemove<T = any> = ({
   tasks,
