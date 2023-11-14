@@ -1,5 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-echo "husky running.."
-yarn commitlint --edit $1
+node_modules/.bin/commitlint --edit $1
