@@ -13,27 +13,27 @@ The following is a quick reference guide to help you get friendly with **Concurr
 
 # Table of Contents
 
--   [👋🏼 Introduction](#introduction)
--   [🎬 Getting Started](#getting-started)
--   [🏁 The Done Callback](#the-done-callback)
--   [⚒ Configuration](#configuration)
--   [🕹 API](#api)
-    -   [add](#api-add)
-    -   [addFirst](#api-add-first)
-    -   [addMultiple](#api-add-multiple)
-    -   [addMultipleFirst](#api-add-multiple-first)
-    -   [remove](#api-remove)
-    -   [removeFirst](#api-remove-first)
-    -   [removeAt](#api-remove-at)
-    -   [removeAll](#api-remove-all)
-    -   [start](#api-start)
-    -   [setConcurrency](#api-set-concurrency)
-    -   [isBusy](#api-is-busy)
--   [💪🏼 Powered by Concurrent Tasks](#powered-by-concurrent-tasks)
--   [👩🏻‍💻 Contributing](#contributing)
--   [🧐 Issues](#issues)
--   [🗺 Roadmap](#roadmap)
--   [🔑 License](#license)
+- [👋🏼 Introduction](#introduction)
+- [🎬 Getting Started](#getting-started)
+- [🏁 The Done Callback](#the-done-callback)
+- [⚒ Configuration](#configuration)
+- [🕹 API](#api)
+  - [add](#api-add)
+  - [addFirst](#api-add-first)
+  - [addMultiple](#api-add-multiple)
+  - [addMultipleFirst](#api-add-multiple-first)
+  - [remove](#api-remove)
+  - [removeRange](#api-remove-range)
+  - [removeAt](#api-remove-at)
+  - [removeAll](#api-remove-all)
+  - [start](#api-start)
+  - [setConcurrency](#api-set-concurrency)
+  - [isBusy](#api-is-busy)
+- [💪🏼 Powered by Concurrent Tasks](#powered-by-concurrent-tasks)
+- [👩🏻‍💻 Contributing](#contributing)
+- [🧐 Issues](#issues)
+- [🗺 Roadmap](#roadmap)
+- [🔑 License](#license)
 
 # 👋🏼 Introduction <a name="introduction"></a>
 
@@ -43,11 +43,11 @@ Concurrent Tasks mimics a priority queue by using JavaScript's inbuilt array dat
 
 The minimalism of Concurrent Tasks makes it an easy-to-use solution across any framework or flavour of JavaScript. It has ZERO dependencies and can be used virtually in any scenario.
 
--   ✅ Vanilla JavaScript
--   ✅ Frontend Frameworks (React, Vue, Angular, etc)
--   ✅ Backend Frameworks (Express, Hapi, Koa, etc)
--   ✅ NPM Module
--   ✅ Node CLI Application
+- ✅ Vanilla JavaScript
+- ✅ Frontend Frameworks (React, Vue, Angular, etc)
+- ✅ Backend Frameworks (Express, Hapi, Koa, etc)
+- ✅ NPM Module
+- ✅ Node CLI Application
 
 # 🎬 Getting Started <a name="getting-started"></a>
 
@@ -103,10 +103,10 @@ Gulp solves this problem by either accepting a return of a Gulp task, or by call
 
 The purpose of this function is simple: Tell the instance when a particular task is complete! Internally, the done function does a fair amount of work. It:
 
--   Makes a free slot available for the internal runner.
--   Updates completion counts and calls the internal runner.
--   Updates the time elapsed from start, until the function calling `done`'s completion.
--   Calls the internal runner to pick up the next task in the priority queue.
+- Makes a free slot available for the internal runner.
+- Updates completion counts and calls the internal runner.
+- Updates the time elapsed from start, until the function calling `done`'s completion.
+- Calls the internal runner to pick up the next task in the priority queue.
 
 ### Examples
 
@@ -220,10 +220,10 @@ isBusy();
 
 If you'd like to showcase any:
 
--   Website
--   Package
--   Framework
--   API
+- Website
+- Package
+- Framework
+- API
 
 That's been powered by **Concurrent Tasks**, you can get in touch on [Twitter](https://twitter.com/tueieo) or just use [#poweredByConcurrentTasks](https://twitter.com/search?f=tweets&q=%23poweredByConcurrentTasks&src=typd) and it'll be featured here!
 
@@ -237,17 +237,17 @@ For any issues or queries you might have about the table, please feel free to cr
 
 # 🗺 Roadmap <a name="roadmap"></a>
 
--   ✅ Custom concurrency.
--   ✅ Events for task addition, idle state change, `done` callback firing.
--   ✅ Programmatic and automatic start.
--   ✅ Different kinds of addition and removal.
--   ❌ Priority value for each task.
--   ❌ Storing tasks as a map of priorities.
--   ❌ Adding/removing tasks to/from an existing priority.
--   ❌ Adding/removing multiple tasks to/from an existing priority.
--   ❌ Adding tasks to a new priority.
--   ❌ Adding multiple tasks to a new priority.
--   ❌ Removal of a priority.
+- ✅ Custom concurrency.
+- ✅ Events for task addition, idle state change, `done` callback firing.
+- ✅ Programmatic and automatic start.
+- ✅ Different kinds of addition and removal.
+- ❌ Priority value for each task.
+- ❌ Storing tasks as a map of priorities.
+- ❌ Adding/removing tasks to/from an existing priority.
+- ❌ Adding/removing multiple tasks to/from an existing priority.
+- ❌ Adding tasks to a new priority.
+- ❌ Adding multiple tasks to a new priority.
+- ❌ Removal of a priority.
 
 # 🔑 License <a name="license"></a>
 
