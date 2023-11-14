@@ -1,7 +1,9 @@
-import { CT } from "../src";
-
-import { createRunner } from "./utils/create-runner";
-import { generateTask, generateTasks } from "./utils/generate-tasks";
+import { CT } from "..";
+import { createRunner } from "../../testing-utils/utils/create-runner";
+import {
+  generateTask,
+  generateTasks,
+} from "../../testing-utils/utils/generate-tasks";
 
 const TASK_COUNT = 10;
 
@@ -150,12 +152,24 @@ describe("Events", () => {
         runner.destroy();
       });
 
-      it("should fire `remove1 event when removing range", () => {
+      it("should fire `remove` event when removing range", () => {
         const runner = createRunner();
         const onRemove = jest.fn();
 
         runner.listen(CT.RunnerEvents.REMOVE, onRemove);
         runner.removeRange(1, 1);
+
+        expect(onRemove).toHaveBeenCalled();
+
+        runner.destroy();
+      });
+
+      it("should fire `remove` event when removing at", () => {
+        const runner = createRunner();
+        const onRemove = jest.fn();
+
+        runner.listen(CT.RunnerEvents.REMOVE, onRemove);
+        runner.removeAt(1);
 
         expect(onRemove).toHaveBeenCalled();
 

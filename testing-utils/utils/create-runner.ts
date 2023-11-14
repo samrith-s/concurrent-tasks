@@ -15,10 +15,7 @@ export function createRunner(
     name: RUNNER_NAME,
     ...(options ?? {}),
   });
-  runner.addMultiple(generateTasks(options?.taskCount, options?.taskDuration));
+  const tasks = generateTasks(options?.taskCount, options?.taskDuration);
+  runner.addMultiple(tasks);
   return runner;
 }
-
-process.on("unhandledRejection", (e) => {
-  console.error(e);
-});

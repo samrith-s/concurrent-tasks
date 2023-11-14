@@ -1,5 +1,8 @@
-import { createRunner } from "./utils/create-runner";
-import { generateTask, generateTasks } from "./utils/generate-tasks";
+import { createRunner } from "../../testing-utils/utils/create-runner";
+import {
+  generateTask,
+  generateTasks,
+} from "../../testing-utils/utils/generate-tasks";
 
 const TASK_COUNT = 10;
 
@@ -76,6 +79,16 @@ describe("Hooks", () => {
       const runner = createRunner({ onRemove });
 
       runner.removeRange(0, 1);
+      expect(onRemove).toHaveBeenCalled();
+
+      runner.destroy();
+    });
+
+    it("should call `onRemove` hook when removing at", () => {
+      const onRemove = jest.fn();
+      const runner = createRunner({ onRemove });
+
+      runner.removeAt(1);
       expect(onRemove).toHaveBeenCalled();
 
       runner.destroy();

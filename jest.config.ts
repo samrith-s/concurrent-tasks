@@ -3,7 +3,7 @@ import type { JestConfigWithTsJest } from "ts-jest";
 const config: JestConfigWithTsJest = {
   preset: "ts-jest",
   testEnvironment: "node",
-  setupFilesAfterEnv: ["./tests/setup/test.setup.ts"],
+  setupFilesAfterEnv: ["./testing-utils/setup/test.setup.ts"],
   coveragePathIgnorePatterns: ["src/Namespace.ts", "tests/*"],
   coverageThreshold: {
     global: {

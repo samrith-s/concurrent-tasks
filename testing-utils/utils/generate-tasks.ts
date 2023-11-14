@@ -1,4 +1,5 @@
 import { CT } from "../../src";
+import { TaskWithDone } from "../../src/Interface";
 
 export function generateTask(result = -1, timeout = 5) {
   return (done: CT.Done<number>) => {
@@ -9,7 +10,7 @@ export function generateTask(result = -1, timeout = 5) {
 }
 
 export function generateTasks(count = 10, timeout = 5) {
-  const tasks = [];
+  const tasks: TaskWithDone[] = [];
 
   for (let i = 0; i < count; i++) {
     tasks.push(generateTask(i, timeout));
