@@ -1,3 +1,5 @@
+import { TasksDescriptor } from "./Interface";
+
 type IUtil = (item: any) => boolean;
 
 export const isFunction: IUtil = (item) => typeof item === "function";
@@ -28,3 +30,8 @@ export const assignNumber = (
 
   return defaultNumber;
 };
+
+export const indexIsWithinTaskBounds = (
+  index: number,
+  descriptor: Omit<TasksDescriptor, "list">
+) => index > -1 && index < descriptor.total;

@@ -11,15 +11,11 @@ export class Task<T = any> {
     this._id = id;
   }
 
-  public run(done: Done<T>) {
-    this.task(done, this.id);
-  }
-
-  get id() {
+  get id(): TaskID {
     return this._id;
   }
 
-  get status() {
+  get status(): TaskStatus {
     return this._status;
   }
 
@@ -27,5 +23,9 @@ export class Task<T = any> {
     if (Object.values(TaskStatus).includes(status)) {
       this._status = status;
     }
+  }
+
+  public run(done: Done<T>): void {
+    this.task(done, this.id);
   }
 }

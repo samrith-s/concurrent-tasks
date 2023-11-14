@@ -25,6 +25,7 @@ export enum TaskStatus {
 export const RemovalMethods = {
   ALL: "all",
   BY_ID: "by-id",
+  BY_INDEX: "by-index",
   RANGE: "range",
 } as const;
 

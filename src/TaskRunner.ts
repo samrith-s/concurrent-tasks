@@ -12,6 +12,7 @@ import {
   TaskWithDone,
 } from "./Interface";
 import { Task } from "./Task";
+import { indexIsWithinTaskBounds } from "./Utils";
 
 export class TaskRunner<T = any> {
   private static instances = 0;
@@ -65,15 +66,31 @@ export class TaskRunner<T = any> {
     this.onEnd = this.options.onEnd;
   }
 
-  get busy() {
+  /**
+   * Get whether the runner is busy executing tasks or not.
+   */
+  get busy(): boolean {
     return this.__busy;
   }
 
-  get taskList() {
+  /**
+   * Get the descriptors for the runner
+   */
+  get descriptor(): Omit<TasksDescriptor, "list"> {
+    return {
+      total: this.tasks.total,
+      completed: this.tasks.completed,
+    };
+  }
+
+  /**
+   * Get the list of tasks of the runner.
+   */
+  get taskList(): TasksDescriptor<T>["list"] {
     return this.tasks.list;
   }
 
-  private done(task: Task<T>) {
+  private done(task: Task<T>): Done<T> {
     return ((result: T) => {
       task.status = TaskStatus.DONE;
 
@@ -113,6 +130,8 @@ export class TaskRunner<T = any> {
         this.duration.total = Math.ceil(
           this.duration.end - this.duration.start
         );
+
+        /* istanbul ignore next */
         this.onEnd?.({ tasks: this.tasks, duration: this.duration });
 
         this.__busy = false;
@@ -146,7 +165,7 @@ export class TaskRunner<T = any> {
     return this.options;
   }
 
-  public setHooks(hooks: Partial<RunnerHooks<T>>) {
+  public setHooks(hooks: Partial<RunnerHooks<T>>): void {
     Object.entries(hooks).forEach(([key, fn]) => {
       (this as any)[key] = fn;
     });
@@ -164,64 +183,147 @@ export class TaskRunner<T = any> {
     this.duration.start = Date.now();
     this.onStart?.({ tasks: this.tasks });
     this.run();
+
     return true;
   }
 
-  public destroy(): boolean {
+  /**
+   * Destroy a runner instance. This will ensure that the current instance is marked as dead, and no additional tasks are run.
+   *
+   * This does not affect currently running tasks.
+   */
+  public destroy(): void {
     this.__destroyed = true;
     this.__busy = false;
-    return true;
   }
 
-  public add(task: TaskWithDone<T>, multiple?: boolean): boolean {
+  /**
+   * Add a single task to the list.
+   *
+   * ```ts
+   * console.log(runner.taskList) // []
+   * runner.add(t1)
+   * console.log(runner.taskList) // [t1]
+   * ```
+   */
+  public add(task: TaskWithDone<T>): void {
     this.tasks.total++;
     this.tasks.list.push(new Task(this.taskIds++, task));
 
     this.onAdd?.({ tasks: this.tasks });
 
     /* istanbul ignore next */
-    if (!multiple && this.autoStart && !this.__busy) {
+    if (this.autoStart && !this.__busy) {
       this.start();
     }
-
-    return true;
   }
 
-  public addMultiple(tasks: TaskWithDone<T>[]): boolean {
+  /**
+   * Add multiple tasks to the runner.
+   *
+   * ```ts
+   * console.log(runner.taskList) // [t1, t2, t3, t4, t5, t6]
+   * runner.addMultiple([t7, t8, t9, t10, t11, t12])
+   * console.log(runner.taskList) // [t1, t2, t4, t5, t6, t7, t8, t9, t10, t11, t12]
+   * ```
+   */
+  public addMultiple(tasks: TaskWithDone<T>[]): void {
     this.tasks.total += tasks.length;
-    tasks.forEach((task) => this.add(task, true));
+    tasks.forEach((task) => this.add(task));
 
     if (this.autoStart && !this.__busy) {
       this.start();
     }
-
-    return true;
   }
 
-  public remove(id: TaskID): void {
+  /**
+   * Remove a particular task by its ID.
+   *
+   * ```ts
+   * runner.addMultiple([t1, t2, t3, t4, t5, t6])
+   * const taskId = runner.taskList.at(2).id
+   * runner.remove(taskId)
+   * console.log(runner.taskList) // [t1, t2, t4, t5, t6]
+   * ```
+   */
+  public remove(id: TaskID): Task<T> | null {
     const index = this.tasks.list.findIndex((t) => t.id === id);
-    this.tasks.total--;
-    if (index > -1) {
+
+    if (indexIsWithinTaskBounds(index, this.tasks)) {
       const removedTasks = this.tasks.list.splice(index, 1);
+      this.tasks.total--;
       this.onRemove?.({
         removedTasks,
         method: RemovalMethods.BY_ID,
         tasks: this.tasks,
       });
+
+      return removedTasks[0];
     }
+
+    return null;
   }
 
-  public removeRange(start: number, count: number): void {
-    this.tasks.total -= count;
-    const removedTasks = this.tasks.list.splice(start, count);
-    this.onRemove?.({
-      removedTasks,
-      method: RemovalMethods.RANGE,
-      tasks: this.tasks,
-    });
+  /**
+   * Remove a task at a particular index.
+   *
+   * ```ts
+   * runner.addMultiple([t1, t2, t3, t4, t5, t6])
+   * runner.removeAt(2)
+   * console.log(runner.taskList) // [t1, t2, t4, t5, t6]
+   * ```
+   */
+  public removeAt(index: number): Task<T> | null {
+    if (indexIsWithinTaskBounds(index, this.tasks)) {
+      const removedTasks = this.tasks.list.splice(index, 1);
+      this.tasks.total--;
+      this.onRemove?.({
+        removedTasks,
+        method: RemovalMethods.BY_INDEX,
+        tasks: this.tasks,
+      });
+
+      return removedTasks[0];
+    }
+
+    return null;
   }
 
-  public removeAll(): void {
+  /**
+   * Remove a range of tasks. The range is inclusive of the starting index specified.
+   *
+   * ```ts
+   * runner.addMultiple([t1, t2, t3, t4, t5, t6])
+   * runner.removeRange(2, 2)
+   * console.log(runner.taskList) // [t1, t2, t5, t6]
+   * ```
+   */
+  public removeRange(start: number, count: number): Task<T>[] | null {
+    if (indexIsWithinTaskBounds(start, this.tasks)) {
+      const removedTasks = this.tasks.list.splice(start, count);
+      this.tasks.total -= removedTasks.length;
+      this.onRemove?.({
+        removedTasks,
+        method: RemovalMethods.RANGE,
+        tasks: this.tasks,
+      });
+
+      return removedTasks;
+    }
+
+    return null;
+  }
+
+  /**
+   * Remove all tasks that are not picked up for execution. Currently running tasks are ignored.
+   *
+   * ```ts
+   * runner.addMultiple([t1, t2, t3, t4, t5, t6])
+   * runner.removeAll()
+   * console.log(runner.taskList) // []
+   * ```
+   */
+  public removeAll(): Task<T>[] | null {
     const removedTasks = this.tasks.list.slice();
     this.tasks.list = [];
     this.tasks.total = 0;
@@ -232,5 +334,7 @@ export class TaskRunner<T = any> {
       method: RemovalMethods.ALL,
       tasks: this.tasks,
     });
+
+    return removedTasks;
   }
 }
