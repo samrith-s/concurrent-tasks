@@ -1,8 +1,17 @@
-import { CT } from "..";
+import { CT, TaskRunner } from "..";
 import { createRunner } from "../../testing-utils/utils/create-runner";
 import { generateTasks } from "../../testing-utils/utils/generate-tasks";
 
 describe("Core", () => {
+  it("should throw an error if concurrency is not in range", () => {
+    expect(
+      () =>
+        new TaskRunner({
+          concurrency: -1,
+        })
+    ).toThrow(RangeError);
+  });
+
   it("should display correct working status", () => {
     const runner = createRunner({
       autoStart: true,
@@ -94,6 +103,31 @@ describe("Core", () => {
       expect(runner.start()).toBeTruthy();
 
       runner.destroy();
+    });
+  });
+
+  describe("add", () => {
+    it("should throw an error if a task is not a function", () => {
+      const runner = createRunner({
+        taskCount: 0,
+      });
+
+      expect(() => runner.add("hello" as any)).toThrow(TypeError);
+    });
+
+    it("should throw an error if a task is an instance `Task`", () => {
+      const runner = createRunner({
+        taskCount: 0,
+      });
+
+      expect(() =>
+        runner.add(
+          new CT.Task("my-task", (done: CT.Done<number>) => {
+            console.log("This is my task!");
+            done(1);
+          }) as any
+        )
+      ).toThrow(TypeError);
     });
   });
 

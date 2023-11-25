@@ -55,6 +55,11 @@ export class TaskRunner<T = any> {
       ...options,
     };
 
+    if (this.options.concurrency < 0) {
+      throw new RangeError(
+        `Invalid range for concurrency. Range should be between 0 and Infinity, found ${this.options.concurrency}`
+      );
+    }
     this.concurrency.max = this.options.concurrency;
     this.autoStart = this.options.autoStart;
 
@@ -208,7 +213,14 @@ export class TaskRunner<T = any> {
    */
   public add(task: TaskWithDone<T>): void {
     this.tasks.total++;
-    this.tasks.list.push(new Task(this.taskIds++, task));
+
+    if (typeof task !== "function" || task instanceof Task) {
+      throw new TypeError(
+        "A task cannot be anything but a function, nor an instance of `Task`. Pass a function instead."
+      );
+    } else {
+      this.tasks.list.push(new Task(this.taskIds++, task));
+    }
 
     this.onAdd?.({ tasks: this.tasks });
 

@@ -1,6 +1,6 @@
 import { Task } from "./Task";
 
-export type TaskID = number;
+export type TaskID = number | string;
 export type Done<T = any> = (result?: T) => void;
 export type TaskReturn<T> = T | void;
 
