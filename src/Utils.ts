@@ -1,4 +1,8 @@
-import { TasksDescriptor } from "./Interface";
+import {
+  RunnerDefaultOptions,
+  RunnerHooks,
+  TasksDescriptor,
+} from "./Interface";
 
 type IUtil = (item: any) => boolean;
 
@@ -35,3 +39,8 @@ export const indexIsWithinTaskBounds = (
   index: number,
   descriptor: Omit<TasksDescriptor, "list">
 ) => index > -1 && index < descriptor.total;
+
+export const isValidHook = <T>(
+  hook: keyof RunnerHooks<T>,
+  options: RunnerDefaultOptions<T>
+) => hook in options;

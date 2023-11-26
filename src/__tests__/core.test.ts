@@ -107,6 +107,20 @@ describe("Core", () => {
   });
 
   describe("add", () => {
+    it("should add the task to the beginning of the queue if `prepend` option is passed", () => {
+      const taskCount = 10;
+      const runner = createRunner({
+        taskCount,
+      });
+
+      runner.add((done) => {
+        console.log("Hello world!");
+        done();
+      }, true);
+
+      expect(runner.taskList.at(0)?.id).toBe(taskCount);
+    });
+
     it("should throw an error if a task is not a function", () => {
       const runner = createRunner({
         taskCount: 0,

@@ -4,6 +4,7 @@ import {
   RemovalMethods,
   RunnerConcurrency,
   RunnerDuration,
+  RunnerEvents,
   RunnerHooks,
   RunnerOptions,
   TaskID,
@@ -12,7 +13,7 @@ import {
   TaskWithDone,
 } from "./Interface";
 import { Task } from "./Task";
-import { indexIsWithinTaskBounds } from "./Utils";
+import { indexIsWithinTaskBounds, isFunction, isValidHook } from "./Utils";
 
 export class TaskRunner<T = any> {
   private static instances = 0;
@@ -81,7 +82,7 @@ export class TaskRunner<T = any> {
   /**
    * Get the descriptors for the runner
    */
-  get descriptor(): Omit<TasksDescriptor, "list"> {
+  public get descriptor(): Omit<TasksDescriptor, "list"> {
     return {
       total: this.tasks.total,
       completed: this.tasks.completed,
@@ -91,7 +92,7 @@ export class TaskRunner<T = any> {
   /**
    * Get the list of tasks of the runner.
    */
-  get taskList(): TasksDescriptor<T>["list"] {
+  public get taskList(): TasksDescriptor<T>["list"] {
     return this.tasks.list;
   }
 
@@ -172,6 +173,20 @@ export class TaskRunner<T = any> {
 
   public setHooks(hooks: Partial<RunnerHooks<T>>): void {
     Object.entries(hooks).forEach(([key, fn]) => {
+      if (!isValidHook(key as keyof typeof hooks, this.options)) {
+        throw new TypeError(
+          `Invalid hook provided. Expected one of ${Object.values(
+            RunnerEvents
+          ).join(", ")} but found ${key} instead.`
+        );
+      }
+
+      if (!isFunction(fn)) {
+        throw new TypeError(
+          `Invalid hook value provided. Expected ${key} to be a function, but found ${typeof fn} instead.`
+        );
+      }
+
       (this as any)[key] = fn;
     });
   }
@@ -211,7 +226,7 @@ export class TaskRunner<T = any> {
    * console.log(runner.taskList) // [t1]
    * ```
    */
-  public add(task: TaskWithDone<T>): void {
+  public add(task: TaskWithDone<T>, prepend?: boolean): void {
     this.tasks.total++;
 
     if (typeof task !== "function" || task instanceof Task) {
@@ -219,7 +234,13 @@ export class TaskRunner<T = any> {
         "A task cannot be anything but a function, nor an instance of `Task`. Pass a function instead."
       );
     } else {
-      this.tasks.list.push(new Task(this.taskIds++, task));
+      const taskInstance = new Task(this.taskIds++, task);
+
+      if (prepend) {
+        this.tasks.list.unshift(taskInstance);
+      } else {
+        this.tasks.list.push(taskInstance);
+      }
     }
 
     this.onAdd?.({ tasks: this.tasks });

@@ -7,6 +7,28 @@ import {
 const TASK_COUNT = 10;
 
 describe("Hooks", () => {
+  it("should throw an error if an invalid hook is set", () => {
+    const runner = createRunner();
+
+    expect(() =>
+      runner.setHooks({
+        onRandom() {
+          console.log("Hello!");
+        },
+      } as any)
+    ).toThrow(TypeError);
+  });
+
+  it("should throw an error if the value of the hook is not a function", () => {
+    const runner = createRunner();
+
+    expect(() =>
+      runner.setHooks({
+        onStart: "hello",
+      } as any)
+    ).toThrow(TypeError);
+  });
+
   describe("onStart", () => {
     it("should call `onStart` hook when `autoStart` is enabled", () => {
       const onStart = jest.fn();
