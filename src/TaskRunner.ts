@@ -21,13 +21,13 @@ export class TaskRunner<T = any> {
   private __busy = false;
   private __destroyed = false;
 
-  private taskIds = 0;
-
-  private tasks: TasksDescriptor<T> = {
+  private _tasks: TasksDescriptor<T> = {
     total: 0,
     completed: 0,
     list: [],
   };
+
+  private taskIds = 0;
 
   private options: RunnerOptions<T>;
 
@@ -42,13 +42,61 @@ export class TaskRunner<T = any> {
     total: 0,
   };
 
-  private autoStart: boolean;
   private onStart: RunnerHooks<T>["onStart"] | undefined;
   private onAdd: RunnerHooks<T>["onAdd"] | undefined;
   private onRemove: RunnerHooks<T>["onRemove"] | undefined;
   private onRun: RunnerHooks<T>["onRun"] | undefined;
   private onDone: RunnerHooks<T>["onDone"] | undefined;
   private onEnd: RunnerHooks<T>["onEnd"] | undefined;
+
+  private done(task: Task<T>): Done<T> {
+    return ((result: T) => {
+      task.status = TaskStatus.DONE;
+
+      this._tasks.completed++;
+      this.concurrency.used--;
+
+      this.onDone?.({
+        task,
+        result,
+        tasks: this._tasks,
+      });
+      this.run();
+    }) as unknown as Done<T>;
+  }
+
+  private run() {
+    if (!this.__destroyed) {
+      if (
+        !!this._tasks.list.length &&
+        this.concurrency.used < this.concurrency.max
+      ) {
+        const difference = this.concurrency.max - this.concurrency.used;
+        const tasks = this._tasks.list.splice(0, difference);
+
+        tasks.forEach((task) => {
+          task.status = TaskStatus.RUNNING;
+          task.run(this.done(task));
+
+          this.concurrency.used++;
+
+          this.onRun?.({ task, tasks: this._tasks });
+        });
+
+        this.__busy = true;
+      } else {
+        this.duration.end = Date.now();
+        this.duration.total = Math.ceil(
+          this.duration.end - this.duration.start
+        );
+
+        /* istanbul ignore next */
+        this.onEnd?.({ tasks: this._tasks, duration: this.duration });
+
+        this.__busy = false;
+      }
+    }
+  }
 
   constructor(options?: Partial<RunnerOptions<T>>) {
     this.options = {
@@ -62,7 +110,6 @@ export class TaskRunner<T = any> {
       );
     }
     this.concurrency.max = this.options.concurrency;
-    this.autoStart = this.options.autoStart;
 
     this.onStart = this.options.onStart;
     this.onAdd = this.options.onAdd;
@@ -75,7 +122,7 @@ export class TaskRunner<T = any> {
   /**
    * Get whether the runner is busy executing tasks or not.
    */
-  get busy(): boolean {
+  public get busy(): boolean {
     return this.__busy;
   }
 
@@ -84,65 +131,16 @@ export class TaskRunner<T = any> {
    */
   public get descriptor(): Omit<TasksDescriptor, "list"> {
     return {
-      total: this.tasks.total,
-      completed: this.tasks.completed,
+      total: this._tasks.total,
+      completed: this._tasks.completed,
     };
   }
 
   /**
    * Get the list of tasks of the runner.
    */
-  public get taskList(): TasksDescriptor<T>["list"] {
-    return this.tasks.list;
-  }
-
-  private done(task: Task<T>): Done<T> {
-    return ((result: T) => {
-      task.status = TaskStatus.DONE;
-
-      this.tasks.completed++;
-      this.concurrency.used--;
-
-      this.onDone?.({
-        task,
-        result,
-        tasks: this.tasks,
-      });
-      this.run();
-    }) as unknown as Done<T>;
-  }
-
-  private run() {
-    if (!this.__destroyed) {
-      if (
-        !!this.tasks.list.length &&
-        this.concurrency.used < this.concurrency.max
-      ) {
-        const difference = this.concurrency.max - this.concurrency.used;
-        const tasks = this.tasks.list.splice(0, difference);
-
-        tasks.forEach((task) => {
-          task.status = TaskStatus.RUNNING;
-          task.run(this.done(task));
-
-          this.concurrency.used++;
-
-          this.onRun?.({ task, tasks: this.tasks });
-        });
-
-        this.__busy = true;
-      } else {
-        this.duration.end = Date.now();
-        this.duration.total = Math.ceil(
-          this.duration.end - this.duration.start
-        );
-
-        /* istanbul ignore next */
-        this.onEnd?.({ tasks: this.tasks, duration: this.duration });
-
-        this.__busy = false;
-      }
-    }
+  public get tasks(): TasksDescriptor<T>["list"] {
+    return this._tasks.list;
   }
 
   public listen<E extends keyof RunnerHooks<T>>(
@@ -156,21 +154,17 @@ export class TaskRunner<T = any> {
     (this as any)[event] = undefined;
   }
 
-  public setOptions(
-    options: Partial<Omit<RunnerOptions<T>, keyof RunnerHooks<T>>>
-  ): RunnerOptions<T> {
-    this.options = {
-      ...this.options,
-      ...options,
-    };
-
-    if (this.options.autoStart) {
-      this.start();
-    }
-
-    return this.options;
+  /**
+   * Set the concurrency value
+   */
+  public setConcurrency(concurrency: number) {
+    this.concurrency.max = concurrency;
+    this.run();
   }
 
+  /**
+   * Set or unset hook values
+   */
   public setHooks(hooks: Partial<RunnerHooks<T>>): void {
     Object.entries(hooks).forEach(([key, fn]) => {
       if (!isValidHook(key as keyof typeof hooks, this.options)) {
@@ -191,6 +185,9 @@ export class TaskRunner<T = any> {
     });
   }
 
+  /**
+   * Start task execution.
+   */
   public start(): boolean {
     if (this.__destroyed) {
       return false;
@@ -201,7 +198,7 @@ export class TaskRunner<T = any> {
     }
 
     this.duration.start = Date.now();
-    this.onStart?.({ tasks: this.tasks });
+    this.onStart?.({ tasks: this._tasks });
     this.run();
 
     return true;
@@ -227,7 +224,7 @@ export class TaskRunner<T = any> {
    * ```
    */
   public add(task: TaskWithDone<T>, prepend?: boolean): void {
-    this.tasks.total++;
+    this._tasks.total++;
 
     if (typeof task !== "function" || task instanceof Task) {
       throw new TypeError(
@@ -237,18 +234,13 @@ export class TaskRunner<T = any> {
       const taskInstance = new Task(this.taskIds++, task);
 
       if (prepend) {
-        this.tasks.list.unshift(taskInstance);
+        this._tasks.list.unshift(taskInstance);
       } else {
-        this.tasks.list.push(taskInstance);
+        this._tasks.list.push(taskInstance);
       }
     }
 
-    this.onAdd?.({ tasks: this.tasks });
-
-    /* istanbul ignore next */
-    if (this.autoStart && !this.__busy) {
-      this.start();
-    }
+    this.onAdd?.({ tasks: this._tasks });
   }
 
   /**
@@ -261,12 +253,8 @@ export class TaskRunner<T = any> {
    * ```
    */
   public addMultiple(tasks: TaskWithDone<T>[]): void {
-    this.tasks.total += tasks.length;
+    this._tasks.total += tasks.length;
     tasks.forEach((task) => this.add(task));
-
-    if (this.autoStart && !this.__busy) {
-      this.start();
-    }
   }
 
   /**
@@ -280,15 +268,15 @@ export class TaskRunner<T = any> {
    * ```
    */
   public remove(id: TaskID): Task<T> | null {
-    const index = this.tasks.list.findIndex((t) => t.id === id);
+    const index = this._tasks.list.findIndex((t) => t.id === id);
 
-    if (indexIsWithinTaskBounds(index, this.tasks)) {
-      const removedTasks = this.tasks.list.splice(index, 1);
-      this.tasks.total--;
+    if (indexIsWithinTaskBounds(index, this._tasks)) {
+      const removedTasks = this._tasks.list.splice(index, 1);
+      this._tasks.total--;
       this.onRemove?.({
         removedTasks,
         method: RemovalMethods.BY_ID,
-        tasks: this.tasks,
+        tasks: this._tasks,
       });
 
       return removedTasks[0];
@@ -307,13 +295,13 @@ export class TaskRunner<T = any> {
    * ```
    */
   public removeAt(index: number): Task<T> | null {
-    if (indexIsWithinTaskBounds(index, this.tasks)) {
-      const removedTasks = this.tasks.list.splice(index, 1);
-      this.tasks.total--;
+    if (indexIsWithinTaskBounds(index, this._tasks)) {
+      const removedTasks = this._tasks.list.splice(index, 1);
+      this._tasks.total--;
       this.onRemove?.({
         removedTasks,
         method: RemovalMethods.BY_INDEX,
-        tasks: this.tasks,
+        tasks: this._tasks,
       });
 
       return removedTasks[0];
@@ -332,13 +320,13 @@ export class TaskRunner<T = any> {
    * ```
    */
   public removeRange(start: number, count: number): Task<T>[] | null {
-    if (indexIsWithinTaskBounds(start, this.tasks)) {
-      const removedTasks = this.tasks.list.splice(start, count);
-      this.tasks.total -= removedTasks.length;
+    if (indexIsWithinTaskBounds(start, this._tasks)) {
+      const removedTasks = this._tasks.list.splice(start, count);
+      this._tasks.total -= removedTasks.length;
       this.onRemove?.({
         removedTasks,
         method: RemovalMethods.RANGE,
-        tasks: this.tasks,
+        tasks: this._tasks,
       });
 
       return removedTasks;
@@ -357,15 +345,15 @@ export class TaskRunner<T = any> {
    * ```
    */
   public removeAll(): Task<T>[] | null {
-    const removedTasks = this.tasks.list.slice();
-    this.tasks.list = [];
-    this.tasks.total = 0;
+    const removedTasks = this._tasks.list.slice();
+    this._tasks.list = [];
+    this._tasks.total = 0;
     this.__busy = false;
 
     this.onRemove?.({
       removedTasks,
       method: RemovalMethods.ALL,
-      tasks: this.tasks,
+      tasks: this._tasks,
     });
 
     return removedTasks;

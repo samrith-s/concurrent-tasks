@@ -52,14 +52,16 @@ describe("Core", () => {
       },
     });
 
-    expect(runner.taskList[0].status).toBe(CT.TaskStatus.PENDING);
+    expect(runner.tasks[0].status).toBe(CT.TaskStatus.PENDING);
 
     runner.start();
   });
 
   it("should print the correct duration on end", (done) => {
     jest.useFakeTimers();
+
     const TASK_COUNT = 10;
+
     const runner = createRunner({
       autoStart: true,
       concurrency: 1,
@@ -72,6 +74,7 @@ describe("Core", () => {
         done();
       },
     });
+
     jest.advanceTimersByTime(1000);
     jest.clearAllTimers();
   });
@@ -118,7 +121,7 @@ describe("Core", () => {
         done();
       }, true);
 
-      expect(runner.taskList.at(0)?.id).toBe(taskCount);
+      expect(runner.tasks.at(0)?.id).toBe(taskCount);
     });
 
     it("should throw an error if a task is not a function", () => {
@@ -148,7 +151,7 @@ describe("Core", () => {
   describe("remove", () => {
     it("should remove the task if a valid id is provided", () => {
       const runner = createRunner();
-      const taskId = runner.taskList[0].id;
+      const taskId = runner.tasks[0].id;
 
       const task = runner.remove(taskId);
 
@@ -170,7 +173,7 @@ describe("Core", () => {
     it("should return the task if a valid index is provided", () => {
       const runner = createRunner();
 
-      const taskId = runner.taskList[1].id;
+      const taskId = runner.tasks[1].id;
       const removedTask = runner.removeAt(1);
 
       expect(removedTask).not.toBeNull();
@@ -223,6 +226,31 @@ describe("Core", () => {
       expect(runner.removeRange(10, 4)).toBeNull();
 
       runner.destroy();
+    });
+  });
+
+  describe("setConcurrency", () => {
+    it("should set the concurrency and execute run", (done) => {
+      jest.useFakeTimers();
+
+      const runner = createRunner({
+        autoStart: true,
+        onRun({ tasks }) {
+          if (tasks.completed > 3) {
+            runner.setConcurrency(5);
+          }
+        },
+        onEnd({ duration }) {
+          expect(duration.total).toBe(10);
+
+          runner.destroy();
+
+          done();
+        },
+      });
+
+      jest.advanceTimersByTime(1000);
+      jest.clearAllTimers();
     });
   });
 });

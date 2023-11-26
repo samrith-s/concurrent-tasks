@@ -10,19 +10,7 @@ const TASK_COUNT = 10;
 describe("Events", () => {
   describe("start", () => {
     describe("on", () => {
-      it("should fire `start` event when `autoStart` is enabled", () => {
-        const runner = createRunner();
-        const onStart = jest.fn();
-
-        runner.listen(CT.RunnerEvents.START, onStart);
-        runner.setOptions({ autoStart: true });
-
-        expect(onStart).toHaveBeenCalled();
-
-        runner.destroy();
-      });
-
-      it("should fire `start` hook when calling `start` manually", () => {
+      it("should fire `start` hook when calling `start`", () => {
         const runner = createRunner();
         const onStart = jest.fn();
 
@@ -38,20 +26,7 @@ describe("Events", () => {
     });
 
     describe("off", () => {
-      it("should not fire `start` event when `autoStart` is enabled", () => {
-        const runner = createRunner();
-        const onStart = jest.fn();
-
-        runner.listen(CT.RunnerEvents.START, onStart);
-        runner.unlisten(CT.RunnerEvents.START);
-        runner.setOptions({ autoStart: true });
-
-        expect(onStart).not.toHaveBeenCalled();
-
-        runner.destroy();
-      });
-
-      it("should not fire `start` hook when calling `start` manually", () => {
+      it("should not fire `start` hook when calling `start`", () => {
         const runner = createRunner();
         const onStart = jest.fn();
 

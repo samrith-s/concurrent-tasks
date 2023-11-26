@@ -97,7 +97,6 @@ export type RunnerHooks<T> = {
 
 export type RunnerDefaultOptions<T> = RunnerHooks<T> & {
   concurrency: number;
-  autoStart: boolean;
   name: string | (() => string);
 };
 

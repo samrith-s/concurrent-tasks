@@ -30,16 +30,7 @@ describe("Hooks", () => {
   });
 
   describe("onStart", () => {
-    it("should call `onStart` hook when `autoStart` is enabled", () => {
-      const onStart = jest.fn();
-      const runner = createRunner({ onStart, autoStart: true });
-
-      expect(onStart).toHaveBeenCalled();
-
-      runner.destroy();
-    });
-
-    it("should call `onStart` hook when calling `start` manually", () => {
+    it("should call `onStart` hook when calling `start`", () => {
       const onStart = jest.fn();
       const runner = createRunner({ onStart });
 

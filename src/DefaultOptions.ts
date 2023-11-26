@@ -4,9 +4,8 @@ import { RunnerOptions } from "./Interface";
 
 export function DefaultOptions<T>(name: string) {
   return {
-    concurrency: 3,
-    autoStart: false,
     name,
+    concurrency: 3,
     onAdd: undefined,
     onStart: undefined,
     onRun: undefined,
