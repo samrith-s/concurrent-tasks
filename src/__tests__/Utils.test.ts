@@ -1,8 +1,6 @@
-import { createRunner } from "../../testing-utils/utils/create-runner";
 import {
   assignFunction,
   assignNumber,
-  indexIsWithinTaskBounds,
   isArray,
   isEmptyString,
   isFunction,
@@ -128,36 +126,6 @@ describe("Utils", () => {
       expect(assignNumber(true as any, 100, 1)).toBe(100);
       expect(assignNumber([] as any, 100, 1)).toBe(100);
       expect(assignNumber({} as any, 100, 1)).toBe(100);
-    });
-  });
-
-  describe("indexIsWithinTaskBounds", () => {
-    it("should return true if index is within bounds", () => {
-      const runner = createRunner();
-
-      expect(indexIsWithinTaskBounds(0, runner.descriptor)).toBeTruthy();
-
-      runner.destroy();
-    });
-
-    it("should return false is index < 0", () => {
-      const runner = createRunner();
-
-      expect(indexIsWithinTaskBounds(-1, runner.descriptor)).toBeFalsy();
-      expect(indexIsWithinTaskBounds(-10, runner.descriptor)).toBeFalsy();
-      expect(indexIsWithinTaskBounds(-100, runner.descriptor)).toBeFalsy();
-
-      runner.destroy();
-    });
-
-    it("it should return false is index > total - 1", () => {
-      const runner = createRunner();
-
-      expect(indexIsWithinTaskBounds(100, runner.descriptor)).toBeFalsy();
-      expect(indexIsWithinTaskBounds(1000, runner.descriptor)).toBeFalsy();
-      expect(indexIsWithinTaskBounds(10000, runner.descriptor)).toBeFalsy();
-
-      runner.destroy();
     });
   });
 });
