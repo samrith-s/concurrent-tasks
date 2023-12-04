@@ -235,16 +235,6 @@ describe("TaskRunner", () => {
         expect(runner.count.pending).toBe(1);
       });
 
-      it("should add to the beginning of the list", () => {
-        const runner = createRunner({
-          taskCount: 5,
-        });
-
-        runner.add(console.log, true);
-
-        expect(runner.tasks.pending.at(0)?.id).toBe(5);
-      });
-
       it("should throw an error if task is an invalid type", () => {
         const runner = createRunner();
 
@@ -252,6 +242,18 @@ describe("TaskRunner", () => {
         expect(() => runner.add(new CT.Task(1, console.log) as any)).toThrow(
           TypeError
         );
+      });
+    });
+
+    describe("addFirst", () => {
+      it("should add to the beginning of the list", () => {
+        const runner = createRunner({
+          taskCount: 5,
+        });
+
+        runner.addFirst(console.log);
+
+        expect(runner.tasks.pending.at(0)?.id).toBe(5);
       });
     });
 
@@ -277,12 +279,28 @@ describe("TaskRunner", () => {
       });
 
       it("should add tasks to the beginning of the list", () => {
-        const runner = createRunner();
+        const runner = createRunner({
+          taskCount: TASK_COUNT,
+        });
 
         runner.addMultiple(generateTasks(5), true);
 
         runner.tasks.pending.slice(0, 5).forEach((task, idx) => {
-          expect(task.id).toBe(14 - idx);
+          expect(task.id).toBe(TASK_COUNT + idx);
+        });
+      });
+    });
+
+    describe("addMultipleFirst", () => {
+      it("should add tasks to the beginning of the list", () => {
+        const runner = createRunner({
+          taskCount: TASK_COUNT,
+        });
+
+        runner.addMultipleFirst(generateTasks(5));
+
+        runner.tasks.pending.slice(0, 5).forEach((task, idx) => {
+          expect(task.id).toBe(TASK_COUNT + idx);
         });
       });
     });
@@ -300,7 +318,7 @@ describe("TaskRunner", () => {
         expect(runner.tasks.pending.at(-1)?.id).toBe(8);
         expect(onRemove).toHaveBeenCalledWith({
           tasks: runner.tasks,
-          descriptor: runner.count,
+          count: runner.count,
           method: RemovalMethods.LAST,
           removedTasks: [tasks.all.at(-1)],
         });
@@ -320,7 +338,7 @@ describe("TaskRunner", () => {
         expect(runner.tasks.pending.at(0)?.id).toBe(1);
         expect(onRemove).toHaveBeenCalledWith({
           tasks: runner.tasks,
-          descriptor: runner.count,
+          count: runner.count,
           method: RemovalMethods.FIRST,
           removedTasks: [tasks.all.at(0)],
         });
@@ -340,7 +358,7 @@ describe("TaskRunner", () => {
         expect(runner.tasks.pending.at(1)?.id).toBe(2);
         expect(onRemove).toHaveBeenCalledWith({
           tasks: runner.tasks,
-          descriptor: runner.count,
+          count: runner.count,
           method: RemovalMethods.BY_INDEX,
           removedTasks: [tasks.all.at(1)],
         });
@@ -362,7 +380,7 @@ describe("TaskRunner", () => {
         expect(runner.tasks.pending.at(2)?.id).toBe(4);
         expect(onRemove).toHaveBeenCalledWith({
           tasks: runner.tasks,
-          descriptor: runner.count,
+          count: runner.count,
           method: RemovalMethods.RANGE,
           removedTasks: tasks.all.slice(1, 3),
         });
@@ -381,7 +399,7 @@ describe("TaskRunner", () => {
       expect(runner.count.pending).toBe(0);
       expect(onRemove).toHaveBeenCalledWith({
         tasks: runner.tasks,
-        descriptor: runner.count,
+        count: runner.count,
         method: RemovalMethods.ALL,
         removedTasks: tasks.all,
       });
@@ -582,7 +600,7 @@ describe("TaskRunner", () => {
           runner.addListener(CT.RunnerEvents.ADD, onAdd);
           runner.addMultiple(generateTasks(TASK_COUNT));
 
-          expect(onAdd).toHaveBeenCalledTimes(TASK_COUNT);
+          expect(onAdd).toHaveBeenCalledTimes(1);
 
           runner.destroy();
         });

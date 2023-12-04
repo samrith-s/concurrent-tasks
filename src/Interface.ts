@@ -15,6 +15,8 @@ export type TaskWithDone<T = any> = (
   id: TaskID
 ) => TaskReturn<T> | Promise<TaskReturn<T>>;
 
+export type TasksWithDone<T = any> = TaskWithDone<T>[];
+
 export type TasksList<T> = {
   readonly running: Tasks<T>;
   readonly pending: Tasks<T>;
@@ -56,65 +58,50 @@ export type RunnerDuration = {
   total: number;
 };
 
-export type OnStart<T = any> = ({
-  tasks,
-  descriptor,
-}: Readonly<{
+type HookDefaults<T = any> = {
   tasks: TasksList<T>;
-  descriptor: TasksCount;
-}>) => void;
+  count: TasksCount;
+};
 
-export type OnAdd<T = any> = ({
-  tasks,
-  descriptor,
-}: Readonly<{
-  tasks: TasksList<T>;
-  descriptor: TasksCount;
-}>) => void;
+type HookFn<
+  T = any,
+  Data extends Record<string, any> = Record<string, never>
+> = (
+  args: Data extends Record<string, never>
+    ? Readonly<HookDefaults<T>>
+    : Readonly<HookDefaults<T> & Data>
+) => void;
 
-export type OnRemove<T = any> = ({
-  tasks,
-  descriptor,
-  method,
-  removedTasks,
-}: Readonly<{
-  tasks: TasksList<T>;
-  descriptor: TasksCount;
-  method: RemovalMethods;
-  removedTasks: Tasks<T>;
-}>) => void;
+export type OnStart<T = any> = HookFn<T>;
 
-export type OnRun<T = any> = ({
-  task,
-  tasks,
-  descriptor,
-}: Readonly<{
-  task: Task<T>;
-  tasks: TasksList<T>;
-  descriptor: TasksCount;
-}>) => void;
+export type OnAdd<T = any> = HookFn<T>;
 
-export type OnDone<T = any> = ({
-  task,
-  tasks,
-  descriptor,
-  result,
-}: Readonly<{
-  task: Task<T>;
-  tasks: TasksList<T>;
-  descriptor: TasksCount;
-  result?: T;
-}>) => void;
+export type OnRemove<T = any> = HookFn<
+  T,
+  { method: RemovalMethods; removedTasks: Tasks<T> }
+>;
 
-export type OnEnd<T = any> = ({
-  tasks,
-  descriptor,
-  duration,
-}: Readonly<{
-  tasks: TasksList<T>;
-  descriptor: TasksCount;
-  duration: RunnerDuration;
-}>) => void;
+export type OnRun<T = any> = HookFn<
+  T,
+  {
+    task: Task<T>;
+  }
+>;
+
+export type OnDone<T = any> = HookFn<
+  T,
+  {
+    task: Task<T>;
+    result?: T;
+  }
+>;
+
+export type OnEnd<T = any> = HookFn<
+  T,
+  {
+    duration: RunnerDuration;
+  }
+>;
 
 export enum RunnerEvents {
   START = "onStart",

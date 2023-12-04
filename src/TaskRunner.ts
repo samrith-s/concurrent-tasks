@@ -8,6 +8,7 @@ import {
   RunnerOptions,
   TasksCount,
   TaskStatus,
+  TasksWithDone,
   TaskWithDone,
 } from "./Interface";
 import { List } from "./List";
@@ -82,7 +83,7 @@ export class TaskRunner<T = any> {
         task,
         result,
         tasks: this.tasks,
-        descriptor: this.count,
+        count: this.count,
       });
 
       this.run();
@@ -110,7 +111,7 @@ export class TaskRunner<T = any> {
           this.onRun?.({
             task,
             tasks: this.tasks,
-            descriptor: this.count,
+            count: this.count,
           });
         });
 
@@ -124,7 +125,7 @@ export class TaskRunner<T = any> {
         /* istanbul ignore next */
         this.onEnd?.({
           tasks: this.tasks,
-          descriptor: this.count,
+          count: this.count,
           duration: this.duration,
         });
 
@@ -291,7 +292,7 @@ export class TaskRunner<T = any> {
     /* istanbul ignore next */
     this.onStart?.({
       tasks: this.tasks,
-      descriptor: this.count,
+      count: this.count,
     });
     this.run();
 
@@ -309,7 +310,7 @@ export class TaskRunner<T = any> {
   }
 
   /**
-   * Add a single task to the list.
+   * Add a single task to the end of the list.
    *
    * ```ts
    * console.log(runner.tasks.pending) // []
@@ -333,8 +334,21 @@ export class TaskRunner<T = any> {
     /* istanbul ignore next */
     this.onAdd?.({
       tasks: this.tasks,
-      descriptor: this.count,
+      count: this.count,
     });
+  }
+
+  /**
+   * Add a single task to the beginning of the list.
+   *
+   * ```ts
+   * console.log(runner.tasks.pending) // [t1, t2, t3]
+   * runner.addFirst(t4)
+   * console.log(runner.tasks.pending) // [t4, t1, t2, t3]
+   * ```
+   */
+  public addFirst(task: TaskWithDone<T>): void {
+    this.add(task, true);
   }
 
   /**
@@ -352,12 +366,12 @@ export class TaskRunner<T = any> {
     /* istanbul ignore next */
     this.onAdd?.({
       tasks: this.tasks,
-      descriptor: this.count,
+      count: this.count,
     });
   }
 
   /**
-   * Add multiple tasks to the runner.
+   * Add multiple tasks to the end of the list.
    *
    * ```ts
    * console.log(runner.tasks) // [t1, t2, t3, t4, t5, t6]
@@ -365,8 +379,27 @@ export class TaskRunner<T = any> {
    * console.log(runner.tasks.pending) // [t1, t2, t4, t5, t6, t7, t8, t9, t10, t11, t12]
    * ```
    */
-  public addMultiple(tasks: TaskWithDone<T>[], prepend?: boolean): void {
-    tasks.forEach((task) => this.add(task, prepend));
+  public addMultiple(tasks: TasksWithDone<T>, prepend?: boolean): void {
+    this._pending.concat(tasks.map(this.createTask.bind(this)), prepend);
+
+    /* istanbul ignore next */
+    this.onAdd?.({
+      tasks: this.tasks,
+      count: this.count,
+    });
+  }
+
+  /**
+   * Add multiple tasks to the beginning of the list.
+   *
+   * ```ts
+   * console.log(runner.tasks) // [t1, t2, t3, t4, t5, t6]
+   * runner.addMultiple([t7, t8, t9, t10, t11, t12])
+   * console.log(runner.tasks.pending) // [t1, t2, t4, t5, t6, t7, t8, t9, t10, t11, t12]
+   * ```
+   */
+  public addMultipleFirst(tasks: TasksWithDone<T>): void {
+    this.addMultiple(tasks, true);
   }
 
   /**
@@ -384,7 +417,7 @@ export class TaskRunner<T = any> {
     /* istanbul ignore next */
     this.onRemove?.({
       tasks: this.tasks,
-      descriptor: this.count,
+      count: this.count,
       removedTasks: this.provideRemovedTasks(removedTasks),
       method: RemovalMethods.LAST,
     });
@@ -405,7 +438,7 @@ export class TaskRunner<T = any> {
     /* istanbul ignore next */
     this.onRemove?.({
       tasks: this.tasks,
-      descriptor: this.count,
+      count: this.count,
       removedTasks: this.provideRemovedTasks(removedTasks),
       method: RemovalMethods.FIRST,
     });
@@ -426,7 +459,7 @@ export class TaskRunner<T = any> {
     /* istanbul ignore next */
     this.onRemove?.({
       tasks: this.tasks,
-      descriptor: this.count,
+      count: this.count,
       removedTasks: this.provideRemovedTasks(removedTasks),
       method: RemovalMethods.BY_INDEX,
     });
@@ -447,7 +480,7 @@ export class TaskRunner<T = any> {
     /* istanbul ignore next */
     this.onRemove?.({
       tasks: this.tasks,
-      descriptor: this.count,
+      count: this.count,
       removedTasks: this.provideRemovedTasks(removedTasks),
       method: RemovalMethods.RANGE,
     });
@@ -470,7 +503,7 @@ export class TaskRunner<T = any> {
     /* istanbul ignore next */
     this.onRemove?.({
       tasks: this.tasks,
-      descriptor: this.count,
+      count: this.count,
       removedTasks: this.provideRemovedTasks(removedTasks),
       method: RemovalMethods.ALL,
     });

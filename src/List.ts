@@ -57,6 +57,18 @@ export class List<T = any> {
     return this.throwRangeError(index);
   }
 
+  public concat(list: Tasks<T>, prepend?: boolean): Tasks<T> {
+    if (prepend) {
+      this.list = list.concat(this.list);
+    } else {
+      this.list = this.list.concat(list);
+    }
+
+    this._length = this.list.length;
+
+    return this.entries();
+  }
+
   public add(item: Task<T>): number {
     this._length++;
     return this.list.push(item);
