@@ -52,6 +52,17 @@ export const RemovalMethods = {
 export type RemovalMethods =
   (typeof RemovalMethods)[keyof typeof RemovalMethods];
 
+export const AdditionMethods = {
+  FIRST: "first",
+  LAST: "last",
+  AT_INDEX: "at-index",
+  MULTIPLE_FIRST: "multiple-first",
+  MULTIPLE_LAST: "multiple-range",
+} as const;
+
+export type AdditionMethods =
+  (typeof AdditionMethods)[keyof typeof AdditionMethods];
+
 export type RunnerDuration = {
   start: number;
   end: number;
@@ -74,7 +85,12 @@ type HookFn<
 
 export type OnStart<T = any> = HookFn<T>;
 
-export type OnAdd<T = any> = HookFn<T>;
+export type OnAdd<T = any> = HookFn<
+  T,
+  {
+    method: AdditionMethods;
+  }
+>;
 
 export type OnRemove<T = any> = HookFn<
   T,

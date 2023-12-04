@@ -1,5 +1,6 @@
 import { DefaultOptions } from "./DefaultOptions";
 import {
+  AdditionMethods,
   Done,
   RemovalMethods,
   RunnerDuration,
@@ -248,34 +249,6 @@ export class TaskRunner<T = any> {
   }
 
   /**
-   * Set a callback for a hook
-   */
-  public setHooks(hooks: Partial<RunnerHooks<T>>): void {
-    Object.entries(hooks).forEach(([key, fn]) => {
-      if (!isFunction(fn)) {
-        throw new TypeError(
-          `Invalid hook value provided. Expected ${key} to be a function, but found ${typeof fn} instead.`
-        );
-      }
-
-      Object.assign(this, {
-        [key]: fn,
-      });
-    });
-  }
-
-  /**
-   * Remove a callback for a hook
-   */
-  public unsetHooks(hooks: Array<`${keyof RunnerHooks<T>}`>): void {
-    hooks.forEach((key) => {
-      Object.assign(this, {
-        [key]: undefined,
-      });
-    });
-  }
-
-  /**
    * Start task execution.
    */
   public start(): boolean {
@@ -335,6 +308,7 @@ export class TaskRunner<T = any> {
     this.onAdd?.({
       tasks: this.tasks,
       count: this.count,
+      method: prepend ? AdditionMethods.FIRST : AdditionMethods.LAST,
     });
   }
 
@@ -367,6 +341,7 @@ export class TaskRunner<T = any> {
     this.onAdd?.({
       tasks: this.tasks,
       count: this.count,
+      method: AdditionMethods.AT_INDEX,
     });
   }
 
@@ -386,6 +361,9 @@ export class TaskRunner<T = any> {
     this.onAdd?.({
       tasks: this.tasks,
       count: this.count,
+      method: prepend
+        ? AdditionMethods.MULTIPLE_FIRST
+        : AdditionMethods.MULTIPLE_LAST,
     });
   }
 
@@ -411,15 +389,17 @@ export class TaskRunner<T = any> {
    * console.log(runner.tasks.pending) // [t1, t2, t3, t4, t5]
    * ```
    */
-  public remove(): void {
-    const removedTasks = this._pending.remove();
+  public remove(first?: boolean): void {
+    const removedTasks = first
+      ? this._pending.removeFirst()
+      : this._pending.remove();
 
     /* istanbul ignore next */
     this.onRemove?.({
       tasks: this.tasks,
       count: this.count,
       removedTasks: this.provideRemovedTasks(removedTasks),
-      method: RemovalMethods.LAST,
+      method: first ? RemovalMethods.FIRST : RemovalMethods.LAST,
     });
   }
 
@@ -433,15 +413,7 @@ export class TaskRunner<T = any> {
    * ```
    */
   public removeFirst(): void {
-    const removedTasks = this._pending.removeFirst();
-
-    /* istanbul ignore next */
-    this.onRemove?.({
-      tasks: this.tasks,
-      count: this.count,
-      removedTasks: this.provideRemovedTasks(removedTasks),
-      method: RemovalMethods.FIRST,
-    });
+    this.remove(true);
   }
 
   /**
@@ -497,8 +469,6 @@ export class TaskRunner<T = any> {
    */
   public removeAll(): void {
     const removedTasks = this._pending.clear();
-
-    this.__busy = false;
 
     /* istanbul ignore next */
     this.onRemove?.({

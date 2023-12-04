@@ -4,7 +4,7 @@ import {
   generateTask,
   generateTasks,
 } from "../../testing-utils/utils/generate-tasks";
-import { RemovalMethods } from "../Interface";
+import { AdditionMethods, RemovalMethods } from "../Interface";
 
 const TASK_COUNT = 10;
 
@@ -135,56 +135,6 @@ describe("TaskRunner", () => {
         runner.setConcurrency(3);
 
         expect(runner.concurrency).toBe(3);
-      });
-    });
-
-    describe("setHooks", () => {
-      it("should set the hooks", () => {
-        const onAdd = jest.fn();
-
-        const runner = createRunner({
-          taskCount: 0,
-        });
-
-        runner.setHooks({
-          onAdd,
-        });
-
-        runner.add(generateTask());
-
-        expect(onAdd).toHaveBeenCalledTimes(1);
-      });
-
-      it("should throw an error if any hook is not a function", () => {
-        const runner = createRunner({
-          taskCount: 0,
-        });
-
-        expect(() =>
-          runner.setHooks({
-            onAdd: "hello" as any,
-          })
-        ).toThrow(TypeError);
-      });
-    });
-
-    describe("unsetHooks", () => {
-      it("should unset the hooks", () => {
-        const onAdd = jest.fn();
-
-        const runner = createRunner({
-          taskCount: 0,
-        });
-
-        runner.setHooks({ onAdd });
-        runner.add(generateTask());
-
-        expect(onAdd).toHaveBeenCalledTimes(1);
-
-        runner.unsetHooks(["onAdd"]);
-        runner.add(generateTask());
-
-        expect(onAdd).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -428,7 +378,18 @@ describe("TaskRunner", () => {
         const runner = createRunner({ onAdd, taskCount: 0 });
 
         runner.add(generateTask());
-        expect(onAdd).toHaveBeenCalled();
+        expect(onAdd).toHaveBeenCalledWith({
+          tasks: runner.tasks,
+          count: runner.count,
+          method: AdditionMethods.LAST,
+        });
+
+        runner.addFirst(generateTask());
+        expect(onAdd).toHaveBeenCalledWith({
+          tasks: runner.tasks,
+          count: runner.count,
+          method: AdditionMethods.FIRST,
+        });
 
         runner.destroy();
       });
@@ -438,7 +399,18 @@ describe("TaskRunner", () => {
         const runner = createRunner({ onAdd, taskCount: 0 });
 
         runner.addMultiple(generateTasks(10));
-        expect(onAdd).toHaveBeenCalled();
+        expect(onAdd).toHaveBeenCalledWith({
+          tasks: runner.tasks,
+          count: runner.count,
+          method: AdditionMethods.MULTIPLE_LAST,
+        });
+
+        runner.addMultiple(generateTasks(10), true);
+        expect(onAdd).toHaveBeenCalledWith({
+          tasks: runner.tasks,
+          count: runner.count,
+          method: AdditionMethods.MULTIPLE_FIRST,
+        });
 
         runner.destroy();
       });
@@ -819,24 +791,28 @@ describe("TaskRunner", () => {
       });
 
       describe("off", () => {
-        it("should not fire `end` event when all tasks are done", (done) => {
+        it("should not fire `end` event when all tasks are done", () => {
+          jest.useFakeTimers();
+
           const onEnd = jest.fn();
           const runner = createRunner();
 
           runner.addListener(CT.RunnerEvents.END, onEnd);
-          runner.removeListener(CT.RunnerEvents.END);
-
-          runner.setHooks({
-            onEnd() {
-              expect(onEnd).not.toHaveBeenCalled();
-
-              runner.destroy();
-
-              done();
-            },
-          });
-
           runner.start();
+
+          jest.advanceTimersByTime(10000);
+
+          expect(onEnd).toHaveBeenCalledTimes(1);
+
+          runner.removeListener(CT.RunnerEvents.END);
+          runner.addMultiple(generateTasks());
+          runner.start();
+
+          jest.advanceTimersByTime(10000);
+
+          expect(onEnd).toHaveBeenCalledTimes(1);
+
+          jest.clearAllTimers();
         });
       });
     });
