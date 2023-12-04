@@ -1,4 +1,10 @@
-import { Task } from "./Task";
+import { Task, Tasks } from "./Task";
+
+type Readonly<T = any> = {
+  readonly [K in keyof T]: T[K];
+};
+
+export type Maybe<T> = T | undefined;
 
 export type TaskID = number | string;
 export type Done<T = any> = (result?: T) => void;
@@ -9,10 +15,21 @@ export type TaskWithDone<T = any> = (
   id: TaskID
 ) => TaskReturn<T> | Promise<TaskReturn<T>>;
 
-export type TasksDescriptor<T = any> = {
+export type TasksList<T> = {
+  readonly running: Tasks<T>;
+  readonly pending: Tasks<T>;
+  readonly completed: Tasks<T>;
+};
+
+export type TasksCount = {
   total: number;
   completed: number;
-  list: Task<T>[];
+  pending: number;
+  running: number;
+};
+
+export type TasksDescriptorWithList<T = any> = TasksCount & {
+  list: Tasks<T>;
 };
 
 export enum TaskStatus {
@@ -24,9 +41,10 @@ export enum TaskStatus {
 
 export const RemovalMethods = {
   ALL: "all",
-  BY_ID: "by-id",
   BY_INDEX: "by-index",
   RANGE: "range",
+  FIRST: "first",
+  LAST: "last",
 } as const;
 
 export type RemovalMethods =
@@ -40,42 +58,63 @@ export type RunnerDuration = {
 
 export type OnStart<T = any> = ({
   tasks,
-}: {
-  tasks: TasksDescriptor<T>;
-}) => void;
-export type OnAdd<T = any> = ({ tasks }: { tasks: TasksDescriptor<T> }) => void;
+  descriptor,
+}: Readonly<{
+  tasks: TasksList<T>;
+  descriptor: TasksCount;
+}>) => void;
+
+export type OnAdd<T = any> = ({
+  tasks,
+  descriptor,
+}: Readonly<{
+  tasks: TasksList<T>;
+  descriptor: TasksCount;
+}>) => void;
+
 export type OnRemove<T = any> = ({
   tasks,
+  descriptor,
   method,
   removedTasks,
-}: {
-  tasks: TasksDescriptor<T>;
+}: Readonly<{
+  tasks: TasksList<T>;
+  descriptor: TasksCount;
   method: RemovalMethods;
-  removedTasks: Task<T>[];
-}) => void;
+  removedTasks: Tasks<T>;
+}>) => void;
+
 export type OnRun<T = any> = ({
   task,
   tasks,
-}: {
+  descriptor,
+}: Readonly<{
   task: Task<T>;
-  tasks: TasksDescriptor<T>;
-}) => void;
+  tasks: TasksList<T>;
+  descriptor: TasksCount;
+}>) => void;
+
 export type OnDone<T = any> = ({
   task,
   tasks,
+  descriptor,
   result,
-}: {
+}: Readonly<{
   task: Task<T>;
-  tasks: TasksDescriptor<T>;
+  tasks: TasksList<T>;
+  descriptor: TasksCount;
   result?: T;
-}) => void;
+}>) => void;
+
 export type OnEnd<T = any> = ({
   tasks,
+  descriptor,
   duration,
-}: {
-  tasks: TasksDescriptor<T>;
+}: Readonly<{
+  tasks: TasksList<T>;
+  descriptor: TasksCount;
   duration: RunnerDuration;
-}) => void;
+}>) => void;
 
 export enum RunnerEvents {
   START = "onStart",

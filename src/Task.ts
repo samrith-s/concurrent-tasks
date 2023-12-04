@@ -1,5 +1,7 @@
 import { TaskWithDone, TaskID, TaskStatus, Done } from "./Interface";
 
+export type Tasks<T = any> = Task<T>[];
+
 export class Task<T = any> {
   private task: TaskWithDone<T>;
 

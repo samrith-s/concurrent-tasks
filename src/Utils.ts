@@ -1,17 +1,24 @@
-import {
-  RunnerDefaultOptions,
-  RunnerHooks,
-  TasksDescriptor,
-} from "./Interface";
+type Item = any;
 
-type IUtil = (item: any) => boolean;
+export function isFunction(item: Item): item is (...args: any) => any {
+  return typeof item === "function";
+}
 
-export const isFunction: IUtil = (item) => typeof item === "function";
-export const isNumber: IUtil = (item) =>
-  typeof item === "number" && !isNaN(item);
-export const isString: IUtil = (item) => typeof item === "string";
-export const isArray: IUtil = (item) => item.constructor === Array;
-export const isEmptyString: IUtil = (item) => isString(item) && !item;
+export function isNumber(item: Item): item is number {
+  return typeof item === "number" && !isNaN(item);
+}
+
+export function isString(item: Item): item is string {
+  return typeof item === "string";
+}
+
+export function isArray(item: Item): item is Array<any> {
+  return item.constructor === Array;
+}
+
+export function isEmptyString(item: Item): item is string {
+  return isString(item) && !item;
+}
 
 export const assignFunction = (item: any): typeof item => {
   if (isFunction(item)) {
@@ -34,13 +41,3 @@ export const assignNumber = (
 
   return defaultNumber;
 };
-
-export const indexIsWithinTaskBounds = (
-  index: number,
-  descriptor: Omit<TasksDescriptor, "list">
-) => index > -1 && index < descriptor.total;
-
-export const isValidHook = <T>(
-  hook: keyof RunnerHooks<T>,
-  options: RunnerDefaultOptions<T>
-) => hook in options;
