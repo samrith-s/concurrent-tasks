@@ -1,0 +1,47 @@
+---
+title: Properties
+description: List of properties provided by Concurrent Tasks runner instance.
+sidebar:
+  order: 1
+---
+
+import References from "../../../components/References.astro";
+
+##### tasks
+
+<References>[`TasksList`][TasksList]</References>
+
+- List of tasks that are in the runner
+- Returns a copy of the tasks
+- Any modifications to this list will not change the underlying list of tasks
+- The `all` property returns the tasks ordered by:
+  - `running`
+  - `pending`
+  - `completed`
+
+---
+
+##### count
+
+<References>[`TasksCount`][TasksCount]</References>
+
+- Counts of tasks at various statuses: `completed`, `running`, `pending`, and `total`
+
+---
+
+##### busy
+
+<References>`boolean`</References>
+
+- Signified whether the instance is currently working or idle
+
+---
+
+##### destroyed
+
+<References>`boolean`</References>
+
+- Signified whether the instance is destroyed or not
+
+[TasksList]: /reference/types-and-enums#taskslist
+[TasksCount]: /reference/types-and-enums#taskscount

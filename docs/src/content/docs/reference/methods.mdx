@@ -1,0 +1,175 @@
+---
+title: Methods
+description: List of methods provided by Concurrent Task runner instance.
+sidebar:
+  order: 2
+---
+
+import References from "../../../components/References.astro";
+
+##### start
+
+```ts
+start(): boolean
+```
+
+- Start the runner and begin execution of tasks
+- Returns `false` if the runner is busy or destroyed
+
+---
+
+##### destroy
+
+```ts
+destroy(): void
+```
+
+:::caution
+
+- Destroyed instances cannot be started
+- Any add operations on tasks will fail silently
+
+  :::
+
+- Destroys the runner instance
+- Pending tasks are unaffected
+- Once all pending tasks are done, the runner will be marked as idle
+
+---
+
+##### setConcurrency
+
+```ts
+setConcurrency(concurrency: number): void
+```
+
+- Sets the concurrency of the runner
+- Concurrency should be a positive integer, or `-1`
+- Setting concurrency as `-1` would run all tasks at once
+- If concurrency is not bound, throws a `RangeError`
+
+---
+
+##### add
+
+```ts
+add(task: TaskWithDone<T>, prepend?: boolean): void
+```
+
+<References>[`TaskWithDone`][TaskWithDone]</References>
+
+- Add a task to end of the pending list
+- Passing `true` as the second argument will add the task to the beginning of the pending list
+
+---
+
+##### addFirst
+
+```ts
+addFirst(task: TaskWithDone<T>): void
+```
+
+<References>[`TaskWithDone`][TaskWithDone]</References>
+
+- Add a task to the beginning of the pending list
+- Alias for `add` with the second argument as `true`
+
+---
+
+##### addAt
+
+```ts
+addAt(index: number, task: TaskWithDone<T>): void
+```
+
+<References>[`TaskWithDone`][TaskWithDone]</References>
+
+- Add a task at a particular index to the pending list
+- Index should always be bound, otherwise throws a `RangeError`
+
+---
+
+##### addMultiple
+
+```ts
+addMultiple(tasks: TasksWithDone<T>, prepend?: boolean): void
+```
+
+<References>[`TasksWithDone`][TasksWithDone]</References>
+
+- Add multiple tasks to end of the pending list
+- Passing `true` as the second argument will add the tasks to the beginning of the pending list
+
+---
+
+##### addMultipleFirst
+
+```ts
+addMultipleFirst(tasks: TasksWithDone<T>): void
+```
+
+<References>[`TasksWithDone`][TasksWithDone]</References>
+
+- Add multiple tasks to the beginning of the pending list
+- Alias for `addMultiple` with the second argument as `true`
+
+---
+
+##### remove
+
+```ts
+remove(first?: boolean): void
+```
+
+- Remove the task at the end of the pending list
+- Passing `true` as the first argument will remove the task at the beginning of the pending list
+
+---
+
+##### removeFirst
+
+```ts
+removeFirst(): void
+```
+
+- Remove the task at the beginning of the pending list
+- Alias for `remove` with the first argument as `true`
+
+---
+
+##### removeAt
+
+```ts
+removeAt(index: number): void
+```
+
+- Remove a task at a particular index
+- Index should always be bound, otherwise throws a `RangeError`
+
+---
+
+##### removeRange
+
+```ts
+removeRange(start: number, count: number): void
+```
+
+- Remove tasks at a particular range from the pending list
+- The count is inclusive of the starting index
+- Starting index should always be bound, otherwise throws a `RangeError`
+
+---
+
+##### removeAll
+
+```ts
+removeAll(): void
+```
+
+- Remove all tasks from the pending list
+
+[TasksList]: /reference/types-and-enums#taskslist
+[TasksCount]: /reference/types-and-enums#taskscount
+[TaskWithDone]: /reference/types-and-enums#taskwithdone
+[TasksWithDone]: /reference/types-and-enums#taskswithdone
+[Done]: /reference/types-and-enums#done

@@ -1,0 +1,83 @@
+---
+title: Getting started
+description: Use Concurrent Tasks in your project today
+sidebar:
+  order: 2
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+Getting started with Concurrent Tasks is super easy. The practical nomenclature and the simplicity of it's API is the true power behind it.
+
+## Installation
+
+**Concurrent Tasks** is available to install directly via NPM.
+
+<Tabs>
+  <TabItem label="NPM">
+  
+  ```bash 
+  npm i concurrent-tasks
+  ```
+
+  </TabItem>
+  <TabItem label="Yarn">
+  
+  ```bash
+  yarn add concurrent-tasks
+  ```
+
+  </TabItem>
+  <TabItem label="PNPM">
+  
+  ```bash
+  pnpm add concurrent-tasks
+  ```
+
+  </TabItem>
+</Tabs>
+
+### Browsers
+
+```html
+<script
+  src="https://cdn.jsdelivr.net/npm/concurrent-tasks/umd/concurrent-tasks.min.js"
+  type="text/javascript"
+></script>
+```
+
+### Bun
+
+```bash
+bun install concurrent-tasks
+```
+
+### Deno
+
+```ts
+import { TaskRunner } from "https://cdn.jsdelivr.net/npm/concurrent-tasks/src/index.ts";
+```
+
+## Usage
+
+```ts
+import { TaskRunner } from "concurrent-tasks";
+
+const runner = new TaskRunner();
+
+function generateTasks() {
+  const tasks = [];
+  let count = 1000;
+  while (count) {
+    tasks.push((done) => {
+      setTimeout(() => {
+        done();
+      }, Math.random() * 1000);
+    });
+    count--;
+  }
+  return tasks;
+}
+
+runner.addMultiple(generateTasks());
+```

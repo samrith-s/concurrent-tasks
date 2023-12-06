@@ -1,0 +1,65 @@
+---
+title: 🏃‍♀️ Concurrent Tasks
+description: Get started with concurrent execution in JavaScript.
+template: splash
+hero:
+  tagline: The only pure JavaScript task runner you need.
+  actions:
+    - text: Get started
+      link: /introduction
+      icon: right-arrow
+      variant: primary
+---
+
+import { Card, CardGrid, Tabs, TabItem } from "@astrojs/starlight/components";
+
+## Installation
+
+<Tabs>
+  <TabItem label="NPM">
+  
+  ```bash 
+  npm i concurrent-tasks
+  ```
+
+  </TabItem>
+  <TabItem label="Yarn">
+  
+  ```bash
+  yarn add concurrent-tasks
+  ```
+
+  </TabItem>
+  <TabItem label="PNPM">
+  
+  ```bash
+  pnpm add concurrent-tasks
+  ```
+
+  </TabItem>
+</Tabs>
+
+## Features
+
+<CardGrid>
+  <Card title="ZERO dependencies" icon="approve-check">
+    CT contains **ZERO** runtime dependencies.
+  </Card>
+  <Card title="Lightweight" icon="approve-check">
+    A minified and gzipped size of **1.6Kb**, making it super lightweight even
+    in high-latency scenarios.
+  </Card>
+</CardGrid>
+
+<Card title="Runs anywhere JavaScript can" icon="approve-check">
+  The minimalism of Concurrent Tasks makes it an easy-to-use solution across any
+  framework or flavour of JavaScript.
+  <ul>
+    <li>Vanilla JavaScript</li>
+    <li>Frontend (React, Vue, Angular, Svelte, etc.)</li>
+    <li>Mobile (React Native, NativeScript, etc.)</li>
+    <li>Backend (Express, Hapi, Koa, etc)</li>
+    <li>NPM modules</li>
+    <li>Node CLI application</li>
+  </ul>
+</Card>

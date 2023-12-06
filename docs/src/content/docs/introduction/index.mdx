@@ -1,0 +1,27 @@
+---
+title: About the project
+description: A background on the what and why of Concurrent Tasks
+prev: false
+sidebar:
+  order: 1
+---
+
+Concurrent Tasks mimics a queue by using JavaScript's inbuilt array data type. Each task is a function which signals completion back to the runner.
+
+Once tasks are added, the instance starts executing them until the concurrency criteria is met. Whenever a task is complete, the next task in the queue is picked up.
+
+## Why another task runner?
+
+While writing fragments or a priority queue in JavaScript, we often come across quite a few hurdles. There's either no real native option, or we need to write a lot of code to get the desired results.
+
+Concurrent Tasks aims to solve this by providing a simplistic queue. The queue not only maintains the order, but also enables you to manipulate it.
+
+## What can I use it with?
+
+The minimalism of Concurrent Tasks makes it an easy-to-use solution across any framework or flavour of JavaScript. It has **ZERO dependencies** and can be used virtually in any scenario. With a **minified and gzipped size of 1.6kB**, it is the ultimate lightweight tool for your concurrency needs.
+
+- [x] Vanilla JavaScript
+- [x] Frontend Frameworks (React, Vue, Angular, etc)
+- [x] Backend Frameworks (Express, Hapi, Koa, etc)
+- [x] NPM Module
+- [x] Node CLI Application

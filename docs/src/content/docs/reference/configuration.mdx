@@ -1,0 +1,178 @@
+---
+title: Configuration
+description: List of configurations provided by Concurrent Tasks runner instance.
+slug: configuration
+sidebar:
+  order: 1
+prev: false
+---
+
+import Configuration from "../../../components/Configuration.astro";
+import References from "../../../components/References.astro";
+
+## Options
+
+##### name
+
+<Configuration type="string" defaultValue="Runner-<count>" />
+
+- A unique name to identify the runner instance
+
+##### concurrency
+
+<Configuration type="number" defaultValue="3" />
+
+- Sets the concurrency of the runner
+- Concurrency should be a positive integer, or `-1`
+- Setting concurrency as `-1` would run all tasks at once
+- If concurrency is not bound, throws a `RangeError`
+
+---
+
+## Hooks
+
+##### onStart
+
+<Configuration type="function" defaultValue="undefined" />
+
+- Fired whenever the runner goes from idle to working state
+
+```ts title="Signature" frame="terminal"
+OnStart<T = any> = ({
+  tasks,
+  count,
+}: {
+  tasks: TasksList<T>;
+  count: TasksCount;
+}) => void;
+```
+
+<References>[`TasksList`][TasksList], [`TasksCount`][TasksCount]</References>
+
+##### onAdd
+
+<Configuration type="function" defaultValue="undefined" />
+
+- Fired every time a task/tasks are added to the queue
+
+```ts title="Signature" frame="terminal"
+OnAdd<T = any> = ({
+  tasks,
+  count,
+  method,
+}: {
+  tasks: TasksList<T>;
+  count: TasksCount;
+  method: AdditionMethods;
+}) => void;
+```
+
+<References>
+  [`TasksList`][TasksList], [`TasksCount`][TasksCount],
+  [`AdditionMethods`][AdditionMethods]
+</References>
+
+##### onRun
+
+<Configuration type="function" defaultValue="undefined" />
+
+- Fired every time a task is picked up for execution
+
+```ts title="Signature" frame="terminal"
+OnRun<T = any> = ({
+  tasks,
+  count,
+  task,
+}: {
+  tasks: TasksList<T>;
+  count: TasksCount;
+  task: Task<T>;
+}) => void;
+```
+
+<References>[`TasksList`][TasksList], [`TasksCount`][TasksCount]</References>
+
+##### onDone
+
+<Configuration type="function" defaultValue="undefined" />
+
+:::caution
+
+- Not calling the `done` function from within your task will result in `onDone` never getting fired.
+- This also means that your queue will never proceed if no task in the queue calls the `done` function
+
+See: [The Done callback](/done-callback)
+
+:::
+
+- Fired after every task's completion
+
+```ts title="Signature" frame="terminal"
+OnDone<T = any> = ({
+  tasks,
+  count,
+  task,
+  result,
+}: {
+  tasks: TasksList<T>;
+  count: TasksCount;
+  task: Task<T>;
+  result?: T;
+}) => void;
+```
+
+<References>[`TasksList`][TasksList], [`TasksCount`][TasksCount]</References>
+
+##### onRemove
+
+<Configuration type="function" defaultValue="undefined" />
+
+- Fired every time a task/tasks are removed from the queue
+
+```ts title="Signature" frame="terminal"
+OnRemove<T = any> = ({
+  tasks,
+  count,
+  method,
+  removedTasks,
+}: {
+  tasks: TasksList<T>;
+  count: TasksCount;
+  method: RemovalMethods;
+  removedTasks: Task<T>[];
+}) => void;
+```
+
+<References>
+  [`TasksList`][TasksList], [`TasksCount`][TasksCount],
+  [`RemovalMethods`][RemovalMethods]
+</References>
+
+##### onEnd
+
+<Configuration type="function" defaultValue="undefined" />
+
+- Fired whenever the runner goes from working to idle state
+
+```ts title="Signature" frame="terminal"
+OnEnd<T = any> = ({
+  tasks,
+  count,
+  duration,
+}: {
+  tasks: TasksList<T>;
+  tasks: TasksCount;
+  duration: RunnerDuration;
+}) => void;
+```
+
+<References>
+  [`TasksList`][TasksList], [`TasksCount`][TasksCount],
+  [`RunnerDuration`][RunnerDuration]
+</References>
+
+[TasksList]: /reference/types-and-enums#taskslist
+[TasksCount]: /reference/types-and-enums#taskscount
+[AdditionMethods]: /reference/types-and-enums/#additionmethods
+[RemovalMethods]: /reference/types-and-enums/#removalmethods
+[RunnerDuration]: /reference/types-and-enums/#runnerduration

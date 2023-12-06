@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+details > ul * {
+  font-weight: normal !important;
+  font-size: var(--sl-text-sm) !important;
+}
+
+.starlight-aside {
+  border-radius: 0.25rem;
+}
+
+.reference p {
+  margin: 0 !important;
+  display: inline;
+}

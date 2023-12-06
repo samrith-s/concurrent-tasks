@@ -1,0 +1,112 @@
+---
+title: Types & Enums
+description: References of all types and enums provided by Concurrent Tasks
+next: false
+sidebar:
+  order: 3
+---
+
+## Types
+
+##### TasksList
+
+```ts
+type TasksList<T = any> = {
+  readonly running: Tasks<T>;
+  readonly pending: Tasks<T>;
+  readonly completed: Tasks<T>;
+};
+```
+
+##### TasksCount
+
+```ts
+type TasksCount<T = any> = {
+  total: number;
+  completed: number;
+  list: Task<T>[];
+};
+```
+
+##### RunnerDuration
+
+```ts
+type RunnerDuration = {
+  start: number;
+  end: number;
+  total: number;
+};
+```
+
+##### TaskWithDone
+
+```ts
+type TaskWithDone<T = any> = (
+  done: Done<T>,
+  id: TaskID
+) => TaskReturn<T> | Promise<TaskReturn<T>>;
+```
+
+##### TasksWithDone
+
+```ts
+type TasksWithDone<T = any> = TaskWithDone<T>[];
+```
+
+##### Done
+
+```ts
+type Done<T = any> = (result?: T) => void;
+```
+
+---
+
+## Enums
+
+##### TaskStatus
+
+```ts
+enum TaskStatus {
+  PENDING = "pending",
+  RUNNING = "running",
+  CANCELLED = "cancelled",
+  DONE = "done",
+}
+```
+
+##### RunnerEvents
+
+```ts
+enum RunnerEvents {
+  START = "onStart",
+  ADD = "onAdd",
+  REMOVE = "onRemove",
+  RUN = "onRun",
+  DONE = "onDone",
+  END = "onEnd",
+}
+```
+
+##### AdditionMethods
+
+```ts
+enum AdditionMethods {
+  FIRST = "first",
+  LAST = "last",
+  AT_INDEX = "at-index",
+  MULTIPLE_FIRST = "multiple-first",
+  MULTIPLE_LAST = "multiple-range",
+}
+```
+
+##### RemovalMethods
+
+```ts
+enum RemovalMethods {
+  ALL = "all",
+  BY_INDEX = "by-index",
+  RANGE = "range",
+  FIRST = "first",
+  LAST = "last",
+}
+```
