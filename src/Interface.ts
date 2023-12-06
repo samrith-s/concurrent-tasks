@@ -1,6 +1,6 @@
-import { Task, Tasks } from "./Task";
+import type { Task, Tasks } from "./Task";
 
-type Readonly<T = any> = {
+export type Readonly<T = any> = {
   readonly [K in keyof T]: T[K];
 };
 
@@ -30,10 +30,6 @@ export type TasksCount = {
   running: number;
 };
 
-export type TasksDescriptorWithList<T = any> = TasksCount & {
-  list: Tasks<T>;
-};
-
 export enum TaskStatus {
   PENDING = "pending",
   RUNNING = "running",
@@ -41,27 +37,21 @@ export enum TaskStatus {
   DONE = "done",
 }
 
-export const RemovalMethods = {
-  ALL: "all",
-  BY_INDEX: "by-index",
-  RANGE: "range",
-  FIRST: "first",
-  LAST: "last",
-} as const;
+export enum RemovalMethods {
+  ALL = "all",
+  BY_INDEX = "by-index",
+  RANGE = "range",
+  FIRST = "first",
+  LAST = "last",
+}
 
-export type RemovalMethods =
-  (typeof RemovalMethods)[keyof typeof RemovalMethods];
-
-export const AdditionMethods = {
-  FIRST: "first",
-  LAST: "last",
-  AT_INDEX: "at-index",
-  MULTIPLE_FIRST: "multiple-first",
-  MULTIPLE_LAST: "multiple-range",
-} as const;
-
-export type AdditionMethods =
-  (typeof AdditionMethods)[keyof typeof AdditionMethods];
+export enum AdditionMethods {
+  FIRST = "first",
+  LAST = "last",
+  AT_INDEX = "at-index",
+  MULTIPLE_FIRST = "multiple-first",
+  MULTIPLE_LAST = "multiple-range",
+}
 
 export type RunnerDuration = {
   start: number;
@@ -144,9 +134,4 @@ export type RunnerDefaultOptions<T> = RunnerHooks<T> & {
 
 export type RunnerOptions<T = any> = {
   [K in keyof RunnerDefaultOptions<T>]: RunnerDefaultOptions<T>[K];
-};
-
-export type RunnerConcurrency = {
-  max: number;
-  used: number;
 };

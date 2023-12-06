@@ -17,50 +17,23 @@ import { Task, Tasks } from "./Task";
 import { isArray, isFunction } from "./Utils";
 
 export class TaskRunner<T = any> {
-  private static instances = 0;
+  static #instances = 0;
 
-  private __busy = false;
-  private __destroyed = false;
+  #_busy = false;
+  #_destroyed = false;
 
-  private _pending = new List<T>();
-
-  private _completed = new List<T>();
-
-  private _running = new List<T>();
-
-  private get total(): number {
-    return this.pending + this.running + this.completed;
-  }
-
-  private get completed(): number {
-    return this._completed.size;
-  }
-
-  private get pending(): number {
-    return this._pending.size;
-  }
-
-  private get running(): number {
-    return this._running.size;
-  }
-
-  private _concurrency = 0;
-
-  private taskIds = 0;
-
-  private options: RunnerOptions<T>;
-
-  private readonly _duration: RunnerDuration = {
+  readonly #_pending = new List<T>();
+  readonly #_completed = new List<T>();
+  readonly #_running = new List<T>();
+  readonly #_options: RunnerOptions<T>;
+  readonly #_duration: RunnerDuration = {
     start: 0,
     end: 0,
     total: 0,
   };
 
-  private get duration(): RunnerDuration {
-    return {
-      ...this._duration,
-    };
-  }
+  #_concurrency = 0;
+  #_taskIds = 0;
 
   private onStart: RunnerHooks<T>["onStart"] | undefined;
   private onAdd: RunnerHooks<T>["onAdd"] | undefined;
@@ -69,16 +42,52 @@ export class TaskRunner<T = any> {
   private onDone: RunnerHooks<T>["onDone"] | undefined;
   private onEnd: RunnerHooks<T>["onEnd"] | undefined;
 
-  private createTask(task: TaskWithDone<T>): Task<T> {
-    return new Task(this.taskIds++, task);
+  set #concurrency(concurrency: number) {
+    if (!concurrency || concurrency < -1) {
+      throw new RangeError(
+        `Invalid range for concurrency. Range should be a positive integer, or -1. Found ${concurrency} instead`
+      );
+    }
+
+    if (concurrency === -1) {
+      this.#_concurrency = Infinity;
+    } else {
+      this.#_concurrency = concurrency;
+    }
   }
 
-  private done(task: Task<T>): Done<T> {
+  get #total(): number {
+    return this.#pending + this.#running + this.#completed;
+  }
+
+  get #completed(): number {
+    return this.#_completed.size;
+  }
+
+  get #pending(): number {
+    return this.#_pending.size;
+  }
+
+  get #running(): number {
+    return this.#_running.size;
+  }
+
+  get #duration(): RunnerDuration {
+    return {
+      ...this.#_duration,
+    };
+  }
+
+  #createTask(task: TaskWithDone<T>): Task<T> {
+    return new Task(this.#_taskIds++, task);
+  }
+
+  #done(task: Task<T>): Done<T> {
     return ((result: T) => {
       task.status = TaskStatus.DONE;
 
-      this._running.removeById(task.id);
-      this._completed.add(task);
+      this.#_running.removeById(task.id);
+      this.#_completed.add(task);
 
       this.onDone?.({
         task,
@@ -87,27 +96,27 @@ export class TaskRunner<T = any> {
         count: this.count,
       });
 
-      this.run();
+      this.#run();
     }) as unknown as Done<T>;
   }
 
-  private run() {
-    if (!this.__destroyed) {
+  #run() {
+    if (!this.#_destroyed) {
       if (
-        !!this.total &&
-        this.completed < this.total &&
-        this.running < this._concurrency
+        !!this.#total &&
+        this.#completed < this.#total &&
+        this.#running < this.#_concurrency
       ) {
-        const difference = this._concurrency - this.running;
+        const difference = this.#_concurrency - this.#running;
 
-        const tasks = this._pending.removeRange(0, difference) as Tasks<T>;
+        const tasks = this.#_pending.removeRange(0, difference) as Tasks<T>;
 
         tasks.forEach((task) => {
           task.status = TaskStatus.RUNNING;
 
-          this._running.add(task);
+          this.#_running.add(task);
 
-          task.run(this.done(task));
+          task.run(this.#done(task));
 
           this.onRun?.({
             task,
@@ -116,29 +125,26 @@ export class TaskRunner<T = any> {
           });
         });
 
-        this.__busy = true;
+        this.#_busy = true;
       } else {
-        this._duration.end = Date.now();
-        this._duration.total = Math.ceil(
-          this._duration.end - this._duration.start
+        this.#_duration.end = Date.now();
+        this.#_duration.total = Math.ceil(
+          this.#_duration.end - this.#_duration.start
         );
 
         /* istanbul ignore next */
         this.onEnd?.({
           tasks: this.tasks,
           count: this.count,
-          duration: this.duration,
+          duration: this.#duration,
         });
 
-        this.__busy = false;
+        this.#_busy = false;
       }
     }
   }
 
-  /* istanbul ignore next */
-  private provideRemovedTasks(
-    removedTasks: Tasks<T> | Task<T> | void
-  ): Tasks<T> {
+  #provideRemovedTasks(removedTasks: Tasks<T> | Task<T> | void): Tasks<T> {
     if (isArray(removedTasks)) {
       return removedTasks;
     }
@@ -147,54 +153,57 @@ export class TaskRunner<T = any> {
       return [removedTasks];
     }
 
+    /* istanbul ignore next */
     return [];
   }
 
   constructor(options?: Partial<RunnerOptions<T>>) {
-    this.options = {
-      ...DefaultOptions(`Runner-${TaskRunner.instances++}`),
+    this.#_options = {
+      ...DefaultOptions(`Runner-${TaskRunner.#instances++}`),
       ...options,
     };
 
-    if (this.options.concurrency < 0) {
-      throw new RangeError(
-        `Invalid range for concurrency. Range should be between 0 and Infinity, found ${this.options.concurrency}`
-      );
-    }
+    this.#concurrency = this.#_options.concurrency;
 
-    this._concurrency = this.options.concurrency;
-
-    this.onStart = this.options.onStart;
-    this.onAdd = this.options.onAdd;
-    this.onRemove = this.options.onRemove;
-    this.onRun = this.options.onRun;
-    this.onDone = this.options.onDone;
-    this.onEnd = this.options.onEnd;
+    this.onStart = this.#_options.onStart;
+    this.onAdd = this.#_options.onAdd;
+    this.onRemove = this.#_options.onRemove;
+    this.onRun = this.#_options.onRun;
+    this.onDone = this.#_options.onDone;
+    this.onEnd = this.#_options.onEnd;
   }
 
   /**
    * Returns the concurrency of the runner.
    */
   public get concurrency(): number {
-    return this._concurrency;
+    return this.#_concurrency;
   }
 
   /**
    * Get whether the runner is busy executing tasks or not.
    */
   public get busy(): boolean {
-    return this.__busy;
+    return this.#_busy;
   }
 
   /**
-   * Get the descriptors for the runner
+   * Get whether the runner is destroyed or not.
+   */
+  /* istanbul ignore next */
+  public get destroyed(): boolean {
+    return this.#_destroyed;
+  }
+
+  /**
+   * Get the counts for the runner
    */
   public get count(): TasksCount {
     return {
-      total: this.total,
-      completed: this.completed,
-      running: this.running,
-      pending: this.pending,
+      total: this.#total,
+      completed: this.#completed,
+      running: this.#running,
+      pending: this.#pending,
     };
   }
 
@@ -202,9 +211,9 @@ export class TaskRunner<T = any> {
    * Get the list of tasks of the runner.
    */
   public get tasks() {
-    const completed = this._completed.entries();
-    const pending = this._pending.entries();
-    const running = this._running.entries();
+    const completed = this.#_completed.entries();
+    const pending = this.#_pending.entries();
+    const running = this.#_running.entries();
     return {
       completed,
       pending,
@@ -214,60 +223,26 @@ export class TaskRunner<T = any> {
   }
 
   /**
-   * Add a listener to any of the supported events of the runner. Only one listener per event can be attached at any time. Adding another will overwrite the existing listener.
-   */
-  public addListener<E extends RunnerEvents>(
-    event: `${E}`,
-    listener: E extends RunnerEvents ? RunnerHooks<T>[E] : never
-  ): void {
-    if (!isFunction(listener)) {
-      throw new TypeError(
-        `Invalid listener callback provided. Expected ${event} to be a function, but found ${typeof listener} instead.`
-      );
-    }
-
-    Object.assign(this, {
-      [event]: listener,
-    });
-  }
-
-  /**
-   * Remove a previously registered listener for an event supported by the runner.
-   */
-  public removeListener<E extends `${keyof RunnerHooks<T>}`>(event: E): void {
-    Object.assign(this, {
-      [event]: undefined,
-    });
-  }
-
-  /**
-   * Set the concurrency value
-   */
-  public setConcurrency(concurrency: number) {
-    this._concurrency = concurrency;
-    this.run();
-  }
-
-  /**
    * Start task execution.
    */
   public start(): boolean {
-    if (this.__destroyed) {
+    if (this.#_destroyed) {
       return false;
     }
 
-    if (this.__busy) {
+    if (this.#_busy) {
       return false;
     }
 
-    this._duration.start = Date.now();
+    this.#_duration.start = Date.now();
 
     /* istanbul ignore next */
     this.onStart?.({
       tasks: this.tasks,
       count: this.count,
     });
-    this.run();
+
+    this.#run();
 
     return true;
   }
@@ -278,8 +253,17 @@ export class TaskRunner<T = any> {
    * This does not affect currently running tasks.
    */
   public destroy(): void {
-    this.__destroyed = true;
-    this.__busy = false;
+    this.#_destroyed = true;
+  }
+
+  /**
+   * Set the concurrency value
+   */
+  public setConcurrency(concurrency: number): void {
+    if (!this.#_destroyed) {
+      this.#concurrency = concurrency;
+      this.#run();
+    }
   }
 
   /**
@@ -292,24 +276,26 @@ export class TaskRunner<T = any> {
    * ```
    */
   public add(task: TaskWithDone<T>, prepend?: boolean): void {
-    if (!isFunction(task) || task instanceof Task) {
-      throw new TypeError(
-        "A task cannot be anything but a function, nor an instance of `Task`. Pass a function instead."
-      );
-    } else {
-      if (prepend) {
-        this._pending.addFirst(this.createTask(task));
+    if (!this.#_destroyed) {
+      if (!isFunction(task) || task instanceof Task) {
+        throw new TypeError(
+          "A task cannot be anything but a function, nor an instance of `Task`. Pass a function instead."
+        );
       } else {
-        this._pending.add(this.createTask(task));
+        if (prepend) {
+          this.#_pending.addFirst(this.#createTask(task));
+        } else {
+          this.#_pending.add(this.#createTask(task));
+        }
       }
-    }
 
-    /* istanbul ignore next */
-    this.onAdd?.({
-      tasks: this.tasks,
-      count: this.count,
-      method: prepend ? AdditionMethods.FIRST : AdditionMethods.LAST,
-    });
+      /* istanbul ignore next */
+      this.onAdd?.({
+        tasks: this.tasks,
+        count: this.count,
+        method: prepend ? AdditionMethods.FIRST : AdditionMethods.LAST,
+      });
+    }
   }
 
   /**
@@ -335,14 +321,16 @@ export class TaskRunner<T = any> {
    * ```
    */
   public addAt(index: number, task: TaskWithDone<T>): void {
-    this._pending.addAt(index, this.createTask(task));
+    if (!this.#_destroyed) {
+      this.#_pending.addAt(index, this.#createTask(task));
 
-    /* istanbul ignore next */
-    this.onAdd?.({
-      tasks: this.tasks,
-      count: this.count,
-      method: AdditionMethods.AT_INDEX,
-    });
+      /* istanbul ignore next */
+      this.onAdd?.({
+        tasks: this.tasks,
+        count: this.count,
+        method: AdditionMethods.AT_INDEX,
+      });
+    }
   }
 
   /**
@@ -355,16 +343,18 @@ export class TaskRunner<T = any> {
    * ```
    */
   public addMultiple(tasks: TasksWithDone<T>, prepend?: boolean): void {
-    this._pending.concat(tasks.map(this.createTask.bind(this)), prepend);
+    if (!this.#_destroyed) {
+      this.#_pending.concat(tasks.map(this.#createTask.bind(this)), prepend);
 
-    /* istanbul ignore next */
-    this.onAdd?.({
-      tasks: this.tasks,
-      count: this.count,
-      method: prepend
-        ? AdditionMethods.MULTIPLE_FIRST
-        : AdditionMethods.MULTIPLE_LAST,
-    });
+      /* istanbul ignore next */
+      this.onAdd?.({
+        tasks: this.tasks,
+        count: this.count,
+        method: prepend
+          ? AdditionMethods.MULTIPLE_FIRST
+          : AdditionMethods.MULTIPLE_LAST,
+      });
+    }
   }
 
   /**
@@ -391,14 +381,14 @@ export class TaskRunner<T = any> {
    */
   public remove(first?: boolean): void {
     const removedTasks = first
-      ? this._pending.removeFirst()
-      : this._pending.remove();
+      ? this.#_pending.removeFirst()
+      : this.#_pending.remove();
 
     /* istanbul ignore next */
     this.onRemove?.({
       tasks: this.tasks,
       count: this.count,
-      removedTasks: this.provideRemovedTasks(removedTasks),
+      removedTasks: this.#provideRemovedTasks(removedTasks),
       method: first ? RemovalMethods.FIRST : RemovalMethods.LAST,
     });
   }
@@ -426,13 +416,13 @@ export class TaskRunner<T = any> {
    * ```
    */
   public removeAt(index: number): void {
-    const removedTasks = this._pending.removeAt(index);
+    const removedTasks = this.#_pending.removeAt(index);
 
     /* istanbul ignore next */
     this.onRemove?.({
       tasks: this.tasks,
       count: this.count,
-      removedTasks: this.provideRemovedTasks(removedTasks),
+      removedTasks: this.#provideRemovedTasks(removedTasks),
       method: RemovalMethods.BY_INDEX,
     });
   }
@@ -447,13 +437,13 @@ export class TaskRunner<T = any> {
    * ```
    */
   public removeRange(start: number, count: number): void {
-    const removedTasks = this._pending.removeRange(start, count);
+    const removedTasks = this.#_pending.removeRange(start, count);
 
     /* istanbul ignore next */
     this.onRemove?.({
       tasks: this.tasks,
       count: this.count,
-      removedTasks: this.provideRemovedTasks(removedTasks),
+      removedTasks: this.#provideRemovedTasks(removedTasks),
       method: RemovalMethods.RANGE,
     });
   }
@@ -468,14 +458,43 @@ export class TaskRunner<T = any> {
    * ```
    */
   public removeAll(): void {
-    const removedTasks = this._pending.clear();
+    const removedTasks = this.#_pending.clear();
 
     /* istanbul ignore next */
     this.onRemove?.({
       tasks: this.tasks,
       count: this.count,
-      removedTasks: this.provideRemovedTasks(removedTasks),
+      removedTasks: this.#provideRemovedTasks(removedTasks),
       method: RemovalMethods.ALL,
+    });
+  }
+
+  /**
+   * Add a listener to any of the supported events of the runner. Only one listener per event can be attached at any time. Adding another will overwrite the existing listener.
+   */
+  public addListener<E extends RunnerEvents>(
+    event: `${E}`,
+    listener: E extends RunnerEvents ? RunnerHooks<T>[E] : never
+  ): void {
+    if (!this.#_destroyed) {
+      if (!isFunction(listener)) {
+        throw new TypeError(
+          `Invalid listener callback provided. Expected ${event} to be a function, but found ${typeof listener} instead.`
+        );
+      }
+
+      Object.assign(this, {
+        [event]: listener,
+      });
+    }
+  }
+
+  /**
+   * Remove a previously registered listener for an event supported by the runner.
+   */
+  public removeListener<E extends `${keyof RunnerHooks<T>}`>(event: E): void {
+    Object.assign(this, {
+      [event]: undefined,
     });
   }
 }

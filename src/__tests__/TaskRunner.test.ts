@@ -10,11 +10,29 @@ const TASK_COUNT = 10;
 
 describe("TaskRunner", () => {
   describe("constructor", () => {
+    it("should set the concurrency if it is a positive integer or -1", () => {
+      const runner = createRunner();
+
+      runner.setConcurrency(10);
+
+      expect(runner.concurrency).toBe(10);
+
+      runner.setConcurrency(-1);
+
+      expect(runner.concurrency).toBe(Infinity);
+    });
+
     it("should throw an error if concurrency is not in range", () => {
       expect(
         () =>
           new TaskRunner({
-            concurrency: -1,
+            concurrency: 0,
+          })
+      ).toThrow(RangeError);
+      expect(
+        () =>
+          new TaskRunner({
+            concurrency: -2,
           })
       ).toThrow(RangeError);
     });
@@ -34,6 +52,8 @@ describe("TaskRunner", () => {
 
     describe("busy", () => {
       it("should show the correct status", () => {
+        jest.useFakeTimers();
+
         const runner = createRunner({
           autoStart: true,
         });
@@ -42,14 +62,18 @@ describe("TaskRunner", () => {
 
         runner.removeAll();
 
+        jest.advanceTimersByTime(10000);
+
         expect(runner.busy).toBeFalsy();
 
         runner.destroy();
+
+        jest.clearAllTimers();
       });
     });
 
     describe("count", () => {
-      it("should return the correct descriptor", () => {
+      it("should return the correct counts", () => {
         const taskCount = 5;
         const runner = createRunner({
           taskCount,
@@ -88,7 +112,7 @@ describe("TaskRunner", () => {
           taskCount: 0,
         });
 
-        runner.addListener("onAdd", onAdd);
+        runner.addListener(CT.RunnerEvents.ADD, onAdd);
 
         runner.add(generateTask());
 
@@ -100,9 +124,9 @@ describe("TaskRunner", () => {
           taskCount: 0,
         });
 
-        expect(() => runner.addListener("onAdd", "hello" as any)).toThrow(
-          TypeError
-        );
+        expect(() =>
+          runner.addListener(CT.RunnerEvents.ADD, "hello" as any)
+        ).toThrow(TypeError);
       });
     });
 
@@ -114,9 +138,9 @@ describe("TaskRunner", () => {
           taskCount: 0,
         });
 
-        runner.addListener("onAdd", onAdd);
+        runner.addListener(CT.RunnerEvents.ADD, onAdd);
         runner.add(generateTask());
-        runner.removeListener("onAdd");
+        runner.removeListener(CT.RunnerEvents.ADD);
         runner.add(generateTask());
 
         expect(onAdd).toHaveBeenCalledTimes(1);
@@ -460,6 +484,8 @@ describe("TaskRunner", () => {
 
     describe("onRun", () => {
       it("should call `onRun` hook whenever a task in run", (done) => {
+        jest.useFakeTimers();
+
         const onRun = jest.fn();
 
         const runner = createRunner({
@@ -468,16 +494,23 @@ describe("TaskRunner", () => {
           taskCount: TASK_COUNT,
           onEnd() {
             expect(onRun).toHaveBeenCalledTimes(TASK_COUNT);
-            done();
 
             runner.destroy();
+
+            jest.clearAllTimers();
+
+            done();
           },
         });
+
+        jest.advanceTimersByTime(10000);
       });
     });
 
     describe("onDone", () => {
       it("should call `onDone` hook whenever a task is done", (done) => {
+        jest.useFakeTimers();
+
         const onDone = jest.fn();
 
         const runner = createRunner({
@@ -490,18 +523,27 @@ describe("TaskRunner", () => {
 
             runner.destroy();
 
+            jest.clearAllTimers();
+
             done();
           },
         });
+
+        jest.advanceTimersByTime(10000);
       });
     });
 
     describe("onEnd", () => {
       it("should call `onEnd` hook when all tasks are done", (done) => {
+        jest.useFakeTimers();
+
         const onEnd = jest.fn().mockImplementation(() => {
           expect(onEnd).toHaveBeenCalled();
 
           runner.destroy();
+
+          jest.clearAllTimers();
+
           done();
         });
 
@@ -510,6 +552,8 @@ describe("TaskRunner", () => {
           taskCount: TASK_COUNT,
           onEnd,
         });
+
+        jest.advanceTimersByTime(10000);
       });
     });
   });
@@ -704,12 +748,14 @@ describe("TaskRunner", () => {
     describe("run", () => {
       describe("on", () => {
         it("should fire `run` event whenever a task in run", (done) => {
+          jest.useFakeTimers();
+
           const runner = createRunner({
             onEnd() {
               expect(onRun).toHaveBeenCalledTimes(TASK_COUNT);
-              done();
-
+              jest.clearAllTimers();
               runner.destroy();
+              done();
             },
           });
           const onRun = jest.fn();
@@ -717,11 +763,15 @@ describe("TaskRunner", () => {
           runner.addListener(CT.RunnerEvents.RUN, onRun);
 
           runner.start();
+
+          jest.advanceTimersByTime(10000);
         });
       });
 
       describe("off", () => {
         it("should not fire `run` event whenever a task in run", (done) => {
+          jest.useFakeTimers();
+
           const runner = createRunner();
           const onRun = jest.fn();
 
@@ -729,11 +779,14 @@ describe("TaskRunner", () => {
           runner.removeListener(CT.RunnerEvents.RUN);
           runner.addListener(CT.RunnerEvents.END, () => {
             expect(onRun).not.toHaveBeenCalled();
-            done();
-
+            jest.clearAllTimers();
             runner.destroy();
+            done();
           });
+
           runner.start();
+
+          jest.advanceTimersByTime(10000);
         });
       });
     });
@@ -741,22 +794,28 @@ describe("TaskRunner", () => {
     describe("done", () => {
       describe("on", () => {
         it("should fire `done` event whenever a task is done", (done) => {
+          jest.useFakeTimers();
+
           const runner = createRunner();
           const onDone = jest.fn();
 
           runner.addListener(CT.RunnerEvents.DONE, onDone);
           runner.addListener(CT.RunnerEvents.END, () => {
             expect(onDone).toHaveBeenCalledTimes(TASK_COUNT);
-            done();
-
+            jest.clearAllTimers();
             runner.destroy();
+            done();
           });
           runner.start();
+
+          jest.advanceTimersByTime(10000);
         });
       });
 
       describe("off", () => {
         it("should not fire `done` event whenever a task is done", (done) => {
+          jest.useFakeTimers();
+
           const runner = createRunner();
           const onDone = jest.fn();
 
@@ -764,11 +823,13 @@ describe("TaskRunner", () => {
           runner.removeListener(CT.RunnerEvents.DONE);
           runner.addListener(CT.RunnerEvents.END, () => {
             expect(onDone).not.toHaveBeenCalled();
-            done();
-
+            jest.clearAllTimers();
             runner.destroy();
+            done();
           });
           runner.start();
+
+          jest.advanceTimersByTime(10000);
         });
       });
     });
@@ -776,17 +837,20 @@ describe("TaskRunner", () => {
     describe("end", () => {
       describe("on", () => {
         it("should fire `end` event when all tasks are done", (done) => {
+          jest.useFakeTimers();
+
           const onEnd = jest.fn().mockImplementation(() => {
             expect(onEnd).toHaveBeenCalled();
-
+            jest.clearAllTimers();
             runner.destroy();
-
             done();
           });
           const runner = createRunner();
 
           runner.addListener(CT.RunnerEvents.END, onEnd);
           runner.start();
+
+          jest.advanceTimersByTime(10000);
         });
       });
 
