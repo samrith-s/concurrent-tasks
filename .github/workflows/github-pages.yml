@@ -1,0 +1,64 @@
+name: Docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  BUILD_PATH: docs
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: yarn
+          cache-dependency-path: ${{ env.BUILD_PATH }}/yarn.lock
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v4
+
+      - name: Install dependencies
+        working-directory: ${{ env.BUILD_PATH }}
+        run: yarn install --frozen-lockfile --ignore-scripts --prefer-offline
+
+      - name: Build
+        working-directory: ${{ env.BUILD_PATH }}
+        run: |
+          yarn astro build \
+            --site "${{ steps.pages.outputs.origin }}" \
+            --base "${{ steps.pages.outputs.base_path }}"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ${{ env.BUILD_PATH }}/dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v3
