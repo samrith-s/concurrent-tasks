@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-undef */
-import * as path from "path";
 
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
@@ -10,28 +9,27 @@ import terser from "@rollup/plugin-terser";
 import builtins from "builtin-modules";
 import typescript from "rollup-plugin-typescript2";
 
+import * as pkg from "./package.json";
+
 const isDev = process.env.NODE_ENV === "development";
 
-const pkg = require(path.resolve("package.json"));
-
 const input = pkg.entries || "src/index.ts";
-
-const plugins = [
-  resolve(),
-  commonjs(),
-  json(),
-  typescript({
-    typescript: require("typescript"),
-    clean: true,
-    useTsconfigDeclarationDir: true,
-  }),
-  strip(),
-];
 
 export default {
   input,
   output: [output("cjs", "main"), output("es", "module"), output("umd", "umd")],
-  plugins,
+  plugins: [
+    resolve(),
+    commonjs(),
+    json(),
+    typescript({
+      typescript: require("typescript"),
+      clean: true,
+      exclude: ["**/*.test.ts"],
+      useTsconfigDeclarationDir: true,
+    }),
+    strip(),
+  ],
   external: [...builtins],
 };
 

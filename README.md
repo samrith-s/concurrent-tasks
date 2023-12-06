@@ -11,7 +11,7 @@ A simple task runner which will run all tasks till completion, while maintaining
 
 > Read the full documentation at the [website][website]
 
-# 👋🏼 Introduction
+# Introduction
 
 Concurrent Tasks mimics a queue by using JavaScript's inbuilt array data type. Each task is a function which signals completion back to the runner.
 
