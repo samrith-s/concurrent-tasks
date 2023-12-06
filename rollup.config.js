@@ -5,6 +5,7 @@ import * as path from "path";
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
 import resolve from "@rollup/plugin-node-resolve";
+import strip from "@rollup/plugin-strip";
 import terser from "@rollup/plugin-terser";
 import builtins from "builtin-modules";
 import typescript from "rollup-plugin-typescript2";
@@ -24,6 +25,7 @@ const plugins = [
     clean: true,
     useTsconfigDeclarationDir: true,
   }),
+  strip(),
 ];
 
 export default {
