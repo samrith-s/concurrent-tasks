@@ -1,6 +1,79 @@
 ---
 title: Migrating from v1 to v3
 description: Upgrading to the latest version of Concurrent Tasks
+sidebar:
+  order: 1
+  badge: New
 ---
 
-Concurrent Tasks v3 comes with a host of changes to the API and
+Concurrent Tasks v3 comes with a host of changes to the API to make it simpler and easier to use.
+
+> The entire code has been migrated to TypeScript to provide auto-completion while ensuring type safety.
+
+## Breaking changes
+
+There are a few breaking changes which you need to be aware of while migrating.
+
+#### Dropped support for Node < 18
+
+With [Node 16 reaching EOL September 11th, 2023](https://nodejs.org/en/blog/announcements/nodejs16-eol), it just made more sense to drop support for older versions when running in Node-based environments.
+
+This majorly only affects you if you use Concurrent Tasks in Node environments, for example:
+
+- Bundling
+- Servers
+- CLIs
+
+If you use Node versions below 18, the ideal solution is for you to upgrade.
+
+If for some reason you are unable to upgrade, no worries. With NPM and PNPM, you should be able to install just fine. With Yarn, you can simply use the `--ignore-engines` flag:
+
+```bash
+yarn add concurrent-tasks --ignore-engines
+```
+
+#### Named exports over default exports
+
+Concurrent Tasks now only provides named exports. This is to align with the move to TypeScript which means we also need to make types available for you to consume for better type safety.
+
+```diff
+- import TaskRunner from 'concurrent-tasks';
++ import { TaskRunner } from 'concurrent-tasks';
+```
+
+#### Removed `autoStart` configuration option
+
+Previously with Concurrent Tasks, you could pass `autoStart` as `true` while creating the runner instance.
+
+Whenever you added tasks via `add` or `addMultiple` methods, it would cause the runner to start executing. This was a source of a lot of confusion since the runner also provides a `start` method.
+
+With v3, we are removing this option in favour of `start` method to remove implicitness.
+
+```diff
+import { TaskRunner } from 'concurrent-tasks';
+
+const runner = new TaskRunner({
+  concurrency: 10,
+- autoStart: true
+});
+
+runner.add((done) => {
+  console.log("I am a task!");
+  done();
+})
+
++ runner.start();
+```
+
+#### Busy status is now a property instead of a method
+
+If you are using the `isBusy` method, you will now move to use the `busy` property instead.
+
+```diff
+import { TaskRunner } from 'concurrent-tasks';
+
+const runner = new TaskRunner()
+
+- console.log(runner.isBusy())
++ console.log(runner.busy)
+```
