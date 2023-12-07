@@ -11,10 +11,14 @@ export default defineConfig({
   },
   integrations: [
     starlight({
-      title: "🏃‍♀️ Concurrent Tasks",
+      title: "Concurrent Tasks",
+      logo: {
+        src: "./public/logo.svg",
+      },
       social: {
         github: "https://github.com/samrith-s/concurrent-tasks",
       },
+      favicon: "/logo.svg",
       customCss: ["./src/tailwind.css"],
       sidebar: [
         {
