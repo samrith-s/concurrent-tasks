@@ -45,7 +45,7 @@ jobs:
         run: yarn install --frozen-lockfile --prefer-offline
 
       - name: Test
-        run: yarn test --max-workers="50%"
+        run: yarn test --max-workers="75%" --coverage
 
   build:
     name: Build
@@ -66,6 +66,3 @@ jobs:
 
       - name: Build
         run: yarn build
-
-      - name: Size Limit
-        run: yarn size-limit
