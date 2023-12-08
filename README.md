@@ -1,15 +1,33 @@
-# 🏃‍♀️ Concurrent Tasks
+<p align="center">
+  <img src="https://raw.githubusercontent.com/samrith-s/concurrent-tasks/main/docs/public/logo.svg" alt="Concurrent Tasks logo" height="64"  />
+</p>
 
-[![npm][npm_v]][npm_package]
-[![size][size_img]][size]
-[![npm][npm_dw]][npm_package]
-[![GitHub issues][gh_issues]][github_issues]
-[![GitHub forks][gh_forks]][github_forks]
-[![GitHub stars][gh_stars]][github_stars]
+<h1 align="center">Concurrent Tasks</h1>
 
+<p align="center">
+  <a href="https://www.npmjs.com/package/concurrent-tasks" style="text-decoration:none">
+    <img src="https://img.shields.io/npm/v/concurrent-tasks.svg">
+  </a>
+  <a href="https://www.npmjs.com/package/concurrent-tasks" style="text-decoration:none">
+    <img src="https://img.shields.io/npm/dw/concurrent-tasks.svg">
+  </a>
+  <a href="https://bundlephobia.com/result?p=concurrent-tasks" style="text-decoration:none">
+    <img src="https://badgen.net/bundlephobia/minzip/concurrent-tasks" />
+  </a>
+  <a href="https://github.com/samrith-s/concurrent-tasks/stargazers" style="text-decoration:none">
+    <img src="https://img.shields.io/github/stars/samrith-s/concurrent-tasks.svg?label=Stars&style=social" />
+  </a>
+</p>
+
+<p align="center">
 A simple task runner which will run all tasks till completion, while maintaining concurrency limits.
+</p>
 
-> Read the full documentation at the [website][website]
+<p align="center">
+Read the full documentation at the <a href="https://www.concurrent-tasks.js.org">website</a>
+</p>
+
+---
 
 # Introduction
 
@@ -22,6 +40,21 @@ The minimalism of Concurrent Tasks makes it an easy-to-use solution across any f
 - [x] Backend Frameworks (Express, Hapi, Koa, etc)
 - [x] NPM Module
 - [x] Node CLI Application
+
+# Installation
+
+### Node
+
+```bash
+# NPM
+npm i concurrent-tasks
+
+# Yarn
+yarn add concurrent-tasks
+
+# PNPM
+pnpm i concurrent-tasks
+```
 
 ### Browser
 
@@ -44,7 +77,7 @@ bun install concurrent-tasks
 import { TaskRunner } from "https://cdn.jsdelivr.net/npm/concurrent-tasks/src/index.ts";
 ```
 
-### Usage
+# Usage
 
 > **Important:** Each task passed to the task runner, necessarily has to call the done function. If not, your queue won't process properly.
 
@@ -71,16 +104,3 @@ runner.addMultiple(generateTasks());
 
 runner.start();
 ```
-
-[website]: https://concurrent-tasks.js.org
-[size]: https://bundlephobia.com/result?p=concurrent-tasks
-[size_img]: https://badgen.net/bundlephobia/minzip/concurrent-tasks
-[npm_package]: https://www.npmjs.com/package/concurrent-tasks
-[npm_v]: https://img.shields.io/npm/v/concurrent-tasks.svg
-[npm_dw]: https://img.shields.io/npm/dw/concurrent-tasks.svg
-[github_issues]: https://github.com/samrith-s/concurrent-tasks/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc
-[github_forks]: https://github.com/samrith-s/concurrent-tasks/network/members
-[github_stars]: https://github.com/samrith-s/concurrent-tasks/stargazers
-[gh_issues]: https://img.shields.io/github/issues/samrith-s/concurrent-tasks.svg
-[gh_forks]: https://img.shields.io/github/forks/samrith-s/concurrent-tasks.svg?label=Fork&style=social
-[gh_stars]: https://img.shields.io/github/stars/samrith-s/concurrent-tasks.svg?label=Stars&style=social
