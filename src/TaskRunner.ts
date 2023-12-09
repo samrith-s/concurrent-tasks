@@ -2,6 +2,7 @@ import { DefaultOptions } from "./DefaultOptions";
 import {
   AdditionMethods,
   Done,
+  HookDefaults,
   RemovalMethods,
   RunnerDuration,
   RunnerEvents,
@@ -20,6 +21,7 @@ export class TaskRunner<T = any> {
   static #instances = 0;
 
   #_busy = false;
+  #_paused = false;
   #_destroyed = false;
 
   readonly #_pending = new List<T>();
@@ -34,13 +36,6 @@ export class TaskRunner<T = any> {
 
   #_concurrency = 0;
   #_taskIds = 0;
-
-  private onStart: RunnerHooks<T>["onStart"] | undefined;
-  private onAdd: RunnerHooks<T>["onAdd"] | undefined;
-  private onRemove: RunnerHooks<T>["onRemove"] | undefined;
-  private onRun: RunnerHooks<T>["onRun"] | undefined;
-  private onDone: RunnerHooks<T>["onDone"] | undefined;
-  private onEnd: RunnerHooks<T>["onEnd"] | undefined;
 
   set #concurrency(concurrency: number) {
     if (!concurrency || concurrency < -1) {
@@ -72,10 +67,25 @@ export class TaskRunner<T = any> {
     return this.#_running.size;
   }
 
-  get #duration(): RunnerDuration {
-    return {
-      ...this.#_duration,
-    };
+  #runHook<
+    Hook extends keyof RunnerHooks<T>,
+    Data extends Omit<
+      Parameters<RunnerHooks<T>[Hook]>[0],
+      keyof HookDefaults
+    > extends infer D
+      ? D extends Record<string, never>
+        ? null
+        : D
+      : null,
+  >(
+    ...[hook, data]: Data extends null ? [hook: Hook] : [hook: Hook, data: Data]
+  ) {
+    (this as any)[hook]?.({
+      ...(data || {}),
+      tasks: this.tasks,
+      count: this.count,
+      duration: this.duration,
+    });
   }
 
   #createTask(task: TaskWithDone<T>): Task<T> {
@@ -89,19 +99,29 @@ export class TaskRunner<T = any> {
       this.#_running.removeById(task.id);
       this.#_completed.add(task);
 
-      this.onDone?.({
+      this.#runHook(RunnerEvents.DONE, {
         task,
         result,
-        tasks: this.tasks,
-        count: this.count,
       });
 
-      this.#run();
+      if (!this.#_paused && !this.#_destroyed) {
+        return this.#run();
+      }
+
+      if (!this.#running) {
+        if (this.#_paused) {
+          return this.#runHook(RunnerEvents.PAUSE);
+        }
+
+        if (this.#_destroyed) {
+          return this.#runHook(RunnerEvents.DESTROY);
+        }
+      }
     }) as unknown as Done<T>;
   }
 
   #run() {
-    if (!this.#_destroyed) {
+    if (!this.#_destroyed && !this.#_paused) {
       if (
         !!this.#total &&
         this.#completed < this.#total &&
@@ -118,10 +138,9 @@ export class TaskRunner<T = any> {
 
           task.run(this.#done(task));
 
-          this.onRun?.({
+          /* istanbul ignore next */
+          this.#runHook(RunnerEvents.RUN, {
             task,
-            tasks: this.tasks,
-            count: this.count,
           });
         });
 
@@ -133,11 +152,7 @@ export class TaskRunner<T = any> {
         );
 
         /* istanbul ignore next */
-        this.onEnd?.({
-          tasks: this.tasks,
-          count: this.count,
-          duration: this.#duration,
-        });
+        this.#runHook(RunnerEvents.END);
 
         this.#_busy = false;
       }
@@ -165,12 +180,9 @@ export class TaskRunner<T = any> {
 
     this.#concurrency = this.#_options.concurrency;
 
-    this.onStart = this.#_options.onStart;
-    this.onAdd = this.#_options.onAdd;
-    this.onRemove = this.#_options.onRemove;
-    this.onRun = this.#_options.onRun;
-    this.onDone = this.#_options.onDone;
-    this.onEnd = this.#_options.onEnd;
+    Object.values(RunnerEvents).forEach((value) => {
+      (this as any)[value] = this.#_options[value];
+    });
   }
 
   /**
@@ -188,9 +200,15 @@ export class TaskRunner<T = any> {
   }
 
   /**
+   * Get whether the runner is paused or not.
+   */
+  public get paused(): boolean {
+    return this.#_paused;
+  }
+
+  /**
    * Get whether the runner is destroyed or not.
    */
-  /* istanbul ignore next */
   public get destroyed(): boolean {
     return this.#_destroyed;
   }
@@ -204,6 +222,12 @@ export class TaskRunner<T = any> {
       completed: this.#completed,
       running: this.#running,
       pending: this.#pending,
+    };
+  }
+
+  public get duration(): RunnerDuration {
+    return {
+      ...this.#_duration,
     };
   }
 
@@ -230,6 +254,10 @@ export class TaskRunner<T = any> {
       return false;
     }
 
+    if (this.#_paused) {
+      this.#_paused = false;
+    }
+
     if (this.#_busy) {
       return false;
     }
@@ -237,12 +265,21 @@ export class TaskRunner<T = any> {
     this.#_duration.start = Date.now();
 
     /* istanbul ignore next */
-    this.onStart?.({
-      tasks: this.tasks,
-      count: this.count,
-    });
-
+    this.#runHook(RunnerEvents.START);
     this.#run();
+
+    return true;
+  }
+
+  /**
+   * Pause task execution.
+   */
+  public pause(): boolean {
+    if (this.#_destroyed) {
+      return false;
+    }
+
+    this.#_paused = true;
 
     return true;
   }
@@ -254,6 +291,8 @@ export class TaskRunner<T = any> {
    */
   public destroy(): void {
     this.#_destroyed = true;
+
+    this.#runHook(RunnerEvents.DESTROY);
   }
 
   /**
@@ -290,9 +329,8 @@ export class TaskRunner<T = any> {
       }
 
       /* istanbul ignore next */
-      this.onAdd?.({
-        tasks: this.tasks,
-        count: this.count,
+
+      this.#runHook(RunnerEvents.ADD, {
         method: prepend ? AdditionMethods.FIRST : AdditionMethods.LAST,
       });
     }
@@ -325,9 +363,7 @@ export class TaskRunner<T = any> {
       this.#_pending.addAt(index, this.#createTask(task));
 
       /* istanbul ignore next */
-      this.onAdd?.({
-        tasks: this.tasks,
-        count: this.count,
+      this.#runHook(RunnerEvents.ADD, {
         method: AdditionMethods.AT_INDEX,
       });
     }
@@ -347,9 +383,7 @@ export class TaskRunner<T = any> {
       this.#_pending.concat(tasks.map(this.#createTask.bind(this)), prepend);
 
       /* istanbul ignore next */
-      this.onAdd?.({
-        tasks: this.tasks,
-        count: this.count,
+      this.#runHook(RunnerEvents.ADD, {
         method: prepend
           ? AdditionMethods.MULTIPLE_FIRST
           : AdditionMethods.MULTIPLE_LAST,
@@ -385,9 +419,7 @@ export class TaskRunner<T = any> {
       : this.#_pending.remove();
 
     /* istanbul ignore next */
-    this.onRemove?.({
-      tasks: this.tasks,
-      count: this.count,
+    this.#runHook(RunnerEvents.REMOVE, {
       removedTasks: this.#provideRemovedTasks(removedTasks),
       method: first ? RemovalMethods.FIRST : RemovalMethods.LAST,
     });
@@ -419,9 +451,7 @@ export class TaskRunner<T = any> {
     const removedTasks = this.#_pending.removeAt(index);
 
     /* istanbul ignore next */
-    this.onRemove?.({
-      tasks: this.tasks,
-      count: this.count,
+    this.#runHook(RunnerEvents.REMOVE, {
       removedTasks: this.#provideRemovedTasks(removedTasks),
       method: RemovalMethods.BY_INDEX,
     });
@@ -440,9 +470,7 @@ export class TaskRunner<T = any> {
     const removedTasks = this.#_pending.removeRange(start, count);
 
     /* istanbul ignore next */
-    this.onRemove?.({
-      tasks: this.tasks,
-      count: this.count,
+    this.#runHook(RunnerEvents.REMOVE, {
       removedTasks: this.#provideRemovedTasks(removedTasks),
       method: RemovalMethods.RANGE,
     });
@@ -461,9 +489,7 @@ export class TaskRunner<T = any> {
     const removedTasks = this.#_pending.clear();
 
     /* istanbul ignore next */
-    this.onRemove?.({
-      tasks: this.tasks,
-      count: this.count,
+    this.#runHook(RunnerEvents.REMOVE, {
       removedTasks: this.#provideRemovedTasks(removedTasks),
       method: RemovalMethods.ALL,
     });

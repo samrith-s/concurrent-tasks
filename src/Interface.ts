@@ -59,9 +59,10 @@ export type RunnerDuration = {
   total: number;
 };
 
-type HookDefaults<T = any> = {
+export type HookDefaults<T = any> = {
   tasks: TasksList<T>;
   count: TasksCount;
+  duration: RunnerDuration
 };
 
 type HookFn<
@@ -74,6 +75,10 @@ type HookFn<
 ) => void;
 
 export type OnStart<T = any> = HookFn<T>;
+
+export type OnPause<T = any> = HookFn<T>;
+
+export type onDestroy<T = any> = HookFn<T>;
 
 export type OnAdd<T = any> = HookFn<
   T,
@@ -102,15 +107,12 @@ export type OnDone<T = any> = HookFn<
   }
 >;
 
-export type OnEnd<T = any> = HookFn<
-  T,
-  {
-    duration: RunnerDuration;
-  }
->;
+export type OnEnd<T = any> = HookFn<T>;
 
 export enum RunnerEvents {
   START = "onStart",
+  PAUSE = "onPause",
+  DESTROY = "onDestroy",
   ADD = "onAdd",
   REMOVE = "onRemove",
   RUN = "onRun",
@@ -120,6 +122,8 @@ export enum RunnerEvents {
 
 export type RunnerHooks<T> = {
   [RunnerEvents.START]: OnStart<T>;
+  [RunnerEvents.PAUSE]: OnPause<T>;
+  [RunnerEvents.DESTROY]: onDestroy<T>;
   [RunnerEvents.ADD]: OnAdd<T>;
   [RunnerEvents.REMOVE]: OnRemove<T>;
   [RunnerEvents.RUN]: OnRun<T>;

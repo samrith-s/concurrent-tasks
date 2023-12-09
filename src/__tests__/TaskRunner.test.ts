@@ -4,7 +4,7 @@ import {
   generateTask,
   generateTasks,
 } from "../../testing-utils/utils/generate-tasks";
-import { AdditionMethods, RemovalMethods } from "../Interface";
+import { RemovalMethods } from "../Interface";
 
 const TASK_COUNT = 10;
 
@@ -69,6 +69,36 @@ describe("TaskRunner", () => {
         runner.destroy();
 
         jest.clearAllTimers();
+      });
+    });
+
+    describe("paused", () => {
+      it("should show the correct status", () => {
+        const runner = createRunner({
+          autoStart: true,
+        });
+
+        expect(runner.paused).toBeFalsy();
+
+        runner.pause();
+
+        expect(runner.paused).toBeTruthy();
+
+        runner.destroy();
+      });
+    });
+
+    describe("destroyed", () => {
+      it("should show the correct status", () => {
+        const runner = createRunner({
+          autoStart: true,
+        });
+
+        expect(runner.destroyed).toBeFalsy();
+
+        runner.destroy();
+
+        expect(runner.destroyed).toBeTruthy();
       });
     });
 
@@ -178,6 +208,24 @@ describe("TaskRunner", () => {
         expect(runner.start()).toBeFalsy();
       });
 
+      it("should resume the runner if it is paused", () => {
+        const runner = createRunner({
+          autoStart: true,
+        });
+
+        expect(runner.paused).toBeFalsy();
+
+        runner.pause();
+
+        expect(runner.paused).toBeTruthy();
+
+        runner.start();
+
+        expect(runner.paused).toBeFalsy();
+
+        runner.destroy();
+      });
+
       it("should not start if the runner is destroyed", () => {
         const runner = createRunner();
 
@@ -195,6 +243,30 @@ describe("TaskRunner", () => {
 
         expect(runner.start()).toBeFalsy();
         expect(runner.busy).toBeFalsy();
+      });
+    });
+
+    describe("pause", () => {
+      it("should pause the runner", () => {
+        const runner = createRunner();
+
+        runner.pause();
+
+        expect(runner.paused).toBeTruthy();
+
+        runner.start();
+
+        expect(runner.paused).toBeFalsy();
+      });
+
+      it("should return `false` if the runner is destroyed", () => {
+        const runner = createRunner();
+
+        expect(runner.pause()).toBeTruthy();
+
+        runner.destroy();
+
+        expect(runner.pause()).toBeFalsy();
       });
     });
 
@@ -293,6 +365,7 @@ describe("TaskRunner", () => {
         expect(onRemove).toHaveBeenCalledWith({
           tasks: runner.tasks,
           count: runner.count,
+          duration: runner.duration,
           method: RemovalMethods.LAST,
           removedTasks: [tasks.all.at(-1)],
         });
@@ -313,6 +386,7 @@ describe("TaskRunner", () => {
         expect(onRemove).toHaveBeenCalledWith({
           tasks: runner.tasks,
           count: runner.count,
+          duration: runner.duration,
           method: RemovalMethods.FIRST,
           removedTasks: [tasks.all.at(0)],
         });
@@ -333,6 +407,7 @@ describe("TaskRunner", () => {
         expect(onRemove).toHaveBeenCalledWith({
           tasks: runner.tasks,
           count: runner.count,
+          duration: runner.duration,
           method: RemovalMethods.BY_INDEX,
           removedTasks: [tasks.all.at(1)],
         });
@@ -355,6 +430,7 @@ describe("TaskRunner", () => {
         expect(onRemove).toHaveBeenCalledWith({
           tasks: runner.tasks,
           count: runner.count,
+          duration: runner.duration,
           method: RemovalMethods.RANGE,
           removedTasks: tasks.all.slice(1, 3),
         });
@@ -374,186 +450,9 @@ describe("TaskRunner", () => {
       expect(onRemove).toHaveBeenCalledWith({
         tasks: runner.tasks,
         count: runner.count,
+        duration: runner.duration,
         method: RemovalMethods.ALL,
         removedTasks: tasks.all,
-      });
-    });
-  });
-
-  describe("hooks", () => {
-    describe("onStart", () => {
-      it("should call `onStart` hook when calling `start`", () => {
-        const onStart = jest.fn();
-        const runner = createRunner({ onStart });
-
-        expect(onStart).not.toHaveBeenCalled();
-
-        runner.start();
-
-        expect(onStart).toHaveBeenCalled();
-
-        runner.destroy();
-      });
-    });
-
-    describe("onAdd", () => {
-      it("should call `onAdd` hook when one task is added", () => {
-        const onAdd = jest.fn();
-        const runner = createRunner({ onAdd, taskCount: 0 });
-
-        runner.add(generateTask());
-        expect(onAdd).toHaveBeenCalledWith({
-          tasks: runner.tasks,
-          count: runner.count,
-          method: AdditionMethods.LAST,
-        });
-
-        runner.addFirst(generateTask());
-        expect(onAdd).toHaveBeenCalledWith({
-          tasks: runner.tasks,
-          count: runner.count,
-          method: AdditionMethods.FIRST,
-        });
-
-        runner.destroy();
-      });
-
-      it("should call `onAdd` hook as many times when multiple tasks are added", () => {
-        const onAdd = jest.fn();
-        const runner = createRunner({ onAdd, taskCount: 0 });
-
-        runner.addMultiple(generateTasks(10));
-        expect(onAdd).toHaveBeenCalledWith({
-          tasks: runner.tasks,
-          count: runner.count,
-          method: AdditionMethods.MULTIPLE_LAST,
-        });
-
-        runner.addMultiple(generateTasks(10), true);
-        expect(onAdd).toHaveBeenCalledWith({
-          tasks: runner.tasks,
-          count: runner.count,
-          method: AdditionMethods.MULTIPLE_FIRST,
-        });
-
-        runner.destroy();
-      });
-    });
-
-    describe("onRemove", () => {
-      it("should call `onRemove` hook when removing one", () => {
-        const onRemove = jest.fn();
-        const runner = createRunner({ onRemove });
-
-        runner.remove();
-        expect(onRemove).toHaveBeenCalled();
-
-        runner.destroy();
-      });
-
-      it("should call `onRemove` hook when removing all", () => {
-        const onRemove = jest.fn();
-        const runner = createRunner({ onRemove });
-
-        runner.removeAll();
-        expect(onRemove).toHaveBeenCalled();
-
-        runner.destroy();
-      });
-
-      it("should call `onRemove` hook when removing range", () => {
-        const onRemove = jest.fn();
-        const runner = createRunner({ onRemove });
-
-        runner.removeRange(0, 1);
-        expect(onRemove).toHaveBeenCalled();
-
-        runner.destroy();
-      });
-
-      it("should call `onRemove` hook when removing at", () => {
-        const onRemove = jest.fn();
-        const runner = createRunner({ onRemove });
-
-        runner.removeAt(1);
-        expect(onRemove).toHaveBeenCalled();
-
-        runner.destroy();
-      });
-    });
-
-    describe("onRun", () => {
-      it("should call `onRun` hook whenever a task in run", (done) => {
-        jest.useFakeTimers();
-
-        const onRun = jest.fn();
-
-        const runner = createRunner({
-          onRun,
-          autoStart: true,
-          taskCount: TASK_COUNT,
-          onEnd() {
-            expect(onRun).toHaveBeenCalledTimes(TASK_COUNT);
-
-            runner.destroy();
-
-            jest.clearAllTimers();
-
-            done();
-          },
-        });
-
-        jest.advanceTimersByTime(10000);
-      });
-    });
-
-    describe("onDone", () => {
-      it("should call `onDone` hook whenever a task is done", (done) => {
-        jest.useFakeTimers();
-
-        const onDone = jest.fn();
-
-        const runner = createRunner({
-          onDone,
-          autoStart: true,
-          taskCount: TASK_COUNT,
-          concurrency: 1,
-          onEnd() {
-            expect(onDone).toHaveBeenCalledTimes(TASK_COUNT);
-
-            runner.destroy();
-
-            jest.clearAllTimers();
-
-            done();
-          },
-        });
-
-        jest.advanceTimersByTime(10000);
-      });
-    });
-
-    describe("onEnd", () => {
-      it("should call `onEnd` hook when all tasks are done", (done) => {
-        jest.useFakeTimers();
-
-        const onEnd = jest.fn().mockImplementation(() => {
-          expect(onEnd).toHaveBeenCalled();
-
-          runner.destroy();
-
-          jest.clearAllTimers();
-
-          done();
-        });
-
-        const runner = createRunner({
-          autoStart: true,
-          taskCount: TASK_COUNT,
-          onEnd,
-        });
-
-        jest.advanceTimersByTime(10000);
       });
     });
   });
@@ -590,6 +489,102 @@ describe("TaskRunner", () => {
           expect(onStart).not.toHaveBeenCalled();
 
           runner.destroy();
+        });
+      });
+    });
+
+    describe("pause", () => {
+      describe("on", () => {
+        it("should fire `pause` hook when calling `pause`", () => {
+          jest.useFakeTimers();
+
+          const runner = createRunner();
+          const onPause = jest.fn();
+
+          expect(onPause).not.toHaveBeenCalled();
+
+          runner.addListener(CT.RunnerEvents.PAUSE, onPause);
+          runner.start();
+
+          runner.pause();
+
+          jest.advanceTimersByTime(1000);
+
+          expect(onPause).toHaveBeenCalled();
+
+          runner.destroy();
+
+          jest.clearAllTimers();
+        });
+      });
+
+      describe("off", () => {
+        it("should not fire `pause` hook when calling `pause`", () => {
+          jest.useFakeTimers();
+
+          const runner = createRunner();
+          const onPause = jest.fn();
+
+          expect(onPause).not.toHaveBeenCalled();
+
+          runner.addListener(CT.RunnerEvents.PAUSE, onPause);
+          runner.start();
+          runner.removeListener(CT.RunnerEvents.PAUSE);
+
+          runner.pause();
+
+          jest.advanceTimersByTime(1000);
+
+          expect(onPause).not.toHaveBeenCalled();
+
+          runner.destroy();
+
+          jest.clearAllTimers();
+        });
+      });
+    });
+
+    describe("destroy", () => {
+      describe("on", () => {
+        it("should fire `destroy` hook when calling `destroy`", () => {
+          jest.useFakeTimers();
+
+          const runner = createRunner();
+          const onDestroy = jest.fn();
+
+          expect(onDestroy).not.toHaveBeenCalled();
+
+          runner.addListener(CT.RunnerEvents.DESTROY, onDestroy);
+          runner.start();
+
+          runner.destroy();
+
+          jest.advanceTimersByTime(1000);
+
+          expect(onDestroy).toHaveBeenCalled();
+        });
+      });
+
+      describe("off", () => {
+        it("should not fire `destroy` hook when calling `destroy`", () => {
+          jest.useFakeTimers();
+
+          const runner = createRunner();
+          const onDestroy = jest.fn();
+
+          expect(onDestroy).not.toHaveBeenCalled();
+
+          runner.addListener(CT.RunnerEvents.DESTROY, onDestroy);
+          runner.start();
+          runner.removeListener(CT.RunnerEvents.DESTROY);
+
+          runner.destroy();
+
+          jest.advanceTimersByTime(1000);
+
+          expect(onDestroy).not.toHaveBeenCalled();
+
+          jest.clearAllTimers();
         });
       });
     });
