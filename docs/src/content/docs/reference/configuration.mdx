@@ -35,19 +35,70 @@ import References from "../../../components/References.astro";
 
 <Configuration type="function" defaultValue="undefined" />
 
-- Fired whenever the runner goes from idle to working state
+- Fired whenever the runner goes from idle/paused to working state
 
 ```ts title="Signature" frame="terminal"
 OnStart<T = any> = ({
   tasks,
   count,
+  duration,
 }: {
   tasks: TasksList<T>;
   count: TasksCount;
+  duration: RunnerDuration
 }) => void;
 ```
 
-<References>[`TasksList`][TasksList], [`TasksCount`][TasksCount]</References>
+<References>
+  [`TasksList`][TasksList], [`TasksCount`][TasksCount],
+  [`RunnerDuration`][RunnerDuration]
+</References>
+
+##### onPause
+
+<Configuration type="function" defaultValue="undefined" />
+
+- Fired whenever the runner goes from working to paused state
+
+```ts title="Signature" frame="terminal"
+OnPause<T = any> = ({
+  tasks,
+  count,
+  duration,
+}: {
+  tasks: TasksList<T>;
+  count: TasksCount;
+  duration: RunnerDuration
+}) => void;
+```
+
+<References>
+  [`TasksList`][TasksList], [`TasksCount`][TasksCount],
+  [`RunnerDuration`][RunnerDuration]
+</References>
+
+##### onDestroy
+
+<Configuration type="function" defaultValue="undefined" />
+
+- Fired whenever the runner is destroyed
+
+```ts title="Signature" frame="terminal"
+OnDestroy<T = any> = ({
+  tasks,
+  count,
+  duration,
+}: {
+  tasks: TasksList<T>;
+  count: TasksCount;
+  duration: RunnerDuration
+}) => void;
+```
+
+<References>
+  [`TasksList`][TasksList], [`TasksCount`][TasksCount],
+  [`RunnerDuration`][RunnerDuration]
+</References>
 
 ##### onAdd
 
@@ -59,17 +110,19 @@ OnStart<T = any> = ({
 OnAdd<T = any> = ({
   tasks,
   count,
+  duration,
   method,
 }: {
   tasks: TasksList<T>;
   count: TasksCount;
+  duration: RunnerDuration;
   method: AdditionMethods;
 }) => void;
 ```
 
 <References>
   [`TasksList`][TasksList], [`TasksCount`][TasksCount],
-  [`AdditionMethods`][AdditionMethods]
+  [`RunnerDuration`][RunnerDuration], [`AdditionMethods`][AdditionMethods]
 </References>
 
 ##### onRun
@@ -82,10 +135,12 @@ OnAdd<T = any> = ({
 OnRun<T = any> = ({
   tasks,
   count,
+  duration,
   task,
 }: {
   tasks: TasksList<T>;
   count: TasksCount;
+  duration: RunnerDuration;
   task: Task<T>;
 }) => void;
 ```
@@ -111,17 +166,22 @@ See: [The Done callback](/done-callback)
 OnDone<T = any> = ({
   tasks,
   count,
+  duration,
   task,
   result,
 }: {
   tasks: TasksList<T>;
   count: TasksCount;
+  duration: RunnerDuration;
   task: Task<T>;
   result?: T;
 }) => void;
 ```
 
-<References>[`TasksList`][TasksList], [`TasksCount`][TasksCount]</References>
+<References>
+  [`TasksList`][TasksList], [`TasksCount`][TasksCount],
+  [`RunnerDuration`][RunnerDuration]
+</References>
 
 ##### onRemove
 
@@ -133,11 +193,13 @@ OnDone<T = any> = ({
 OnRemove<T = any> = ({
   tasks,
   count,
+  duration,
   method,
   removedTasks,
 }: {
   tasks: TasksList<T>;
   count: TasksCount;
+  duration: RunnerDuration;
   method: RemovalMethods;
   removedTasks: Task<T>[];
 }) => void;
@@ -145,7 +207,7 @@ OnRemove<T = any> = ({
 
 <References>
   [`TasksList`][TasksList], [`TasksCount`][TasksCount],
-  [`RemovalMethods`][RemovalMethods]
+  [`RunnerDuration`][RunnerDuration], [`RemovalMethods`][RemovalMethods]
 </References>
 
 ##### onEnd
@@ -161,7 +223,7 @@ OnEnd<T = any> = ({
   duration,
 }: {
   tasks: TasksList<T>;
-  tasks: TasksCount;
+  count: TasksCount;
   duration: RunnerDuration;
 }) => void;
 ```
