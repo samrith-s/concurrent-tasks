@@ -121,12 +121,8 @@ export class TaskRunner<T = any> {
   }
 
   #run() {
-    if (!this.#_destroyed && !this.#_paused) {
-      if (
-        !!this.#total &&
-        this.#completed < this.#total &&
-        this.#running < this.#_concurrency
-      ) {
+    if (this.#completed !== this.#total) {
+      if (!this.#_paused && this.#running < this.#_concurrency) {
         const difference = this.#_concurrency - this.#running;
 
         const tasks = this.#_pending.removeRange(0, difference) as Tasks<T>;
@@ -145,17 +141,17 @@ export class TaskRunner<T = any> {
         });
 
         this.#_busy = true;
-      } else {
-        this.#_duration.end = Date.now();
-        this.#_duration.total = Math.ceil(
-          this.#_duration.end - this.#_duration.start
-        );
-
-        /* istanbul ignore next */
-        this.#runHook(RunnerEvents.END);
-
-        this.#_busy = false;
       }
+    } else {
+      this.#_duration.end = Date.now();
+      this.#_duration.total = Math.ceil(
+        this.#_duration.end - this.#_duration.start
+      );
+
+      /* istanbul ignore next */
+      this.#runHook(RunnerEvents.END);
+
+      this.#_busy = false;
     }
   }
 
@@ -254,7 +250,9 @@ export class TaskRunner<T = any> {
       return false;
     }
 
-    if (this.#_paused) {
+    const previousPause = this.#_paused;
+
+    if (previousPause) {
       this.#_paused = false;
     }
 
@@ -265,7 +263,9 @@ export class TaskRunner<T = any> {
     this.#_duration.start = Date.now();
 
     /* istanbul ignore next */
-    this.#runHook(RunnerEvents.START);
+    if (!previousPause) {
+      this.#runHook(RunnerEvents.START);
+    }
     this.#run();
 
     return true;

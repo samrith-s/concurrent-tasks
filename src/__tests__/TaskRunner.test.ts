@@ -473,6 +473,33 @@ describe("TaskRunner", () => {
 
           runner.destroy();
         });
+
+        it("should not fire `start` hook when going from paused to unpaused state", () => {
+          jest.useFakeTimers();
+
+          const onStart = jest.fn();
+          const onPause = jest.fn();
+          const runner = createRunner();
+
+          runner.addListener(CT.RunnerEvents.START, onStart);
+          runner.addListener(CT.RunnerEvents.PAUSE, onPause);
+
+          runner.start();
+
+          expect(onStart).toHaveBeenCalledTimes(1);
+
+          runner.pause();
+
+          jest.advanceTimersByTime(10000);
+
+          expect(onPause).toHaveBeenCalledTimes(1);
+
+          runner.start();
+
+          expect(onStart).toHaveBeenCalledTimes(1);
+
+          runner.destroy();
+        });
       });
 
       describe("off", () => {
