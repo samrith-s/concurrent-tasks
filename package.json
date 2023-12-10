@@ -31,7 +31,8 @@
     "lint": "eslint src/**/*.ts --cache",
     "lint:docs": "eslint docs/**/*.ts --cache",
     "prettify": "prettier --write {src,tests,docs}/**/*",
-    "docs": "yarn --cwd docs"
+    "docs": "yarn --cwd docs",
+    "release": "ts-node scripts/release"
   },
   "dependencies": {},
   "devDependencies": {
