@@ -8,7 +8,11 @@ details > ul * {
 }
 
 .starlight-aside {
-  border-radius: 0.25rem;
+  @apply rounded;
+}
+
+.card {
+  @apply rounded;
 }
 
 .reference p {
@@ -19,4 +23,22 @@ details > ul * {
 site-search > button[data-open-modal] {
   width: 100%;
   max-width: 100% !important;
+}
+
+:root,
+:root[data-theme="dark"] .expressive-code,
+:root[data-theme="dark"] .expressive-code[data-theme="dark"] {
+  --ec-tm-delBg: #862d2722 !important;
+  --ec-tm-insBg: #1e571533 !important;
+}
+
+:root,
+:root[data-theme="light"] .expressive-code,
+:root[data-theme="light"] .expressive-code[data-theme="light"] {
+  --ec-tm-delBg: #862d2711 !important;
+  --ec-tm-insBg: #1e571522 !important;
+}
+
+header.header {
+  @apply bg-white bg-opacity-5 backdrop-blur-lg;
 }

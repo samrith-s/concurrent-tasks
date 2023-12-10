@@ -4,11 +4,6 @@ import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
-  markdown: {
-    shikiConfig: {
-      theme: "dark-plus",
-    },
-  },
   integrations: [
     starlight({
       title: "Concurrent Tasks",
@@ -35,7 +30,7 @@ export default defineConfig({
         },
         {
           label: "Guides",
-          collapsed: true,
+          badge: "New",
           autogenerate: {
             directory: "guides",
           },
@@ -45,6 +40,7 @@ export default defineConfig({
         maxHeadingLevel: 5,
       },
       expressiveCode: {
+        themes: ["material-theme-darker", "material-theme-lighter"],
         styleOverrides: { borderRadius: "0.25rem" },
         frames: {
           removeCommentsWhenCopyingTerminalFrames: true,
