@@ -3,3 +3,4 @@ node_modules/
 coverage/
 .cache/
 *.log
+src/__tests__

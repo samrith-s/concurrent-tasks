@@ -9,10 +9,14 @@
   "main": "lib/cjs/index.js",
   "module": "lib/es/index.js",
   "types": "lib/dts/src/index.d.ts",
+  "source": "src/index.ts",
+  "react-native": "src/index.ts",
   "files": [
     "lib",
     "LICENSE",
-    "README"
+    "README",
+    "src",
+    "!src/__tests__"
   ],
   "publishConfig": {
     "access": "public",
