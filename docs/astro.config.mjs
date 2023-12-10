@@ -13,7 +13,7 @@ export default defineConfig({
       social: {
         github: "https://github.com/samrith-s/concurrent-tasks",
       },
-      favicon: "/logo.svg",
+      favicon: "/favicon.png",
       customCss: ["./src/tailwind.css"],
       sidebar: [
         {
