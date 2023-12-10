@@ -25,6 +25,7 @@ export default {
     typescript({
       typescript: require("typescript"),
       clean: true,
+      tsconfig: "./tsconfig.build.json",
       exclude: ["**/*.test.ts"],
       useTsconfigDeclarationDir: true,
     }),

@@ -23,7 +23,7 @@
   },
   "scripts": {
     "bootstrap": "yarn install && yarn --cwd docs install",
-    "prepublishOnly": "yarn build:prod",
+    "prepublishOnly": "yarn build",
     "prebuild": "yarn clean",
     "build": "NODE_ENV=production rollup -c rollup.config.js --bundleConfigAsCjs && size-limit",
     "clean": "rm -rf lib/",
