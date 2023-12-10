@@ -1,6 +1,12 @@
 {
   "git": {
-    "commitMessage": "release: v${version}"
+    "commitMessage": "release: v${version}",
+    "commitArgs": ["--no-verify"],
+    "requireCleanWorkingDir": false,
+    "push": false
+  },
+  "npm": {
+    "release": true
   },
   "github": {
     "release": true
