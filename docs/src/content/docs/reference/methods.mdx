@@ -15,6 +15,27 @@ start(): boolean
 
 - Start the runner and begin execution of tasks
 - Returns `false` if the runner is busy or destroyed
+- The [`start`](#start) method can be used to unpause the runner
+
+---
+
+##### pause
+
+```ts
+pause(): boolean
+```
+
+:::note
+
+The `pause` event is fired once all the running tasks are done, to ensure the duration and task list reported are correct.
+
+:::
+
+- Pauses the runner instance
+- Running tasks are unaffected
+- Once all running tasks are done, the runner will be marked as idle
+- Returns `false` if the runner is destroyed
+- The [`start`](#start) method can be used to unpause the runner
 
 ---
 
@@ -29,11 +50,17 @@ destroy(): void
 - Destroyed instances cannot be started
 - Any add operations on tasks will fail silently
 
-  :::
+:::
+
+:::note
+
+The `destroy` event is fired once all the running tasks are done, to ensure the duration and task list reported are correct.
+
+:::
 
 - Destroys the runner instance
-- Pending tasks are unaffected
-- Once all pending tasks are done, the runner will be marked as idle
+- Running tasks are unaffected
+- Once all running tasks are done, the runner will be marked as idle
 
 ---
 

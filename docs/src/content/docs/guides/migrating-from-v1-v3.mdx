@@ -3,7 +3,6 @@ title: Migrating from v1 to v3
 description: Upgrading to the latest version of Concurrent Tasks
 sidebar:
   order: 1
-  badge: New
 ---
 
 Concurrent Tasks v3 comes with a host of changes to the API to make it simpler and easier to use.
@@ -67,7 +66,7 @@ runner.add((done) => {
 
 #### Busy status is now a property instead of a method
 
-If you are using the `isBusy` method, you will now move to use the `busy` property instead.
+If you are using the `isBusy` method, you will now have to use the `busy` property instead.
 
 ```diff
 import { TaskRunner } from 'concurrent-tasks';
