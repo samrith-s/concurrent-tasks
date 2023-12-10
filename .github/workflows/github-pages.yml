@@ -14,33 +14,44 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 env:
-  BUILD_PATH: docs
+  BUILD_PATH: "./docs"
 
 jobs:
-  build:
-    name: Build
+  check:
+    name: Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          cache: yarn
-          cache-dependency-path: ${{ env.BUILD_PATH }}/yarn.lock
 
-      - name: Setup Pages
+      - name: Setup
+        uses: ./.github/setup
+        with:
+          working-directory: ${{ env.BUILD_PATH }}
+
+      - name: Lint check
+        run: yarn lint:docs
+
+  build:
+    name: Build
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/setup
+        with:
+          working-directory: ${{ env.BUILD_PATH }}
+
+      - name: Setup pages
         id: pages
         uses: actions/configure-pages@v4
-
-      - name: Install dependencies
-        working-directory: ${{ env.BUILD_PATH }}
-        run: yarn install --frozen-lockfile --ignore-scripts --prefer-offline
 
       - name: Build
         working-directory: ${{ env.BUILD_PATH }}

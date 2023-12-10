@@ -1,0 +1,31 @@
+name: Setup
+description: "Setup node and dependencies"
+
+inputs:
+  lockfile:
+    required: true
+    description: "Location of lockfile"
+    default: "./yarn.lock"
+  working-directory:
+    required: false
+    description: "Working directory"
+    default: "."
+  node-version:
+    description: "Node version"
+    required: false
+    default: "18"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: yarn
+        cache-dependency-path: ${{ inputs.lockfile }}
+
+    - name: Install dependencies
+      shell: "bash"
+      working-directory: ${{ inputs.working-directory }}
+      run: yarn install --frozen-lockfile --prefer-offline

@@ -28,7 +28,8 @@
     "build": "NODE_ENV=production rollup -c rollup.config.js --bundleConfigAsCjs && size-limit",
     "clean": "rm -rf lib/",
     "test": "jest",
-    "lint": "eslint {src,docs}/**/*.ts --cache",
+    "lint": "eslint src/**/*.ts --cache",
+    "lint:docs": "eslint docs/**/*.ts --cache",
     "prettify": "prettier --write {src,tests,docs}/**/*",
     "docs": "yarn --cwd docs"
   },

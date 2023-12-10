@@ -4,10 +4,16 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - "docs/**"
+      - "README.md"
   pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "README.md"
 
 concurrency:
-  group: checks
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -16,37 +22,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: yarn
-          cache-dependency-path: "**/yarn.lock"
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile --prefer-offline
+      - name: Setup
+        uses: ./.github/setup
 
       - name: Lint
         run: yarn lint
+
+  types:
+    name: Types
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/setup
+
+      - name: Type check
+        run: yarn tsc -p .
 
   tests:
     name: Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: yarn
-          cache-dependency-path: "**/yarn.lock"
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile --prefer-offline
+      - name: Setup
+        uses: ./.github/setup
 
       - name: Test
         run: yarn test --max-workers="75%" --coverage
@@ -56,17 +61,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: yarn
-          cache-dependency-path: "**/yarn.lock"
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile --prefer-offline
+      - name: Setup
+        uses: ./.github/setup
 
       - name: Build
         run: yarn build
