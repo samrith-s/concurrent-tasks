@@ -17,10 +17,8 @@ const pkgClone: Partial<typeof pkg> = {
   ...pkg,
 };
 
-delete pkgClone.dependencies;
 delete pkgClone.devDependencies;
 delete pkgClone.scripts;
-delete pkgClone["lint-staged"];
 
 fs.writeFileSync(
   PKG_JSON_PATH,

@@ -1,0 +1,21 @@
+output:
+  - failure
+no_tty: true
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      glob: "*.{js,ts,jsx,tsx}"
+      run: node_modules/.bin/eslint {staged_files}
+    prettier:
+      glob: "*.{ts,tsx,json}"
+      run: node_modules/.bin/prettier --write {staged_files}
+commit-msg:
+  commands:
+    check:
+      run: node_modules/.bin/commitlint --edit $1
+#   scripts:
+#     "hello.js":
+#       runner: node
+#     "any.go":
+#       runner: go run

@@ -29,7 +29,11 @@ runs:
         cache: yarn
         cache-dependency-path: ${{ inputs.lockfile }}
 
+    - name: Enable corepack
+      shell: bash
+      run: corepack enable
+
     - name: Install dependencies
-      shell: "bash"
+      shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: yarn install --immutable
