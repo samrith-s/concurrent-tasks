@@ -24,7 +24,7 @@ A simple task runner which will run all tasks till completion, while maintaining
 </p>
 
 <p align="center">
-Read the full documentation at the <a href="https://www.concurrent-tasks.js.org">website</a>
+Read the full documentation at the <a href="https://concurrent-tasks.samrith.dev">website</a>
 </p>
 
 ---
