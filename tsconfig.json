@@ -6,6 +6,7 @@
     "commitlint.config.js",
     "testing-utils/**/*.ts"
   ],
+  "files": ["src/bench/bench.d.ts"],
   "compilerOptions": {
     "baseUrl": ".",
     "module": "CommonJS",
