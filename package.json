@@ -38,7 +38,6 @@
     "docs": "yarn --cwd docs",
     "release": "ts-node scripts/release"
   },
-  "dependencies": {},
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
@@ -92,5 +91,6 @@
     "fifo",
     "scheduler",
     "schedule task"
-  ]
+  ],
+  "packageManager": "yarn@4.5.1"
 }
