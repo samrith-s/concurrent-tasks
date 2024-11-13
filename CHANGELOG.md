@@ -1,5 +1,12 @@
 
 
+## [3.0.2](https://github.com/samrith-s/concurrent-tasks/compare/v3.0.1...v3.0.2) (2024-11-13)
+
+
+### Bug Fixes
+
+* update `homepage` field in `package.json` ([da4ee4a](https://github.com/samrith-s/concurrent-tasks/commit/da4ee4ac2a0e17469dc4907d6fc8b8ab5efc1164))
+
 # [3.0.0](https://github.com/samrith-s/concurrent-tasks/compare/v2.1.0-beta.0...v1.0.7) (2023-12-10)
 
 
