@@ -1,7 +1,7 @@
 {
   "git": {
     "commitMessage": "release: v${version}",
-    "commitArgs": ["--no-verify"],
+    "commitArgs": ["-n"],
     "requireCleanWorkingDir": false,
     "push": false
   },
