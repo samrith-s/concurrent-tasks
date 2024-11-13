@@ -4,8 +4,14 @@
   "description": "A simple task runner which will run tasks concurrently while maintaining limits.",
   "author": "Samrith Shankar",
   "license": "MIT",
-  "homepage": "https://concurrent-tasks.js.org",
-  "repository": "https://github.com/samrith-s/concurrent-tasks.git",
+  "homepage": "https://concurrent-tasks.samrith.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samrith-s/concurrent-tasks.git"
+  },
+  "bugs": {
+    "url": "https://github.com/samrith-s/concurrent-tasks/issues/new/choose"
+  },
   "main": "lib/cjs/index.js",
   "module": "lib/es/index.js",
   "types": "lib/dts/src/index.d.ts",
@@ -71,9 +77,6 @@
     "typescript": "^5.3.3",
     "vite-node": "^2.1.4",
     "yocto-spinner": "^0.1.1"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,json}": "eslint --cache --fix"
   },
   "keywords": [
     "concurrent",
