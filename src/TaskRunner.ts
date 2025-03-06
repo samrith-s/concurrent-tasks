@@ -123,6 +123,8 @@ export class TaskRunner<T = any> {
   #run() {
     if (this.#completed !== this.#total) {
       if (!this.#_paused && this.#running < this.#_concurrency) {
+        this.#_busy = true;
+        
         const difference = this.#_concurrency - this.#running;
 
         const tasks = this.#_pending.removeRange(0, difference) as Tasks<T>;
@@ -139,10 +141,9 @@ export class TaskRunner<T = any> {
             task,
           });
         });
-
-        this.#_busy = true;
       }
     } else {
+      this.#_busy = false;
       this.#_duration.end = Date.now();
       this.#_duration.total = Math.ceil(
         this.#_duration.end - this.#_duration.start
@@ -150,8 +151,6 @@ export class TaskRunner<T = any> {
 
       /* istanbul ignore next */
       this.#runHook(RunnerEvents.END);
-
-      this.#_busy = false;
     }
   }
 
