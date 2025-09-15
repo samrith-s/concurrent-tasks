@@ -1,5 +1,12 @@
 
 
+## [3.0.3](https://github.com/samrith-s/concurrent-tasks/compare/v3.0.2...v3.0.3) (2025-09-15)
+
+
+### Bug Fixes
+
+* move the busy flag check to enable starting synchronization queue ([7fe66ae](https://github.com/samrith-s/concurrent-tasks/commit/7fe66ae1c5679888b63fd384f4a6f9ce7f232089)), closes [#56](https://github.com/samrith-s/concurrent-tasks/issues/56)
+
 ## [3.0.2](https://github.com/samrith-s/concurrent-tasks/compare/v3.0.1...v3.0.2) (2024-11-13)
 
 
