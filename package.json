@@ -43,7 +43,7 @@
     "prettify": "prettier --write {src,tests,docs}/**/*",
     "docs": "yarn --cwd docs",
     "release": "vite-node scripts/release",
-    "bench": "vite-node src/bench/benchmarks.ts"
+    "bench": "vite-node bench/benchmarks.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
@@ -97,5 +97,5 @@
     "scheduler",
     "schedule task"
   ],
-  "packageManager": "yarn@4.5.1"
+  "packageManager": "yarn@4.9.4"
 }

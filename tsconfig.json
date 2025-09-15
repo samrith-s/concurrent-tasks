@@ -1,12 +1,11 @@
 {
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "bench/**/*.ts"],
   "exclude": [
     "node_modules",
     "rollup.config.js",
     "commitlint.config.js",
-    "testing-utils/**/*.ts"
+    "testing-utils/**/*"
   ],
-  "files": ["src/bench/bench.d.ts"],
   "compilerOptions": {
     "baseUrl": ".",
     "module": "CommonJS",

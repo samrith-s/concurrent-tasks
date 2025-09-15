@@ -1,5 +1,7 @@
-import { CT } from "../..";
-import { generateTasks } from "../../../testing-utils/utils/generate-tasks";
+import { CT } from "../../src";
+import { generateTasks } from "../../testing-utils/utils/generate-tasks";
+
+import { cpuUsage } from "./cpu-usage";
 
 function whatIsLast(last: number) {
   return function isLast(value: number, callback: () => void) {
@@ -26,12 +28,16 @@ function benchInner(
   const endMark = `${name}-end`;
 
   const task = performance.timerify(() => {
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise((resolve) => {
       const tasks = generateTasks(benchConfig.taskCount, benchConfig.timeout);
       const total = tasks.length;
       const isLast = whatIsLast(total - 1);
 
       performance.mark(startMark);
+
+      const startTime = Date.now();
+      const startUsage = process.cpuUsage();
 
       benchmark({
         tasks,
@@ -40,12 +46,11 @@ function benchInner(
           resolve(true);
           performance.mark(endMark);
           const entry = performance.measure(name, startMark, endMark);
+          const usage = cpuUsage(startUsage, startTime);
 
           results.add(name, {
             Duration: `${entry.duration.toFixed(2)}ms`,
-            ELU: `${(
-              performance.eventLoopUtilization().utilization * 100
-            ).toFixed(2)}%`,
+            CPU: `${usage.toFixed(2)}%`,
           });
         },
         isLast,

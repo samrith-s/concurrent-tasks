@@ -1,6 +1,4 @@
 /* eslint-disable no-var */
-export {};
-
 declare global {
   declare var benchConfig: {
     taskCount?: number;
@@ -9,7 +7,7 @@ declare global {
 
   declare type BenchmarkResult = {
     Duration: string;
-    ELU: string;
+    CPU: string;
   };
 
   declare type BenchmarkResults = Record<string, BenchmarkResult>;
@@ -20,3 +18,5 @@ declare global {
     print(): void;
   };
 }
+
+export {};
