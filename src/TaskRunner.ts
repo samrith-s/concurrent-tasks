@@ -127,6 +127,8 @@ export class TaskRunner<T = any> {
 
         const tasks = this.#_pending.removeRange(0, difference) as Tasks<T>;
 
+        this.#_busy = true;
+
         tasks.forEach((task) => {
           task.status = TaskStatus.RUNNING;
 
@@ -139,8 +141,6 @@ export class TaskRunner<T = any> {
             task,
           });
         });
-
-        this.#_busy = true;
       }
     } else {
       this.#_duration.end = Date.now();
